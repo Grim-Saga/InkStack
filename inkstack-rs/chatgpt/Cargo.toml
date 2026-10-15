@@ -1,0 +1,31 @@
+[package]
+name = "inkstack-chatgpt"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+inkstack-connectors = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-utils-cli = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tokio = { workspace = true, features = ["full"] }
+
+[dev-dependencies]
+inkstack-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+
+[lib]
+doctest = false

@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "guardian-reviewer",
+    crate_name = "inkstack_guardian_reviewer",
+)

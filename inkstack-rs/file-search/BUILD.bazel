@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "file-search",
+    crate_name = "inkstack_file_search",
+)

@@ -1,0 +1,45 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-cloud-tasks"
+version.workspace = true
+
+[lib]
+name = "inkstack_cloud_tasks"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+clap = { workspace = true, features = ["derive"] }
+inkstack-http-client = { workspace = true }
+inkstack-cloud-tasks-client = { workspace = true }
+# TODO: inkstack-cloud-tasks-mock-client should be in dev-dependencies.
+inkstack-cloud-tasks-mock-client = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-login = { path = "../login" }
+inkstack-model-provider = { workspace = true }
+inkstack-tui = { workspace = true }
+inkstack-utils-cli = { workspace = true }
+crossterm = { workspace = true, features = ["event-stream"] }
+http = { workspace = true }
+owo-colors = { workspace = true, features = ["supports-colors"] }
+ratatui = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+supports-color = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tokio-stream = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+unicode-segmentation = { workspace = true }
+unicode-width = { workspace = true }
+
+[dev-dependencies]
+insta = { workspace = true }
+pretty_assertions = { workspace = true }

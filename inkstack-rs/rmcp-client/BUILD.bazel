@@ -1,0 +1,9 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "rmcp-client",
+    crate_name = "inkstack_rmcp_client",
+    extra_binaries = [
+        "//inkstack-rs/cli:inkstack",
+    ],
+)

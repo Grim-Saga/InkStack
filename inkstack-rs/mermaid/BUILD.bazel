@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "mermaid",
+    crate_name = "inkstack_mermaid",
+    test_data_extra = glob(["src/snapshots/**"]),
+)

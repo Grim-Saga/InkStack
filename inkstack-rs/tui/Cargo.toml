@@ -1,0 +1,191 @@
+[package]
+name = "inkstack-tui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+autobins = false
+
+[[bin]]
+name = "inkstack-tui"
+path = "src/main.rs"
+
+[[bin]]
+name = "md-events"
+path = "src/bin/md-events.rs"
+
+[lib]
+name = "inkstack_tui"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-build-info = { workspace = true }
+anyhow = { workspace = true }
+axum = { workspace = true, default-features = false, features = ["http1", "tokio"] }
+base64 = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+clap = { workspace = true, features = ["derive"] }
+inkstack-ansi-escape = { workspace = true }
+inkstack-app-server-client = { workspace = true }
+inkstack-app-server-daemon = { workspace = true }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-arg0 = { workspace = true }
+inkstack-backend-client = { workspace = true }
+inkstack-install-context = { workspace = true }
+inkstack-cloud-config = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-context-fragments = { workspace = true }
+inkstack-connectors = { workspace = true }
+inkstack-core-plugins = { workspace = true }
+inkstack-history = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-feedback = { workspace = true }
+inkstack-file-search = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-mermaid = { workspace = true }
+inkstack-message-history = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+inkstack-models-manager = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-realtime-webrtc = { workspace = true }
+futures = { workspace = true }
+inkstack-rollout = { workspace = true }
+inkstack-sandboxing = { workspace = true }
+inkstack-shell-command = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-terminal-detection = { workspace = true }
+inkstack-worktree = { workspace = true }
+inkstack-utils-approval-presets = { workspace = true }
+inkstack-uds = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-cli = { workspace = true }
+inkstack-utils-elapsed = { workspace = true }
+inkstack-utils-fuzzy-match = { workspace = true }
+inkstack-utils-home-dir = { workspace = true }
+inkstack-utils-oss = { workspace = true }
+inkstack-utils-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+inkstack-utils-plugins = { workspace = true }
+inkstack-utils-sandbox-summary = { workspace = true }
+inkstack-utils-sleep-inhibitor = { workspace = true }
+inkstack-utils-string = { workspace = true }
+color-eyre = { workspace = true }
+crossterm = { workspace = true, features = ["bracketed-paste", "event-stream"] }
+derive_more = { workspace = true, features = ["is_variant"] }
+diffy = { workspace = true }
+dirs = { workspace = true }
+dunce = { workspace = true }
+image = { workspace = true, features = ["jpeg", "png", "gif", "webp"] }
+itertools = { workspace = true }
+lazy_static = { workspace = true }
+pathdiff = { workspace = true }
+pulldown-cmark = { workspace = true, features = ["html"] }
+rand = { workspace = true }
+ratatui = { workspace = true, features = [
+    "scrolling-regions",
+    "unstable-backend-writer",
+    "unstable-rendered-line-info",
+    "unstable-widget-ref",
+] }
+ratatui-macros = { workspace = true }
+regex-lite = { workspace = true }
+rmcp = { workspace = true, features = ["server", "transport-streamable-http-server"] }
+semver = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["preserve_order"] }
+sha2 = { workspace = true }
+shlex = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
+supports-color = { workspace = true }
+tempfile = { workspace = true }
+textwrap = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+    "test-util",
+    "time",
+] }
+tokio-stream = { workspace = true, features = ["sync"] }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+syntect = { version = "5", default-features = false, features = ["parsing", "plist-load", "regex-onig"] }
+two-face = { version = "0.5", default-features = false, features = ["syntect-onig"] }
+unicode-segmentation = { workspace = true }
+unicode-width = { workspace = true }
+url = { workspace = true }
+urlencoding = { workspace = true }
+webbrowser = { workspace = true }
+uuid = { workspace = true }
+
+inkstack-windows-sandbox = { workspace = true }
+tokio-util = { workspace = true, features = ["time"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSAccessibility", "NSWorkspace"] }
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSDateFormatter", "NSFormatter", "NSLocale", "NSString"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# Keep the same executor features as the credential store, which also uses zbus.
+zbus = "4.4.0"
+
+[target.'cfg(windows)'.dependencies]
+which = { workspace = true }
+windows-sys = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_Security",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Console",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_System_RemoteDesktop",
+    "Win32_System_IO",
+    "Win32_System_Pipes",
+    "Win32_System_Threading",
+    "Win32_UI_WindowsAndMessaging",
+] }
+winsplit = "0.1"
+
+# Clipboard support via `arboard` is not available on Android/Termux.
+# Only include it for non-Android targets so the crate builds on Android.
+[target.'cfg(not(target_os = "android"))'.dependencies]
+arboard = { workspace = true }
+
+
+[dev-dependencies]
+app_test_support = { workspace = true }
+inkstack-mcp = { workspace = true }
+core_test_support = { workspace = true }
+inkstack-utils-cargo-bin = { workspace = true }
+assert_matches = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+futures = { workspace = true }
+http = { workspace = true }
+insta = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+rand = { workspace = true }
+serial_test = { workspace = true }
+tokio-tungstenite = { workspace = true }
+vt100 = { workspace = true }
+uuid = { workspace = true }
+wiremock = { workspace = true }

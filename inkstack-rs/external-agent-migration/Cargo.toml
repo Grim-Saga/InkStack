@@ -1,0 +1,43 @@
+[package]
+name = "inkstack-external-agent-migration"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_external_agent_migration"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+chrono = { workspace = true }
+inkstack-analytics = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-core-plugins = { workspace = true }
+inkstack-hooks = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-memories-write = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-rollout = { workspace = true }
+inkstack-thread-store = { workspace = true }
+inkstack-utils-output-truncation = { workspace = true }
+linkify = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+sha2 = { workspace = true }
+toml = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+inkstack-app-server-protocol = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

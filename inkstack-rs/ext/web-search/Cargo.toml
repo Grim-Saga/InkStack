@@ -1,0 +1,33 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-web-search-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_web_search_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-api = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-extension-items = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-tools = { workspace = true }
+http = { workspace = true }
+schemars = { workspace = true }
+serde_json = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

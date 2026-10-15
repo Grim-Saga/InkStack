@@ -1,0 +1,25 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-features"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_features"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-network-proxy = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-utils-redacted-string = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+toml = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

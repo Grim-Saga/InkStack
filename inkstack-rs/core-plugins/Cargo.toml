@@ -1,0 +1,69 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-core-plugins"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_core_plugins"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-utils-process = { workspace = true }
+anyhow = { workspace = true }
+inkstack-analytics = { workspace = true }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-connectors = { workspace = true }
+inkstack-core-plugin-common = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-hooks = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-mcp = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-skills = { workspace = true }
+inkstack-shell-command = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+inkstack-utils-plugins = { workspace = true }
+chrono = { workspace = true }
+dirs = { workspace = true }
+flate2 = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
+serde_yaml = { workspace = true }
+sha2 = { workspace = true }
+tar = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs", "macros", "rt", "time"] }
+toml = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true, features = ["v4"] }
+zip = { workspace = true }
+
+[dev-dependencies]
+inkstack-exec-server-test-support = { workspace = true }
+inkstack-utils-cargo-bin = { workspace = true }
+libc = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-test = { workspace = true, features = ["no-env-filter"] }
+wiremock = { workspace = true }

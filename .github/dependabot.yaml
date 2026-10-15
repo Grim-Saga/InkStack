@@ -1,0 +1,36 @@
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#package-ecosystem-
+
+version: 2
+updates:
+  - package-ecosystem: bun
+    directory: .github/actions/inkstack
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: cargo
+    directories:
+      - inkstack-rs
+      - inkstack-rs/*
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: docker
+    directory: inkstack-cli
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: rust-toolchain
+    directory: inkstack-rs
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

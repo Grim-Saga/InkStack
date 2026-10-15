@@ -1,0 +1,11 @@
+# Paths are matched exactly, relative to the repository root.
+# Keep this list short and limited to intentional large checked-in assets.
+
+.github/inkstack-cli-splash.png
+MODULE.bazel.lock
+inkstack-rs/app-server-protocol/schema/json/inkstack_app_server_protocol.schemas.json
+inkstack-rs/app-server-protocol/schema/json/inkstack_app_server_protocol.v2.schemas.json
+inkstack-rs/models-manager/models.json
+inkstack-rs/tui/tests/fixtures/oss-story.jsonl
+inkstack-rs/tui_app_server/tests/fixtures/oss-story.jsonl
+inkstack-rs/tui/src/app.rs

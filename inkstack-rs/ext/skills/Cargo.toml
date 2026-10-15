@@ -1,0 +1,49 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-skills-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_skills_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+blake3 = { workspace = true }
+inkstack-analytics = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-mcp = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-skills = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+inkstack-utils-plugins = { workspace = true }
+inkstack-utils-string = { workspace = true }
+dirs = { workspace = true }
+futures = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync", "time"] }
+toml = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+assert_matches = { workspace = true }
+inkstack-models-manager = { workspace = true }
+inkstack-utils-cargo-bin = { workspace = true }
+dunce = { workspace = true }
+insta = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tracing-subscriber = { workspace = true }

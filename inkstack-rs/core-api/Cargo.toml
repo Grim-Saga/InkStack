@@ -1,0 +1,33 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-core-api"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_core_api"
+path = "src/lib.rs"
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-app-server-protocol = { workspace = true }
+inkstack-arg0 = { workspace = true }
+inkstack-analytics = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-home = { workspace = true }
+inkstack-history = { workspace = true }
+inkstack-image-generation-extension = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+inkstack-models-manager = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }

@@ -1,0 +1,36 @@
+[package]
+name = "inkstack-arg0"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "inkstack_arg0"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+inkstack-apply-patch = { workspace = true }
+inkstack-async-utils = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-install-context = { workspace = true }
+inkstack-linux-sandbox = { workspace = true }
+inkstack-sandboxing = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-home-dir = { workspace = true }
+inkstack-utils-pty = { workspace = true }
+dotenvy = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+
+[target.'cfg(windows)'.dependencies]
+inkstack-windows-sandbox = { workspace = true }
+pathdiff = { workspace = true }
+
+[dev-dependencies]
+inkstack-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }

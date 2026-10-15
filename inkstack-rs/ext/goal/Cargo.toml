@@ -1,0 +1,38 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-goal-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_goal_extension"
+path = "src/lib.rs"
+test = false
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-analytics = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-prompts = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-rollout = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-template = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+anyhow = { workspace = true }
+chrono = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

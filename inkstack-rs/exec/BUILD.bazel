@@ -1,0 +1,10 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "exec",
+    crate_name = "inkstack_exec",
+    test_shard_counts = {
+        "exec-all-test": 8,
+    },
+    test_tags = ["no-sandbox"],
+)

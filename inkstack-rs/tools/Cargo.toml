@@ -1,0 +1,38 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-tools"
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+bitflags = { workspace = true }
+inkstack-code-mode = { workspace = true }
+inkstack-connectors = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-file-system = { workspace = true }
+inkstack-extension-items = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-utils-output-truncation = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+inkstack-utils-string = { workspace = true }
+jsonptr = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "schemars",
+    "server",
+] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["raw_value"] }
+thiserror = { workspace = true }
+urlencoding = { workspace = true }
+
+[dev-dependencies]
+inkstack-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

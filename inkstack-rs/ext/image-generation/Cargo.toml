@@ -1,0 +1,39 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-image-generation-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_image_generation_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+inkstack-api = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-extension-items = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-image = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+http = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }

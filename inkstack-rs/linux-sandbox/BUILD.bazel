@@ -1,0 +1,13 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "linux-sandbox",
+    crate_name = "inkstack_linux_sandbox",
+    extra_binaries = [
+        "//inkstack-rs/bwrap:bwrap",
+    ],
+    rustc_env_files = select({
+        "@platforms//os:linux": ["//inkstack-rs/bwrap:bwrap-sha256-env"],
+        "//conditions:default": [],
+    }),
+)

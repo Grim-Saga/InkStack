@@ -1,0 +1,26 @@
+
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-utils-plugins"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_utils_plugins"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-exec-server = { workspace = true }
+inkstack-exec-server-protocol = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }

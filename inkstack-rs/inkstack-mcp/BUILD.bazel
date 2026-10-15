@@ -1,0 +1,8 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "inkstack-mcp",
+    crate_name = "inkstack_mcp",
+    extra_binaries = ["//inkstack-rs/cli:inkstack"],
+    test_data_extra = glob(["src/**/snapshots/**"]),
+)

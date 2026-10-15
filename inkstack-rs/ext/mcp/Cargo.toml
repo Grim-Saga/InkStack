@@ -1,0 +1,45 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-mcp-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_mcp_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-core-plugins = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-connectors = { workspace = true }
+inkstack-connectors-extension = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-mcp = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+
+[dev-dependencies]
+core_test_support = { workspace = true }
+axum = { workspace = true }
+inkstack-exec-server-test-support = { workspace = true }
+inkstack-login = { workspace = true }
+futures = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+tokio-util = { workspace = true, features = ["rt"] }
+wiremock = { workspace = true }

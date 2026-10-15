@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "inkstack-experimental-api-macros",
+    crate_name = "inkstack_experimental_api_macros",
+    proc_macro = True,
+)

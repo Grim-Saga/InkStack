@@ -1,0 +1,23 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-guardian-context"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_guardian_context"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-context-fragments = { workspace = true }
+inkstack-history = { workspace = true }
+inkstack-protocol = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

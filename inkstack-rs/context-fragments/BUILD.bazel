@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "context-fragments",
+    crate_name = "inkstack_context_fragments",
+)

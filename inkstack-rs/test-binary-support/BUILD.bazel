@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "test-binary-support",
+    crate_name = "inkstack_test_binary_support",
+    crate_srcs = ["lib.rs"],
+)

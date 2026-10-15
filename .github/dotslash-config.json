@@ -1,0 +1,136 @@
+{
+  "outputs": {
+    "inkstack": {
+      "platforms": {
+        "macos-aarch64": {
+          "regex": "^inkstack-package-aarch64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/inkstack"
+        },
+        "macos-x86_64": {
+          "regex": "^inkstack-package-x86_64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/inkstack"
+        },
+        "linux-x86_64": {
+          "regex": "^inkstack-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/inkstack"
+        },
+        "linux-aarch64": {
+          "regex": "^inkstack-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/inkstack"
+        },
+        "windows-x86_64": {
+          "regex": "^inkstack-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/inkstack.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/inkstack.exe"
+        }
+      }
+    },
+    "inkstack-app-server": {
+      "platforms": {
+        "macos-aarch64": {
+          "regex": "^inkstack-app-server-package-aarch64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server"
+        },
+        "macos-x86_64": {
+          "regex": "^inkstack-app-server-package-x86_64-apple-darwin\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server"
+        },
+        "linux-x86_64": {
+          "regex": "^inkstack-app-server-package-x86_64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server"
+        },
+        "linux-aarch64": {
+          "regex": "^inkstack-app-server-package-aarch64-unknown-linux-musl\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server"
+        },
+        "windows-x86_64": {
+          "regex": "^inkstack-app-server-package-x86_64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-app-server-package-aarch64-pc-windows-msvc\\.tar\\.zst$",
+          "path": "bin/inkstack-app-server.exe"
+        }
+      }
+    },
+    "inkstack-responses-api-proxy": {
+      "platforms": {
+        "macos-aarch64": {
+          "regex": "^inkstack-responses-api-proxy-aarch64-apple-darwin\\.zst$",
+          "path": "inkstack-responses-api-proxy"
+        },
+        "macos-x86_64": {
+          "regex": "^inkstack-responses-api-proxy-x86_64-apple-darwin\\.zst$",
+          "path": "inkstack-responses-api-proxy"
+        },
+        "linux-x86_64": {
+          "regex": "^inkstack-responses-api-proxy-x86_64-unknown-linux-musl\\.zst$",
+          "path": "inkstack-responses-api-proxy"
+        },
+        "linux-aarch64": {
+          "regex": "^inkstack-responses-api-proxy-aarch64-unknown-linux-musl\\.zst$",
+          "path": "inkstack-responses-api-proxy"
+        },
+        "windows-x86_64": {
+          "regex": "^inkstack-responses-api-proxy-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-responses-api-proxy.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-responses-api-proxy-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-responses-api-proxy.exe"
+        }
+      }
+    },
+    "bwrap": {
+      "platforms": {
+        "linux-x86_64": {
+          "regex": "^bwrap-x86_64-unknown-linux-musl\\.zst$",
+          "path": "bwrap"
+        },
+        "linux-aarch64": {
+          "regex": "^bwrap-aarch64-unknown-linux-musl\\.zst$",
+          "path": "bwrap"
+        }
+      }
+    },
+    "inkstack-command-runner": {
+      "platforms": {
+        "windows-x86_64": {
+          "regex": "^inkstack-command-runner-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-command-runner.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-command-runner-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-command-runner.exe"
+        }
+      }
+    },
+    "inkstack-windows-sandbox-setup": {
+      "platforms": {
+        "windows-x86_64": {
+          "regex": "^inkstack-windows-sandbox-setup-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-windows-sandbox-setup.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-windows-sandbox-setup-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-windows-sandbox-setup.exe"
+        }
+      }
+    },
+    "inkstack-windows-sandbox-service": {
+      "platforms": {
+        "windows-x86_64": {
+          "regex": "^inkstack-windows-sandbox-service-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-windows-sandbox-service.exe"
+        },
+        "windows-aarch64": {
+          "regex": "^inkstack-windows-sandbox-service-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "inkstack-windows-sandbox-service.exe"
+        }
+      }
+    }
+  }
+}

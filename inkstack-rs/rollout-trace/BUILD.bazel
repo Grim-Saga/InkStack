@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "rollout-trace",
+    crate_name = "inkstack_rollout_trace",
+)

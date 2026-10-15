@@ -1,0 +1,50 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-guardian-v2"
+version.workspace = true
+
+[lib]
+name = "inkstack_guardian_v2"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+inkstack-analytics = { workspace = true }
+inkstack-api = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-context-fragments = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-guardian-context = { workspace = true }
+inkstack-guardian-reviewer = { workspace = true }
+inkstack-history = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-prompts = { workspace = true }
+inkstack-websocket-client = { workspace = true }
+dirs = { workspace = true }
+http = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["time"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+inkstack-model-provider-info = { workspace = true }
+inkstack-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+insta = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+wiremock = { workspace = true }
+zstd = { workspace = true }

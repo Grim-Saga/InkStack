@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "app-server-protocol-noop-macros",
+    crate_name = "inkstack_app_server_protocol_noop_macros",
+    proc_macro = True,
+)

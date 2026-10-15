@@ -1,0 +1,36 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-history-notes-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_history_notes_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-analytics = { workspace = true }
+inkstack-client = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-output-truncation = { workspace = true }
+http = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+inkstack-config = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+core_test_support = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }
+wiremock = { workspace = true }

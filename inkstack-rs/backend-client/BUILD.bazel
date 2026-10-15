@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "backend-client",
+    compile_data = glob(["tests/fixtures/**"]),
+    crate_name = "inkstack_backend_client",
+)

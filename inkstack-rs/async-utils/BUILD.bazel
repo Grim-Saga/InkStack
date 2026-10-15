@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "async-utils",
+    crate_name = "inkstack_async_utils",
+)

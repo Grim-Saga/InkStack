@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "protocol",
+    compile_data = glob(["src/prompts/**/*.md"]),
+    crate_name = "inkstack_protocol",
+)

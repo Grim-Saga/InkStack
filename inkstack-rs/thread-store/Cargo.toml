@@ -1,0 +1,44 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-thread-store"
+version.workspace = true
+
+[lib]
+name = "inkstack_thread_store"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+chrono = { workspace = true, features = ["serde"] }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-extension-items = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-install-context = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-rollout = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+futures = { workspace = true }
+pulldown-cmark = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+sqlx-macros = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+zstd = { workspace = true }
+
+[dev-dependencies]
+inkstack-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+uuid = { workspace = true }

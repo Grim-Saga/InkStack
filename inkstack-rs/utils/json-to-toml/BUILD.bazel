@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "json-to-toml",
+    crate_name = "inkstack_utils_json_to_toml",
+)

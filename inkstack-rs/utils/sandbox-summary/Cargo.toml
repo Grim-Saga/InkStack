@@ -1,0 +1,19 @@
+[package]
+name = "inkstack-utils-sandbox-summary"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-protocol = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+
+[dev-dependencies]
+inkstack-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

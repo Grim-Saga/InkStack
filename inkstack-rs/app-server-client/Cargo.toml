@@ -1,0 +1,40 @@
+[package]
+name = "inkstack-app-server-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "inkstack_app_server_client"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-app-server = { workspace = true }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-arg0 = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-feedback = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-uds = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-rustls-provider = { workspace = true }
+futures = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["sync", "time", "rt"] }
+tokio-tungstenite = { workspace = true }
+toml = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

@@ -1,0 +1,66 @@
+[package]
+name = "inkstack-app-server-transport"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "inkstack_app_server_transport"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-http-client = { workspace = true }
+inkstack-websocket-client = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+    "ws",
+] }
+base64 = { workspace = true }
+inkstack-api = { workspace = true }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-uds = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-rustls-provider = { workspace = true }
+inkstack-websocket-auth = { workspace = true }
+futures = { workspace = true }
+gethostname = { workspace = true }
+httpdate = { workspace = true }
+owo-colors = { workspace = true, features = ["supports-colors"] }
+rand = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+] }
+tokio-tungstenite = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+url = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v7"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+signal-hook = { workspace = true }
+
+[dev-dependencies]
+chrono = { workspace = true }
+inkstack-config = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }

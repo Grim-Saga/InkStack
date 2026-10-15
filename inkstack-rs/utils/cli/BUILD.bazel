@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "cli",
+    crate_name = "inkstack_utils_cli",
+)

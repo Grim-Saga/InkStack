@@ -1,0 +1,13 @@
+---
+source: cli/src/main.rs
+assertion_line: 3324
+expression: "errors.join(\"\\n\")"
+---
+inkstack --worktree login: `--worktree` supports new interactive sessions, `inkstack fork`, `inkstack exec`, and `inkstack exec fork`
+inkstack fork --worktree: `inkstack fork --worktree` requires an explicit session ID
+inkstack fork --worktree --last: `inkstack fork --worktree` requires an explicit session ID
+inkstack exec resume --worktree session: `--worktree` cannot resume an existing session; use `inkstack exec fork --worktree`
+inkstack exec review --worktree: `--worktree` is not supported for code review
+inkstack resume --worktree session: `--worktree` supports new interactive sessions, `inkstack fork`, `inkstack exec`, and `inkstack exec fork`
+inkstack archive session --worktree: `--worktree` supports new interactive sessions, `inkstack fork`, `inkstack exec`, and `inkstack exec fork`
+inkstack queue --thread session --message hi --worktree: `--worktree` supports new interactive sessions, `inkstack fork`, `inkstack exec`, and `inkstack exec fork`

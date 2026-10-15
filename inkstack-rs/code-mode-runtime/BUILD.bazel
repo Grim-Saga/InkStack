@@ -1,0 +1,7 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "code-mode-runtime",
+    compile_data = ["src/runtime/settled.js"],
+    crate_name = "inkstack_code_mode_runtime",
+)

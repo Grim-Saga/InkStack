@@ -1,0 +1,58 @@
+# Individual Contributor License Agreement (v1.0, InkStack)
+
+_Based on the Apache Software Foundation Individual CLA v 2.2._
+
+By commenting **"I have read the CLA Document and I hereby sign the CLA"**
+on a Pull Request, **you ("Contributor") agree to the following terms** for any
+past and future "Contributions" submitted to the **InkStack CLI project
+(the "Project")**.
+
+---
+
+## 1. Definitions
+
+- **"Contribution"** – any original work of authorship submitted to the Project
+  (code, documentation, designs, etc.).
+- **"You" / "Your"** – the individual (or legal entity) posting the acceptance
+  comment.
+
+## 2. Copyright License
+
+You grant the **InkStack project maintainer (GitHub: Grim-Saga)** and all
+recipients of software distributed by the Project a perpetual, worldwide,
+non-exclusive, royalty-free, irrevocable license to reproduce, prepare
+derivative works of, publicly display, publicly perform, sublicense, and
+distribute Your Contributions and derivative works.
+
+## 3. Patent License
+
+You grant the **InkStack project maintainer (GitHub: Grim-Saga)** and all
+recipients of the Project a perpetual, worldwide, non-exclusive, royalty-free,
+irrevocable (except as below) patent license to make, have made, use, sell,
+offer to sell, import, and otherwise transfer Your Contributions alone or in
+combination with the Project.
+
+If any entity brings patent litigation alleging that the Project or a
+Contribution infringes a patent, the patent licenses granted by You to that
+entity under this CLA terminate.
+
+## 4. Representations
+
+1. You are legally entitled to grant the licenses above.
+2. Each Contribution is either Your original creation or You have authority to
+   submit it under this CLA.
+3. Your Contributions are provided **"AS IS"** without warranties of any kind.
+4. You will notify the Project if any statement above becomes inaccurate.
+
+## 5. Miscellany
+
+If any provision is held unenforceable, the remaining provisions remain in
+force.
+
+---
+
+_Note to the maintainer: this is a starting draft, not legal advice. If you
+want the grant to name you as a legal person rather than a GitHub handle,
+replace "GitHub: Grim-Saga" with your full legal name. The California
+governing-law clause from the upstream text was intentionally dropped; add
+your own jurisdiction here if you want one._

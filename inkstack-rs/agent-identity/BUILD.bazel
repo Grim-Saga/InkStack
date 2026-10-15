@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "agent-identity",
+    crate_name = "inkstack_agent_identity",
+)

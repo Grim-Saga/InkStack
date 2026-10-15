@@ -1,0 +1,164 @@
+[package]
+name = "inkstack-app-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "inkstack-app-server"
+path = "src/main.rs"
+
+[[bin]]
+name = "inkstack-app-server-test-notify-capture"
+path = "src/bin/notify_capture.rs"
+
+[[bin]]
+name = "exec-server"
+path = "src/bin/exec_server.rs"
+
+[lib]
+name = "inkstack_app_server"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-utils-process = { workspace = true }
+anyhow = { workspace = true }
+base64 = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+    "ws",
+] }
+inkstack-analytics = { workspace = true }
+inkstack-agent-extension = { workspace = true }
+inkstack-arg0 = { workspace = true }
+inkstack-aws-auth = { workspace = true }
+inkstack-cloud-config = { workspace = true }
+inkstack-code-mode = { workspace = true }
+inkstack-config = { workspace = true }
+inkstack-network-proxy = { workspace = true }
+inkstack-connectors = { workspace = true }
+inkstack-core = { workspace = true }
+inkstack-core-plugins = { workspace = true }
+inkstack-diagnostics = { workspace = true }
+inkstack-home = { workspace = true }
+inkstack-exec-server = { workspace = true }
+inkstack-extension-api = { workspace = true }
+inkstack-external-agent-migration = { workspace = true }
+inkstack-features = { workspace = true }
+inkstack-goal-extension = { workspace = true }
+inkstack-git-attribution = { workspace = true }
+inkstack-guardian-v2 = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-file-watcher = { workspace = true }
+inkstack-hooks = { workspace = true }
+inkstack-history-notes-extension = { workspace = true }
+inkstack-http-client = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-shell-command = { workspace = true }
+inkstack-skills = { workspace = true }
+inkstack-skills-extension = { workspace = true }
+inkstack-utils-cli = { workspace = true }
+inkstack-user-verification = { workspace = true }
+inkstack-utils-pty = { workspace = true }
+inkstack-backend-client = { workspace = true }
+inkstack-file-search = { workspace = true }
+inkstack-chatgpt = { workspace = true }
+inkstack-login = { workspace = true }
+inkstack-image-generation-extension = { workspace = true }
+inkstack-memories-extension = { workspace = true }
+inkstack-web-search-extension = { workspace = true }
+inkstack-websocket-auth = { workspace = true }
+inkstack-memories-write = { workspace = true }
+inkstack-mcp = { workspace = true }
+inkstack-mcp-extension = { workspace = true }
+inkstack-model-provider = { workspace = true }
+inkstack-model-provider-info = { workspace = true }
+inkstack-models-manager = { workspace = true }
+inkstack-prompts = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-queue-extension = { workspace = true }
+inkstack-app-server-protocol = { workspace = true }
+inkstack-app-server-transport = { workspace = true }
+inkstack-feedback = { workspace = true }
+inkstack-rmcp-client = { workspace = true }
+inkstack-rollout = { workspace = true }
+inkstack-sandboxing = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-thread-store = { workspace = true }
+inkstack-tools = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-json-to-toml = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+chrono = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+futures = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+time = { workspace = true }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }
+tokio-util = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+tracing-subscriber = { workspace = true, features = ["env-filter", "fmt", "json"] }
+url = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v7"] }
+
+[target.'cfg(all(target_os = "linux", target_env = "musl", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+tikv-jemallocator = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+inkstack-windows-sandbox = { workspace = true }
+
+[dev-dependencies]
+inkstack-uds = { workspace = true }
+app_test_support = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+] }
+base64 = { workspace = true }
+inkstack-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+flate2 = { workspace = true }
+hmac = { workspace = true }
+http = { workspace = true }
+keyring = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+rcgen = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "elicitation",
+    "server",
+    "transport-streamable-http-server",
+] }
+serial_test = { workspace = true }
+shlex = { workspace = true }
+sqlx = { workspace = true }
+tar = { workspace = true }
+test-case = "3.3.1"
+tokio-rustls = { workspace = true }
+tokio-tungstenite = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+wiremock = { workspace = true }

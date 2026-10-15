@@ -1,0 +1,20 @@
+
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-cloud-tasks-mock-client"
+version.workspace = true
+
+[lib]
+name = "inkstack_cloud_tasks_mock_client"
+path = "src/lib.rs"
+test = false
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+chrono = { workspace = true }
+inkstack-cloud-tasks-client = { workspace = true }
+diffy = { workspace = true }

@@ -1,0 +1,14 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+# Core's context-adapter unit tests compile the same setup function with their Config type.
+exports_files(
+    ["src/sync_reviewer/reviewer_config.rs"],
+    visibility = ["//inkstack-rs/core:__pkg__"],
+)
+
+inkstack_rust_crate(
+    name = "guardian-v2",
+    crate_name = "inkstack_guardian_v2",
+    extra_binaries = ["//inkstack-rs/code-mode-host:inkstack-code-mode-host"],
+    test_data_extra = glob(["src/**/snapshots/**"]),
+)

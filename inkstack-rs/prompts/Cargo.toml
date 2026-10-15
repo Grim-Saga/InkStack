@@ -1,0 +1,28 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-prompts"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_prompts"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+inkstack-collaboration-mode-templates = { workspace = true }
+inkstack-context-fragments = { workspace = true }
+inkstack-execpolicy = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-guardian-context = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-template = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

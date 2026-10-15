@@ -1,0 +1,18 @@
+[package]
+name = "inkstack-thread-manager-sample"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+# Keep this sample limited to a single InkStack workspace dependency.
+# Add new InkStack surface area to `inkstack-core-api` instead of depending on
+# additional `inkstack-*` crates here.
+inkstack-core-api = { workspace = true }
+tracing = { workspace = true }

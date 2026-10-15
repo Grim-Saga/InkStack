@@ -1,0 +1,17 @@
+# Core crate ownership.
+/inkstack-rs/arg0/ inkstack-core-agent-team
+/inkstack-rs/inkstack-mcp/ inkstack-core-agent-team
+/inkstack-rs/core/ inkstack-core-agent-team
+/inkstack-rs/exec-server/ inkstack-core-agent-team
+/inkstack-rs/exec-server-protocol/ inkstack-core-agent-team
+/inkstack-rs/ext/extension-api/ inkstack-core-agent-team
+/inkstack-rs/prompts/ inkstack-core-agent-team
+/inkstack-rs/utils/path-uri/ inkstack-core-agent-team
+
+# Keep macOS AKV signing changes reviewed by InkStack maintainers.
+/.github/actions/setup-akv-pkcs11-codesigning/ inkstack-core-agent-team
+/.github/scripts/macos-signing/ inkstack-core-agent-team
+/.github/workflows/rust-release.yml inkstack-core-agent-team
+
+# Keep ownership changes reviewed by the same team.
+/.github/CODEOWNERS inkstack-core-agent-team

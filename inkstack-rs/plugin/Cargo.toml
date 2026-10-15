@@ -1,0 +1,26 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-plugin"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_plugin"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-config = { workspace = true }
+inkstack-core-plugin-common = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+inkstack-utils-plugins = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

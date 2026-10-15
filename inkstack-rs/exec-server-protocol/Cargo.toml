@@ -1,0 +1,31 @@
+[package]
+name = "inkstack-exec-server-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "inkstack_exec_server_protocol"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = { workspace = true }
+inkstack-file-system = { workspace = true }
+inkstack-install-context = { workspace = true }
+inkstack-network-proxy = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-shell-command = { workspace = true }
+inkstack-skills = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["arbitrary_precision", "raw_value"] }
+
+[target.'cfg(windows)'.dependencies]
+inkstack-mxc-sandbox = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

@@ -1,0 +1,56 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-rollout"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "inkstack_rollout"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-utils-process = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+inkstack-extension-items = { workspace = true }
+inkstack-file-search = { workspace = true }
+inkstack-git-utils = { workspace = true }
+inkstack-history = { workspace = true }
+inkstack-otel = { workspace = true }
+inkstack-protocol = { workspace = true }
+inkstack-state = { workspace = true }
+inkstack-utils-absolute-path = { workspace = true }
+inkstack-utils-output-truncation = { workspace = true }
+inkstack-utils-path = { workspace = true }
+inkstack-utils-string = { workspace = true }
+memchr = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+time = { workspace = true, features = [
+    "formatting",
+    "local-offset",
+    "macros",
+    "parsing",
+] }
+tokio = { workspace = true, features = [
+    "fs",
+    "io-util",
+    "macros",
+    "process",
+    "rt",
+    "sync",
+    "time",
+] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+zstd = { workspace = true }
+
+[dev-dependencies]
+inkstack-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }

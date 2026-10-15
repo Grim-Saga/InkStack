@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "cloud-tasks-mock-client",
+    crate_name = "inkstack_cloud_tasks_mock_client",
+)

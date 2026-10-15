@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "model-provider",
+    crate_name = "inkstack_model_provider",
+)

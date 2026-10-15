@@ -1,0 +1,6 @@
+load("//:defs.bzl", "inkstack_rust_crate")
+
+inkstack_rust_crate(
+    name = "mcp",
+    crate_name = "inkstack_mcp_extension",
+)

@@ -1,0 +1,16 @@
+---
+source: tui/src/bottom_pane/feedback_view.rs
+assertion_line: 746
+expression: rendered
+---
+Upload logs?
+
+The following files will be sent:
+  • inkstack-logs.log
+  • client-logs.txt (if available)
+  • inkstack-doctor-report.json
+  • inkstack-apps-tools-cache.json (if available)
+  • inkstack-app-directory-cache.json (if available)
+  • windows-sandbox.log
+  • rollout.jsonl
+  • auto-review-rollout.jsonl

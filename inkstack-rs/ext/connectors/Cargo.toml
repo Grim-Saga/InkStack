@@ -1,0 +1,24 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "inkstack-connectors-extension"
+version.workspace = true
+
+[lib]
+name = "inkstack_connectors_extension"
+path = "src/lib.rs"
+doctest = false
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+inkstack-connectors = { workspace = true }
+inkstack-core-plugins = { workspace = true }
+inkstack-file-system = { workspace = true }
+inkstack-plugin = { workspace = true }
+inkstack-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
