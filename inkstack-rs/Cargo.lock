@@ -281,6 +281,7 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "chrono",
+ "core_test_support",
  "inkstack-app-server-protocol",
  "inkstack-config",
  "inkstack-core",
@@ -290,7 +291,6 @@ dependencies = [
  "inkstack-model-provider",
  "inkstack-protocol",
  "inkstack-utils-cargo-bin",
- "core_test_support",
  "pretty_assertions",
  "serde",
  "serde_json",
@@ -1894,3518 +1894,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "inkstack-agent-extension"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-core",
- "inkstack-protocol",
- "core_test_support",
- "pretty_assertions",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-agent-graph-store"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-utils-absolute-path",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-agent-identity"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "chrono",
- "inkstack-http-client",
- "inkstack-protocol",
- "crypto_box",
- "ed25519-dalek",
- "http 1.4.0",
- "jsonwebtoken",
- "pretty_assertions",
- "rand 0.9.3",
- "serde",
- "serde_json",
- "sha2 0.10.9",
-]
-
-[[package]]
-name = "inkstack-agent-message-board-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-agent-message-board-extension",
- "inkstack-extension-api",
- "inkstack-http-client",
- "inkstack-protocol",
- "eventsource-stream",
- "futures",
- "http 1.4.0",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tokio",
- "tokio-util",
- "tracing",
- "url",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-agent-message-board-extension"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "caseless",
- "chrono",
- "inkstack-extension-api",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-tools",
- "inkstack-utils-output-truncation",
- "futures",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-agent-roles"
-version = "0.0.0"
-dependencies = [
- "inkstack-config",
- "inkstack-file-system",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "serde",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-analytics"
-version = "0.0.0"
-dependencies = [
- "inkstack-app-server-protocol",
- "inkstack-git-utils",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "os_info",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sha1 0.10.6",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-ansi-escape"
-version = "0.0.0"
-dependencies = [
- "ansi-to-tui",
- "pretty_assertions",
- "ratatui",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "inkstack-api"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "assert_matches",
- "async-channel",
- "base64 0.22.1",
- "bytes",
- "chrono",
- "inkstack-client",
- "inkstack-http-client",
- "inkstack-protocol",
- "inkstack-utils-rustls-provider",
- "inkstack-websocket-client",
- "eventsource-stream",
- "futures",
- "http 1.4.0",
- "pretty_assertions",
- "rcgen",
- "regex-lite",
- "rustls",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-test",
- "tokio-tungstenite",
- "tokio-util",
- "tracing",
- "tungstenite",
- "url",
- "uuid",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-app-server"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "app_test_support",
- "axum",
- "base64 0.22.1",
- "chrono",
- "clap",
- "inkstack-agent-extension",
- "inkstack-analytics",
- "inkstack-app-server-protocol",
- "inkstack-app-server-transport",
- "inkstack-arg0",
- "inkstack-aws-auth",
- "inkstack-backend-client",
- "inkstack-chatgpt",
- "inkstack-cloud-config",
- "inkstack-code-mode",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-core",
- "inkstack-core-plugins",
- "inkstack-diagnostics",
- "inkstack-exec-server",
- "inkstack-extension-api",
- "inkstack-external-agent-migration",
- "inkstack-features",
- "inkstack-feedback",
- "inkstack-file-search",
- "inkstack-file-watcher",
- "inkstack-git-attribution",
- "inkstack-git-utils",
- "inkstack-goal-extension",
- "inkstack-guardian-v2",
- "inkstack-history-notes-extension",
- "inkstack-home",
- "inkstack-hooks",
- "inkstack-http-client",
- "inkstack-image-generation-extension",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-mcp-extension",
- "inkstack-memories-extension",
- "inkstack-memories-write",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-network-proxy",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-prompts",
- "inkstack-protocol",
- "inkstack-queue-extension",
- "inkstack-rmcp-client",
- "inkstack-rollout",
- "inkstack-sandboxing",
- "inkstack-shell-command",
- "inkstack-skills",
- "inkstack-skills-extension",
- "inkstack-state",
- "inkstack-thread-store",
- "inkstack-tools",
- "inkstack-uds",
- "inkstack-user-verification",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-cli",
- "inkstack-utils-json-to-toml",
- "inkstack-utils-path-uri",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "inkstack-web-search-extension",
- "inkstack-websocket-auth",
- "inkstack-windows-sandbox",
- "core_test_support",
- "flate2",
- "futures",
- "hmac 0.12.1",
- "http 1.4.0",
- "keyring",
- "libc",
- "opentelemetry",
- "opentelemetry_sdk",
- "pretty_assertions",
- "rcgen",
- "rmcp",
- "serde",
- "serde_json",
- "serial_test",
- "sha2 0.10.9",
- "shlex",
- "sqlx",
- "tar",
- "tempfile",
- "test-case",
- "thiserror 2.0.18",
- "tikv-jemallocator",
- "time",
- "tokio",
- "tokio-rustls",
- "tokio-tungstenite",
- "tokio-util",
- "toml 0.9.11+spec-1.1.0",
- "toml_edit 0.24.0+spec-1.1.0",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "url",
- "uuid",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-app-server-client"
-version = "0.0.0"
-dependencies = [
- "inkstack-app-server",
- "inkstack-app-server-protocol",
- "inkstack-arg0",
- "inkstack-config",
- "inkstack-core",
- "inkstack-exec-server",
- "inkstack-feedback",
- "inkstack-protocol",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-rustls-provider",
- "futures",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-tungstenite",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "inkstack-app-server-daemon"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "blake3",
- "inkstack-app-server-protocol",
- "inkstack-app-server-transport",
- "inkstack-features",
- "inkstack-http-client",
- "inkstack-install-context",
- "inkstack-uds",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-home-dir",
- "futures",
- "libc",
- "pretty_assertions",
- "semver",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-tungstenite",
- "tracing",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-app-server-protocol"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-app-server-protocol-noop-macros",
- "inkstack-experimental-api-macros",
- "inkstack-extension-items",
- "inkstack-history",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-secrets",
- "inkstack-shell-command",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path-uri",
- "inkstack-utils-redacted-string",
- "inventory",
- "pretty_assertions",
- "rmcp",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "serde_with",
- "similar",
- "strum_macros 0.28.0",
- "tempfile",
- "thiserror 2.0.18",
- "tracing",
- "ts-rs",
- "uuid",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-app-server-protocol-noop-macros"
-version = "0.0.0"
-
-[[package]]
-name = "inkstack-app-server-test-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-app-server-protocol",
- "inkstack-core",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-utils-cli",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "tungstenite",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-app-server-transport"
-version = "0.0.0"
-dependencies = [
- "axum",
- "base64 0.22.1",
- "chrono",
- "inkstack-api",
- "inkstack-app-server-protocol",
- "inkstack-config",
- "inkstack-core",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-rustls-provider",
- "inkstack-websocket-auth",
- "inkstack-websocket-client",
- "futures",
- "gethostname",
- "httpdate",
- "libc",
- "owo-colors",
- "pretty_assertions",
- "rand 0.9.3",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "signal-hook",
- "tempfile",
- "time",
- "tokio",
- "tokio-tungstenite",
- "tokio-util",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-apply-patch"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "assert_cmd",
- "assert_matches",
- "inkstack-exec-server",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path-uri",
- "pretty_assertions",
- "similar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tree-sitter",
- "tree-sitter-bash",
-]
-
-[[package]]
-name = "inkstack-arg0"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-apply-patch",
- "inkstack-async-utils",
- "inkstack-exec-server",
- "inkstack-install-context",
- "inkstack-linux-sandbox",
- "inkstack-sandboxing",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-home-dir",
- "inkstack-utils-pty",
- "inkstack-windows-sandbox",
- "dotenvy",
- "pathdiff",
- "pretty_assertions",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-async-utils"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "rand 0.9.3",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "inkstack-attachment-store"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "serde",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-aws-auth"
-version = "0.0.0"
-dependencies = [
- "aws-config",
- "aws-credential-types",
- "aws-sigv4",
- "aws-smithy-runtime-api",
- "aws-smithy-types",
- "aws-types",
- "bytes",
- "inkstack-http-client",
- "inkstack-utils-rustls-provider",
- "http 1.4.0",
- "http-body 1.0.1",
- "http-body-util",
- "pretty_assertions",
- "rcgen",
- "rustls",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-rustls",
- "url",
-]
-
-[[package]]
-name = "inkstack-backend-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-api",
- "inkstack-backend-openapi-models",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-protocol",
- "http 1.4.0",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tokio",
- "url",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-backend-openapi-models"
-version = "0.0.0"
-dependencies = [
- "serde",
- "serde_json",
- "serde_with",
-]
-
-[[package]]
-name = "inkstack-build-info"
-version = "0.0.0"
-dependencies = [
- "inkstack-install-context",
- "pretty_assertions",
- "semver",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
-]
-
-[[package]]
-name = "inkstack-bwrap"
-version = "0.0.0"
-dependencies = [
- "cc",
- "libc",
- "pkg-config",
-]
-
-[[package]]
-name = "inkstack-chatgpt"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-connectors",
- "inkstack-core",
- "inkstack-git-utils",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-plugin",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-cli",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-cli"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "app_test_support",
- "assert_cmd",
- "assert_matches",
- "chrono",
- "clap",
- "clap_complete",
- "inkstack-api",
- "inkstack-app-server",
- "inkstack-app-server-client",
- "inkstack-app-server-daemon",
- "inkstack-app-server-protocol",
- "inkstack-app-server-test-client",
- "inkstack-arg0",
- "inkstack-aws-auth",
- "inkstack-build-info",
- "inkstack-chatgpt",
- "inkstack-cloud-config",
- "inkstack-cloud-tasks",
- "inkstack-config",
- "inkstack-core",
- "inkstack-core-plugins",
- "inkstack-exec",
- "inkstack-exec-server",
- "inkstack-execpolicy",
- "inkstack-extension-api",
- "inkstack-features",
- "inkstack-git-attribution",
- "inkstack-git-utils",
- "inkstack-history",
- "inkstack-home",
- "inkstack-http-client",
- "inkstack-install-context",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-memories-write",
- "inkstack-model-provider",
- "inkstack-models-manager",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-responses-api-proxy",
- "inkstack-rmcp-client",
- "inkstack-rollout",
- "inkstack-rollout-trace",
- "inkstack-sandboxing",
- "inkstack-skills-extension",
- "inkstack-state",
- "inkstack-stdio-to-uds",
- "inkstack-tcp-tunnel",
- "inkstack-terminal-detection",
- "inkstack-thread-store",
- "inkstack-tui",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-cli",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "inkstack-utils-redacted-string",
- "inkstack-websocket-auth",
- "inkstack-windows-sandbox",
- "crossterm",
- "flate2",
- "futures",
- "http 1.4.0",
- "insta",
- "jsonwebtoken",
- "libc",
- "os_info",
- "owo-colors",
- "predicates",
- "pretty_assertions",
- "regex-lite",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "sqlx",
- "supports-color 3.0.2",
- "sys-locale",
- "tar",
- "tempfile",
- "tikv-jemallocator",
- "tokio",
- "tokio-tungstenite",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "unicode-segmentation",
- "url",
- "vt100",
- "which 8.0.0",
- "windows-sys 0.61.2",
- "wiremock",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-client"
-version = "0.0.0"
-dependencies = [
- "inkstack-http-client",
- "eventsource-stream",
- "futures",
- "http 1.4.0",
- "rand 0.9.3",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "inkstack-cloud-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-stream",
- "bytes",
- "inkstack-http-client",
- "futures",
- "http 1.4.0",
- "http-body-util",
- "hyper",
- "hyper-util",
- "pretty_assertions",
- "prost",
- "thiserror 2.0.18",
- "tokio",
- "tokio-rustls",
- "tonic",
- "tonic-prost",
- "tower",
- "url",
-]
-
-[[package]]
-name = "inkstack-cloud-config"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "chrono",
- "inkstack-agent-identity",
- "inkstack-async-utils",
- "inkstack-backend-client",
- "inkstack-config",
- "inkstack-core",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-otel",
- "inkstack-protocol",
- "hmac 0.12.1",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-cloud-tasks"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "clap",
- "inkstack-cloud-tasks-client",
- "inkstack-cloud-tasks-mock-client",
- "inkstack-core",
- "inkstack-git-utils",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-tui",
- "inkstack-utils-cli",
- "crossterm",
- "http 1.4.0",
- "insta",
- "owo-colors",
- "pretty_assertions",
- "ratatui",
- "serde",
- "serde_json",
- "supports-color 3.0.2",
- "tokio",
- "tokio-stream",
- "tracing",
- "tracing-subscriber",
- "unicode-segmentation",
- "unicode-width 0.2.1",
-]
-
-[[package]]
-name = "inkstack-cloud-tasks-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-api",
- "inkstack-backend-client",
- "inkstack-git-utils",
- "inkstack-http-client",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "inkstack-cloud-tasks-mock-client"
-version = "0.0.0"
-dependencies = [
- "chrono",
- "inkstack-cloud-tasks-client",
- "diffy",
-]
-
-[[package]]
-name = "inkstack-code-mode"
-version = "0.0.0"
-dependencies = [
- "inkstack-code-mode-protocol",
- "inkstack-http-client",
- "inkstack-install-context",
- "inkstack-otel",
- "inkstack-protocol",
- "futures",
- "http-body-util",
- "pretty_assertions",
- "prost",
- "rand 0.9.3",
- "reqwest 0.12.28",
- "serde_json",
- "tokio",
- "tokio-util",
- "tonic",
- "tower",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-code-mode-host"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "axum",
- "clap",
- "inkstack-code-mode",
- "inkstack-code-mode-protocol",
- "inkstack-code-mode-runtime",
- "inkstack-http-client",
- "inkstack-otel",
- "inkstack-otel-trace-websocket",
- "inkstack-protocol",
- "inkstack-utils-cargo-bin",
- "futures",
- "pretty_assertions",
- "prost",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tonic",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-code-mode-protocol"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "glob",
- "pretty_assertions",
- "prost",
- "protoc-bin-vendored",
- "serde",
- "serde_json",
- "tokio",
- "tokio-util",
- "tonic",
- "tonic-prost",
- "tonic-prost-build",
-]
-
-[[package]]
-name = "inkstack-code-mode-runtime"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-code-mode-protocol",
- "inkstack-protocol",
- "deno_core_icudata",
- "futures",
- "opentelemetry",
- "pretty_assertions",
- "serde_json",
- "tokio",
- "tokio-util",
- "tracing",
- "v8",
-]
-
-[[package]]
-name = "inkstack-collaboration-mode-templates"
-version = "0.0.0"
-
-[[package]]
-name = "inkstack-config"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "inkstack-execpolicy",
- "inkstack-features",
- "inkstack-file-system",
- "inkstack-git-utils",
- "inkstack-model-provider-info",
- "inkstack-network-proxy",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-redacted-string",
- "inkstack-windows-sandbox",
- "core-foundation 0.9.4",
- "dns-lookup",
- "dunce",
- "futures",
- "gethostname",
- "indexmap 2.14.0",
- "libc",
- "multimap",
- "pretty_assertions",
- "prost",
- "regex-lite",
- "schemars 0.8.22",
- "serde",
- "serde_ignored",
- "serde_json",
- "serde_path_to_error",
- "sha2 0.10.9",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "toml 0.9.11+spec-1.1.0",
- "toml_edit 0.24.0+spec-1.1.0",
- "tonic",
- "tonic-prost",
- "tonic-prost-build",
- "tracing",
- "wildmatch",
- "winapi-util",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-config-schema"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-config",
-]
-
-[[package]]
-name = "inkstack-connectors"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "arc-swap",
- "inkstack-config",
- "inkstack-login",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-protocol",
- "indexmap 2.14.0",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sha1 0.10.6",
- "tempfile",
- "tokio",
- "tracing",
- "urlencoding",
-]
-
-[[package]]
-name = "inkstack-connectors-extension"
-version = "0.0.0"
-dependencies = [
- "inkstack-connectors",
- "inkstack-core-plugins",
- "inkstack-file-system",
- "inkstack-plugin",
- "inkstack-utils-path-uri",
- "serde_json",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-context-fragments"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-utils-string",
- "pretty_assertions",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-core"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "arc-swap",
- "assert_cmd",
- "assert_matches",
- "async-channel",
- "base64 0.22.1",
- "bm25",
- "chrono",
- "inkstack-agent-graph-store",
- "inkstack-agent-message-board-client",
- "inkstack-agent-message-board-extension",
- "inkstack-agent-roles",
- "inkstack-analytics",
- "inkstack-api",
- "inkstack-app-server-protocol",
- "inkstack-apply-patch",
- "inkstack-async-utils",
- "inkstack-attachment-store",
- "inkstack-client",
- "inkstack-code-mode",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-context-fragments",
- "inkstack-core-plugins",
- "inkstack-diagnostics",
- "inkstack-exec-server",
- "inkstack-exec-server-test-support",
- "inkstack-execpolicy",
- "inkstack-extension-api",
- "inkstack-extension-items",
- "inkstack-features",
- "inkstack-feedback",
- "inkstack-file-system",
- "inkstack-git-utils",
- "inkstack-guardian-context",
- "inkstack-guardian-reviewer",
- "inkstack-history",
- "inkstack-home",
- "inkstack-hooks",
- "inkstack-http-client",
- "inkstack-image-generation-extension",
- "inkstack-install-context",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-mcp-extension",
- "inkstack-memories-read",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-network-proxy",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-prompts",
- "inkstack-protocol",
- "inkstack-response-debug-context",
- "inkstack-rmcp-client",
- "inkstack-rollout",
- "inkstack-rollout-trace",
- "inkstack-sandboxing",
- "inkstack-shell-command",
- "inkstack-skills",
- "inkstack-skills-extension",
- "inkstack-state",
- "inkstack-terminal-detection",
- "inkstack-test-binary-support",
- "inkstack-thread-store",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-audio",
- "inkstack-utils-cache",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-git-discovery",
- "inkstack-utils-home-dir",
- "inkstack-utils-image",
- "inkstack-utils-output-truncation",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "inkstack-utils-redacted-string",
- "inkstack-utils-stream-parser",
- "inkstack-utils-string",
- "inkstack-web-search-extension",
- "inkstack-windows-sandbox",
- "inkstack-windows-sandbox-test-support",
- "core_test_support",
- "ctor 0.6.3",
- "dirs",
- "dunce",
- "eventsource-stream",
- "futures",
- "http 1.4.0",
- "hyper-util",
- "iana-time-zone",
- "image",
- "indexmap 2.14.0",
- "insta",
- "libc",
- "maplit",
- "once_cell",
- "openssl-sys",
- "opentelemetry",
- "opentelemetry_sdk",
- "predicates",
- "pretty_assertions",
- "rand 0.9.3",
- "regex-lite",
- "rmcp",
- "serde",
- "serde_json",
- "serial_test",
- "sha1 0.10.6",
- "shlex",
- "similar",
- "tempfile",
- "test-case",
- "test-log",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "tokio-util",
- "toml 0.9.11+spec-1.1.0",
- "toml_edit 0.24.0+spec-1.1.0",
- "tonic",
- "tower",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "tracing-test",
- "url",
- "uuid",
- "walkdir",
- "which 8.0.0",
- "whoami 1.6.1",
- "windows-sys 0.61.2",
- "wiremock",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-core-api"
-version = "0.0.0"
-dependencies = [
- "inkstack-analytics",
- "inkstack-app-server-protocol",
- "inkstack-arg0",
- "inkstack-config",
- "inkstack-core",
- "inkstack-exec-server",
- "inkstack-extension-api",
- "inkstack-features",
- "inkstack-history",
- "inkstack-home",
- "inkstack-image-generation-extension",
- "inkstack-login",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-utils-absolute-path",
-]
-
-[[package]]
-name = "inkstack-core-plugin-common"
-version = "0.0.0"
-dependencies = [
- "inkstack-utils-absolute-path",
- "semver",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "inkstack-core-plugins"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-analytics",
- "inkstack-app-server-protocol",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-core-plugin-common",
- "inkstack-exec-server",
- "inkstack-exec-server-test-support",
- "inkstack-git-utils",
- "inkstack-hooks",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-model-provider",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-shell-command",
- "inkstack-skills",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "inkstack-utils-process",
- "dirs",
- "flate2",
- "futures",
- "http 1.4.0",
- "libc",
- "pretty_assertions",
- "regex",
- "serde",
- "serde_json",
- "serde_with",
- "serde_yaml",
- "sha2 0.10.9",
- "tar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
- "tracing-subscriber",
- "tracing-test",
- "url",
- "uuid",
- "wiremock",
- "zip",
-]
-
-[[package]]
-name = "inkstack-diagnostics"
-version = "0.0.0"
-dependencies = [
- "libc",
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-exec"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "assert_cmd",
- "clap",
- "inkstack-app-server-client",
- "inkstack-app-server-protocol",
- "inkstack-apply-patch",
- "inkstack-arg0",
- "inkstack-cloud-config",
- "inkstack-config",
- "inkstack-core",
- "inkstack-features",
- "inkstack-feedback",
- "inkstack-git-utils",
- "inkstack-history",
- "inkstack-login",
- "inkstack-model-provider-info",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-cli",
- "inkstack-utils-oss",
- "inkstack-utils-path-uri",
- "inkstack-utils-sandbox-summary",
- "inkstack-worktree",
- "core_test_support",
- "insta",
- "libc",
- "opentelemetry",
- "opentelemetry_sdk",
- "owo-colors",
- "predicates",
- "pretty_assertions",
- "serde",
- "serde_json",
- "supports-color 3.0.2",
- "tempfile",
- "tokio",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "ts-rs",
- "uuid",
- "walkdir",
- "wiremock",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-exec-server"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "arc-swap",
- "axum",
- "base64 0.22.1",
- "bytes",
- "clatter",
- "inkstack-api",
- "inkstack-build-info",
- "inkstack-config",
- "inkstack-core-plugin-common",
- "inkstack-exec-server-protocol",
- "inkstack-exec-server-test-support",
- "inkstack-file-system",
- "inkstack-file-watcher",
- "inkstack-http-client",
- "inkstack-linux-sandbox",
- "inkstack-mxc-sandbox",
- "inkstack-network-proxy",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-sandboxing",
- "inkstack-shell-command",
- "inkstack-skills",
- "inkstack-test-binary-support",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-home-dir",
- "inkstack-utils-path-uri",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "inkstack-utils-redacted-string",
- "inkstack-utils-rustls-provider",
- "inkstack-websocket-auth",
- "inkstack-websocket-client",
- "inkstack-windows-sandbox-test-support",
- "ctor 0.6.3",
- "dirs",
- "futures",
- "http 1.4.0",
- "libc",
- "opentelemetry",
- "opentelemetry_sdk",
- "pretty_assertions",
- "prost",
- "rcgen",
- "rustix 1.1.4",
- "rustls",
- "serde",
- "serde_json",
- "serial_test",
- "tempfile",
- "test-case",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "tokio-util",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "url",
- "uuid",
- "which 8.0.0",
- "windows-sys 0.61.2",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-exec-server-protocol"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-file-system",
- "inkstack-install-context",
- "inkstack-mxc-sandbox",
- "inkstack-network-proxy",
- "inkstack-protocol",
- "inkstack-shell-command",
- "inkstack-skills",
- "inkstack-utils-path-uri",
- "pretty_assertions",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-exec-server-test-support"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-exec-server",
- "inkstack-http-client",
- "futures",
- "prost",
- "serde_json",
- "tokio",
- "tokio-tungstenite",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-execpolicy"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-utils-absolute-path",
- "multimap",
- "pretty_assertions",
- "serde",
- "serde_json",
- "shlex",
- "starlark",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-experimental-api-macros"
-version = "0.0.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "inkstack-extension-api"
-version = "0.0.0"
-dependencies = [
- "inkstack-api",
- "inkstack-config",
- "inkstack-context-fragments",
- "inkstack-exec-server-protocol",
- "inkstack-file-system",
- "inkstack-guardian-context",
- "inkstack-history",
- "inkstack-mcp",
- "inkstack-protocol",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "futures",
- "pretty_assertions",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-extension-items"
-version = "0.0.0"
-dependencies = [
- "inkstack-utils-absolute-path",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "ts-rs",
-]
-
-[[package]]
-name = "inkstack-external-agent-migration"
-version = "0.0.0"
-dependencies = [
- "chrono",
- "inkstack-analytics",
- "inkstack-app-server-protocol",
- "inkstack-config",
- "inkstack-core",
- "inkstack-core-plugins",
- "inkstack-hooks",
- "inkstack-login",
- "inkstack-memories-write",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-thread-store",
- "inkstack-utils-output-truncation",
- "linkify",
- "pretty_assertions",
- "serde",
- "serde_json",
- "serde_yaml",
- "sha2 0.10.9",
- "tempfile",
- "tokio",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-features"
-version = "0.0.0"
-dependencies = [
- "inkstack-network-proxy",
- "inkstack-protocol",
- "inkstack-utils-redacted-string",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-feedback"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-state",
- "flate2",
- "http 1.4.0",
- "httpdate",
- "log",
- "mime_guess",
- "pretty_assertions",
- "sentry",
- "serde_json",
- "tar",
- "tempfile",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-file-search"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "crossbeam-channel",
- "ignore",
- "nucleo",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-file-system"
-version = "0.0.0"
-dependencies = [
- "bytes",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "futures",
- "serde",
-]
-
-[[package]]
-name = "inkstack-file-watcher"
-version = "0.0.0"
-dependencies = [
- "notify",
- "pretty_assertions",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-git-attribution"
-version = "0.0.0"
-dependencies = [
- "inkstack-backend-client",
- "inkstack-extension-api",
- "inkstack-http-client",
- "inkstack-login",
- "serde_json",
- "tokio",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-git-utils"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-file-system",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path-uri",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "futures",
- "gix",
- "once_cell",
- "pretty_assertions",
- "regex",
- "schemars 0.8.22",
- "serde",
- "similar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "ts-rs",
- "walkdir",
-]
-
-[[package]]
-name = "inkstack-goal-extension"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-analytics",
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-otel",
- "inkstack-prompts",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-state",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-template",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-guardian-context"
-version = "0.0.0"
-dependencies = [
- "inkstack-context-fragments",
- "inkstack-history",
- "inkstack-protocol",
- "pretty_assertions",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-guardian-reviewer"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-analytics",
- "inkstack-extension-api",
- "inkstack-feedback",
- "inkstack-guardian-context",
- "inkstack-mcp",
- "inkstack-otel",
- "inkstack-prompts",
- "inkstack-protocol",
- "opentelemetry",
- "opentelemetry_sdk",
- "pretty_assertions",
- "rand 0.9.3",
- "serde",
- "serde_json",
- "test-case",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-guardian-v2"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-analytics",
- "inkstack-api",
- "inkstack-config",
- "inkstack-context-fragments",
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-features",
- "inkstack-guardian-context",
- "inkstack-guardian-reviewer",
- "inkstack-history",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-prompts",
- "inkstack-protocol",
- "inkstack-utils-cargo-bin",
- "inkstack-websocket-client",
- "core_test_support",
- "dirs",
- "http 1.4.0",
- "insta",
- "pretty_assertions",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
- "wiremock",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-history"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-protocol",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-history-notes-extension"
-version = "0.0.0"
-dependencies = [
- "inkstack-analytics",
- "inkstack-client",
- "inkstack-config",
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-protocol",
- "inkstack-tools",
- "inkstack-utils-output-truncation",
- "core_test_support",
- "http 1.4.0",
- "pretty_assertions",
- "serde_json",
- "tempfile",
- "tokio",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-home"
-version = "0.0.0"
-dependencies = [
- "inkstack-extension-api",
- "inkstack-utils-absolute-path",
- "pretty_assertions",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-hooks"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-channel",
- "chrono",
- "inkstack-config",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-output-truncation",
- "inkstack-utils-path-uri",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "futures",
- "libc",
- "pretty_assertions",
- "regex",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-http-client"
-version = "0.0.0"
-dependencies = [
- "bytes",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-rustls-provider",
- "futures",
- "http 1.4.0",
- "http-body 1.0.1",
- "httpdate",
- "native-tls",
- "opentelemetry",
- "opentelemetry_sdk",
- "pretty_assertions",
- "rcgen",
- "reqwest 0.12.28",
- "rustls",
- "rustls-native-certs",
- "rustls-pki-types",
- "rustls-platform-verifier",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "sha2 0.10.9",
- "system-configuration",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "windows-sys 0.61.2",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-image-generation-extension"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-api",
- "inkstack-core",
- "inkstack-exec-server",
- "inkstack-extension-api",
- "inkstack-extension-items",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-protocol",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-image",
- "inkstack-utils-path-uri",
- "http 1.4.0",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-install-context"
-version = "0.0.0"
-dependencies = [
- "inkstack-utils-absolute-path",
- "inkstack-utils-home-dir",
- "pretty_assertions",
- "semver",
- "serde",
- "serde_json",
- "tempfile",
-]
-
-[[package]]
-name = "inkstack-keyring-store"
-version = "0.0.0"
-dependencies = [
- "keyring",
- "pretty_assertions",
- "secret-service",
- "security-framework 3.5.1",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-linux-sandbox"
-version = "0.0.0"
-dependencies = [
- "clap",
- "inkstack-core",
- "inkstack-install-context",
- "inkstack-network-proxy",
- "inkstack-process-hardening",
- "inkstack-protocol",
- "inkstack-sandboxing",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "globset",
- "landlock",
- "libc",
- "pretty_assertions",
- "rustix 1.1.4",
- "seccompiler",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
- "test-case",
- "tokio",
- "url",
-]
-
-[[package]]
-name = "inkstack-lmstudio"
-version = "0.0.0"
-dependencies = [
- "inkstack-core",
- "inkstack-http-client",
- "inkstack-model-provider-info",
- "serde_json",
- "tokio",
- "tracing",
- "which 8.0.0",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-login"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "chrono",
- "inkstack-agent-identity",
- "inkstack-config",
- "inkstack-http-client",
- "inkstack-keyring-store",
- "inkstack-model-provider-info",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-secrets",
- "inkstack-terminal-detection",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-process",
- "inkstack-utils-template",
- "inkstack-workload-identity",
- "core_test_support",
- "http 1.4.0",
- "jsonwebtoken",
- "keyring",
- "once_cell",
- "opentelemetry_sdk",
- "os_info",
- "pretty_assertions",
- "rand 0.9.3",
- "regex-lite",
- "serde",
- "serde_json",
- "serial_test",
- "sha2 0.10.9",
- "tempfile",
- "thiserror 2.0.18",
- "tiny_http",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
- "urlencoding",
- "webbrowser",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-mcp"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "arc-swap",
- "assert_matches",
- "async-channel",
- "inkstack-api",
- "inkstack-async-utils",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-diagnostics",
- "inkstack-exec-server",
- "inkstack-exec-server-test-support",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-rmcp-client",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "inkstack-utils-process",
- "futures",
- "insta",
- "lru",
- "pretty_assertions",
- "regex-lite",
- "rmcp",
- "serde",
- "serde_json",
- "sha1 0.10.6",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "inkstack-mcp-extension"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "axum",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-connectors-extension",
- "inkstack-core",
- "inkstack-core-plugins",
- "inkstack-exec-server",
- "inkstack-exec-server-test-support",
- "inkstack-extension-api",
- "inkstack-features",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "core_test_support",
- "futures",
- "pretty_assertions",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-memories-extension"
-version = "0.0.0"
-dependencies = [
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-features",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-output-truncation",
- "inkstack-utils-template",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-memories-read"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-shell-command",
- "inkstack-utils-absolute-path",
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-memories-write"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-backend-client",
- "inkstack-config",
- "inkstack-core",
- "inkstack-features",
- "inkstack-git-utils",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-rollout-trace",
- "inkstack-secrets",
- "inkstack-state",
- "inkstack-terminal-detection",
- "inkstack-utils-absolute-path",
- "inkstack-utils-output-truncation",
- "inkstack-utils-template",
- "core_test_support",
- "futures",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
- "uuid",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-mermaid"
-version = "0.0.0"
-dependencies = [
- "insta",
- "pretty_assertions",
- "unicode-width 0.2.1",
-]
-
-[[package]]
-name = "inkstack-message-history"
-version = "0.0.0"
-dependencies = [
- "inkstack-config",
- "memchr",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-model-provider"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "chrono",
- "inkstack-agent-identity",
- "inkstack-api",
- "inkstack-aws-auth",
- "inkstack-feedback",
- "inkstack-http-client",
- "inkstack-keyring-store",
- "inkstack-login",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-response-debug-context",
- "inkstack-secrets",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-process",
- "inkstack-utils-redacted-string",
- "http 1.4.0",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
- "tokio",
- "tracing",
- "url",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-model-provider-info"
-version = "0.0.0"
-dependencies = [
- "inkstack-client",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-redacted-string",
- "http 1.4.0",
- "maplit",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "tempfile",
- "toml 0.9.11+spec-1.1.0",
- "url",
-]
-
-[[package]]
-name = "inkstack-models-manager"
-version = "0.0.0"
-dependencies = [
- "chrono",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-otel",
- "inkstack-prompts",
- "inkstack-protocol",
- "inkstack-utils-output-truncation",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-mxc-sandbox"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "appcontainer_common",
- "inkstack-network-proxy",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "inkstack-windows-sandbox",
- "learning_mode_windows",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tracelogging",
- "windows-sys 0.61.2",
- "wxc_common",
-]
-
-[[package]]
-name = "inkstack-network-proxy"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "chrono",
- "clap",
- "inkstack-utils-absolute-path",
- "inkstack-utils-home-dir",
- "inkstack-utils-path-uri",
- "inkstack-utils-rustls-provider",
- "inkstack-windows-sandbox",
- "globset",
- "libc",
- "opentelemetry",
- "pretty_assertions",
- "rama-core",
- "rama-dns",
- "rama-http",
- "rama-http-backend",
- "rama-net",
- "rama-socks5",
- "rama-tcp",
- "rama-tls-rustls",
- "rama-unix",
- "rand 0.9.3",
- "rand_regex",
- "regex",
- "regex-automata",
- "regex-syntax",
- "rustls-native-certs",
- "schannel",
- "schemars 0.8.22",
- "security-framework 3.5.1",
- "serde",
- "serde_ignored",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-ollama"
-version = "0.0.0"
-dependencies = [
- "assert_matches",
- "async-stream",
- "bytes",
- "inkstack-core",
- "inkstack-http-client",
- "inkstack-model-provider-info",
- "futures",
- "memchr",
- "pretty_assertions",
- "semver",
- "serde_json",
- "tokio",
- "tracing",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-otel"
-version = "0.0.0"
-dependencies = [
- "bytes",
- "chrono",
- "inkstack-api",
- "inkstack-http-client",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-stream-parser",
- "inkstack-utils-string",
- "eventsource-stream",
- "gethostname",
- "http 1.4.0",
- "libc",
- "opentelemetry",
- "opentelemetry-appender-tracing",
- "opentelemetry-http",
- "opentelemetry-otlp",
- "opentelemetry-semantic-conventions",
- "opentelemetry_sdk",
- "os_info",
- "pretty_assertions",
- "reqwest 0.12.28",
- "seccompiler",
- "serde",
- "serde_json",
- "strum_macros 0.28.0",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "inkstack-otel-trace-websocket"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "axum",
- "futures",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-plugin"
-version = "0.0.0"
-dependencies = [
- "inkstack-config",
- "inkstack-core-plugin-common",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "pretty_assertions",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "inkstack-process-hardening"
-version = "0.0.0"
-dependencies = [
- "libc",
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-prompts"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-collaboration-mode-templates",
- "inkstack-context-fragments",
- "inkstack-execpolicy",
- "inkstack-git-utils",
- "inkstack-guardian-context",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-template",
- "pretty_assertions",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-protocol"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chardetng",
- "chrono",
- "inkstack-async-utils",
- "inkstack-execpolicy",
- "inkstack-extension-items",
- "inkstack-http-client",
- "inkstack-network-proxy",
- "inkstack-utils-absolute-path",
- "inkstack-utils-image",
- "inkstack-utils-path-uri",
- "inkstack-utils-redacted-string",
- "inkstack-utils-string",
- "derive_more 2.1.1",
- "encoding_rs",
- "gix-url",
- "globset",
- "http 1.4.0",
- "icu_decimal",
- "icu_locale_core",
- "icu_provider",
- "landlock",
- "libc",
- "pretty_assertions",
- "quick-xml 0.41.0",
- "schemars 0.8.22",
- "seccompiler",
- "serde",
- "serde_json",
- "serde_with",
- "strum 0.27.2",
- "strum_macros 0.28.0",
- "sys-locale",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "ts-rs",
- "uuid",
- "wildmatch",
-]
-
-[[package]]
-name = "inkstack-queue-extension"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-thread-store",
- "inkstack-utils-absolute-path",
- "core_test_support",
- "pretty_assertions",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-realtime-webrtc"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-build-info",
- "inkstack-install-context",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-pty",
- "ctor 0.6.3",
- "futures",
- "libc",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-response-debug-context"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-api",
- "http 1.4.0",
- "pretty_assertions",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-responses-api-proxy"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-process-hardening",
- "ctor 0.6.3",
- "libc",
- "pretty_assertions",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "tiny_http",
- "zeroize",
-]
-
-[[package]]
-name = "inkstack-rmcp-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "axum",
- "base64 0.22.1",
- "bytes",
- "inkstack-api",
- "inkstack-config",
- "inkstack-exec-server",
- "inkstack-http-client",
- "inkstack-keyring-store",
- "inkstack-network-proxy",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-secrets",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-home-dir",
- "inkstack-utils-path-uri",
- "inkstack-utils-pty",
- "futures",
- "http 1.4.0",
- "keyring",
- "libc",
- "memchr",
- "oauth2",
- "opentelemetry_sdk",
- "pretty_assertions",
- "rmcp",
- "serde",
- "serde_json",
- "serial_test",
- "sha2 0.10.9",
- "sse-stream",
- "tempfile",
- "thiserror 2.0.18",
- "tiny_http",
- "tokio",
- "tokio-util",
- "tracing",
- "tracing-subscriber",
- "tracing-test",
- "url",
- "urlencoding",
- "webbrowser",
- "which 8.0.0",
- "windows-sys 0.61.2",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-rollout"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-extension-items",
- "inkstack-file-search",
- "inkstack-git-utils",
- "inkstack-history",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-state",
- "inkstack-utils-absolute-path",
- "inkstack-utils-output-truncation",
- "inkstack-utils-path",
- "inkstack-utils-process",
- "inkstack-utils-string",
- "memchr",
- "pretty_assertions",
- "regex",
- "serde",
- "serde_json",
- "tempfile",
- "time",
- "tokio",
- "tracing",
- "uuid",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-rollout-trace"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-code-mode",
- "inkstack-protocol",
- "http 1.4.0",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-sandboxing"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-mxc-sandbox",
- "inkstack-network-proxy",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-home-dir",
- "inkstack-utils-path-uri",
- "inkstack-utils-pty",
- "inkstack-windows-sandbox",
- "dunce",
- "libc",
- "pretty_assertions",
- "regex-lite",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
- "url",
- "which 8.0.0",
-]
-
-[[package]]
-name = "inkstack-secrets"
-version = "0.0.0"
-dependencies = [
- "age",
- "anyhow",
- "base64 0.22.1",
- "inkstack-git-utils",
- "inkstack-keyring-store",
- "keyring",
- "pretty_assertions",
- "rand 0.9.3",
- "regex",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "tempfile",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-shell-command"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "libc",
- "once_cell",
- "pretty_assertions",
- "regex",
- "serde",
- "serde_json",
- "shlex",
- "tempfile",
- "tree-sitter",
- "tree-sitter-bash",
- "tree-sitter-powershell",
- "url",
- "which 8.0.0",
-]
-
-[[package]]
-name = "inkstack-skills"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-shell-command",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "include_dir",
- "pretty_assertions",
- "serde",
- "serde_yaml",
- "shlex",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-skills-extension"
-version = "0.0.0"
-dependencies = [
- "assert_matches",
- "blake3",
- "inkstack-analytics",
- "inkstack-config",
- "inkstack-exec-server",
- "inkstack-extension-api",
- "inkstack-mcp",
- "inkstack-models-manager",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-skills",
- "inkstack-tools",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "inkstack-utils-string",
- "dirs",
- "dunce",
- "futures",
- "insta",
- "opentelemetry_sdk",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "toml 0.9.11+spec-1.1.0",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "inkstack-state"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "inkstack-git-utils",
- "inkstack-history",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "file-id",
- "libsqlite3-sys",
- "log",
- "pretty_assertions",
- "scopeguard",
- "serde",
- "serde_json",
- "sqlx",
- "sqlx-macros",
- "sqlx-sqlite",
- "strum 0.27.2",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "inkstack-stdio-to-uds"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-uds",
- "inkstack-utils-cargo-bin",
- "pretty_assertions",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-tcp-tunnel"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "clap",
- "h3",
- "h3-quinn",
- "http 1.4.0",
- "pretty_assertions",
- "quinn",
- "rand 0.9.3",
- "rcgen",
- "rustls",
- "rustls-native-certs",
- "serde_json",
- "tokio",
- "url",
-]
-
-[[package]]
-name = "inkstack-terminal-detection"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-test-binary-support"
-version = "0.0.0"
-dependencies = [
- "inkstack-arg0",
- "tempfile",
-]
-
-[[package]]
-name = "inkstack-thread-manager-sample"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "inkstack-core-api",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-thread-store"
-version = "0.0.0"
-dependencies = [
- "chrono",
- "inkstack-app-server-protocol",
- "inkstack-extension-items",
- "inkstack-git-utils",
- "inkstack-install-context",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-rollout",
- "inkstack-state",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "futures",
- "pretty_assertions",
- "pulldown-cmark",
- "serde",
- "serde_json",
- "sqlx",
- "sqlx-macros",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
- "zstd",
-]
-
-[[package]]
-name = "inkstack-tools"
-version = "0.0.0"
-dependencies = [
- "bitflags 2.13.1",
- "inkstack-code-mode",
- "inkstack-connectors",
- "inkstack-extension-items",
- "inkstack-features",
- "inkstack-file-system",
- "inkstack-protocol",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-output-truncation",
- "inkstack-utils-path-uri",
- "inkstack-utils-string",
- "jsonptr",
- "pretty_assertions",
- "rmcp",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "urlencoding",
-]
-
-[[package]]
-name = "inkstack-tui"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "app_test_support",
- "arboard",
- "assert_matches",
- "axum",
- "base64 0.22.1",
- "chrono",
- "clap",
- "inkstack-ansi-escape",
- "inkstack-app-server-client",
- "inkstack-app-server-daemon",
- "inkstack-app-server-protocol",
- "inkstack-arg0",
- "inkstack-backend-client",
- "inkstack-build-info",
- "inkstack-cloud-config",
- "inkstack-config",
- "inkstack-connectors",
- "inkstack-context-fragments",
- "inkstack-core-plugins",
- "inkstack-exec-server",
- "inkstack-features",
- "inkstack-feedback",
- "inkstack-file-search",
- "inkstack-git-utils",
- "inkstack-history",
- "inkstack-http-client",
- "inkstack-install-context",
- "inkstack-login",
- "inkstack-mcp",
- "inkstack-mermaid",
- "inkstack-message-history",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-models-manager",
- "inkstack-otel",
- "inkstack-plugin",
- "inkstack-protocol",
- "inkstack-realtime-webrtc",
- "inkstack-rollout",
- "inkstack-sandboxing",
- "inkstack-shell-command",
- "inkstack-state",
- "inkstack-terminal-detection",
- "inkstack-uds",
- "inkstack-utils-absolute-path",
- "inkstack-utils-approval-presets",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-cli",
- "inkstack-utils-elapsed",
- "inkstack-utils-fuzzy-match",
- "inkstack-utils-home-dir",
- "inkstack-utils-oss",
- "inkstack-utils-path",
- "inkstack-utils-path-uri",
- "inkstack-utils-plugins",
- "inkstack-utils-sandbox-summary",
- "inkstack-utils-sleep-inhibitor",
- "inkstack-utils-string",
- "inkstack-windows-sandbox",
- "inkstack-worktree",
- "color-eyre",
- "core_test_support",
- "crossterm",
- "derive_more 2.1.1",
- "diffy",
- "dirs",
- "dunce",
- "futures",
- "http 1.4.0",
- "image",
- "insta",
- "itertools 0.14.0",
- "lazy_static",
- "libc",
- "objc2-app-kit",
- "objc2-foundation",
- "opentelemetry_sdk",
- "pathdiff",
- "pretty_assertions",
- "pulldown-cmark",
- "rand 0.9.3",
- "ratatui",
- "ratatui-macros",
- "regex-lite",
- "rmcp",
- "semver",
- "serde",
- "serde_json",
- "serial_test",
- "sha2 0.10.9",
- "shlex",
- "strum 0.27.2",
- "strum_macros 0.28.0",
- "supports-color 3.0.2",
- "syntect",
- "tempfile",
- "textwrap 0.16.2",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-tungstenite",
- "tokio-util",
- "toml 0.9.11+spec-1.1.0",
- "toml_edit 0.24.0+spec-1.1.0",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "two-face",
- "unicode-segmentation",
- "unicode-width 0.2.1",
- "url",
- "urlencoding",
- "uuid",
- "vt100",
- "webbrowser",
- "which 8.0.0",
- "windows-sys 0.61.2",
- "winsplit",
- "wiremock",
- "zbus",
-]
-
-[[package]]
-name = "inkstack-uds"
-version = "0.0.0"
-dependencies = [
- "async-io",
- "libc",
- "pretty_assertions",
- "tempfile",
- "tokio",
- "tokio-util",
- "uds_windows",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-user-verification"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "block2",
- "core-foundation 0.10.1",
- "dirs",
- "objc2",
- "objc2-foundation",
- "objc2-local-authentication",
- "p256",
- "pretty_assertions",
- "security-framework 3.5.1",
- "security-framework-sys",
- "sha2 0.10.9",
- "tempfile",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-utils-absolute-path"
-version = "0.0.0"
-dependencies = [
- "dirs",
- "dunce",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "tempfile",
- "ts-rs",
-]
-
-[[package]]
-name = "inkstack-utils-approval-presets"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
-]
-
-[[package]]
-name = "inkstack-utils-audio"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-protocol",
- "inkstack-utils-cache",
- "inkstack-utils-string",
- "pretty_assertions",
- "symphonia",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-utils-cache"
-version = "0.0.0"
-dependencies = [
- "lru",
- "sha1 0.10.6",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-utils-cargo-bin"
-version = "0.0.0"
-dependencies = [
- "assert_cmd",
- "runfiles",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "inkstack-utils-cli"
-version = "0.0.0"
-dependencies = [
- "clap",
- "inkstack-protocol",
- "inkstack-shell-command",
- "pretty_assertions",
- "serde",
- "toml 0.9.11+spec-1.1.0",
-]
-
-[[package]]
-name = "inkstack-utils-elapsed"
-version = "0.0.0"
-
-[[package]]
-name = "inkstack-utils-fuzzy-match"
-version = "0.0.0"
-
-[[package]]
-name = "inkstack-utils-git-discovery"
-version = "0.0.0"
-dependencies = [
- "inkstack-git-utils",
- "inkstack-utils-absolute-path",
- "futures",
- "pretty_assertions",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "inkstack-utils-home-dir"
-version = "0.0.0"
-dependencies = [
- "inkstack-utils-absolute-path",
- "dirs",
- "pretty_assertions",
- "tempfile",
-]
-
-[[package]]
-name = "inkstack-utils-image"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-utils-cache",
- "divan",
- "image",
- "mime_guess",
- "png",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-utils-json-to-toml"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "serde_json",
- "toml 0.9.11+spec-1.1.0",
-]
-
-[[package]]
-name = "inkstack-utils-oss"
-version = "0.0.0"
-dependencies = [
- "inkstack-core",
- "inkstack-lmstudio",
- "inkstack-model-provider-info",
- "inkstack-ollama",
-]
-
-[[package]]
-name = "inkstack-utils-output-truncation"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-utils-string",
- "pretty_assertions",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-utils-path"
-version = "0.0.0"
-dependencies = [
- "inkstack-utils-absolute-path",
- "dunce",
- "pretty_assertions",
- "tempfile",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-utils-path-uri"
-version = "0.0.0"
-dependencies = [
- "base64 0.22.1",
- "inkstack-utils-absolute-path",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "ts-rs",
- "url",
- "urlencoding",
-]
-
-[[package]]
-name = "inkstack-utils-plugins"
-version = "0.0.0"
-dependencies = [
- "inkstack-exec-server",
- "inkstack-exec-server-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-utils-process"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-utils-pty"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-utils-cargo-bin",
- "ctor 0.6.3",
- "filedescriptor",
- "lazy_static",
- "libc",
- "log",
- "portable-pty",
- "pretty_assertions",
- "shared_library",
- "tempfile",
- "tokio",
- "winapi",
-]
-
-[[package]]
-name = "inkstack-utils-readiness"
-version = "0.0.0"
-dependencies = [
- "assert_matches",
- "thiserror 2.0.18",
- "time",
- "tokio",
-]
-
-[[package]]
-name = "inkstack-utils-redacted-string"
-version = "0.0.0"
-dependencies = [
- "schemars 0.8.22",
- "serde",
-]
-
-[[package]]
-name = "inkstack-utils-rustls-provider"
-version = "0.0.0"
-dependencies = [
- "rustls",
-]
-
-[[package]]
-name = "inkstack-utils-sandbox-summary"
-version = "0.0.0"
-dependencies = [
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-path-uri",
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-utils-sleep-inhibitor"
-version = "0.0.0"
-dependencies = [
- "core-foundation 0.9.4",
- "libc",
- "tracing",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-utils-stream-parser"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-utils-string"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "regex-lite",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "inkstack-utils-template"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
-]
-
-[[package]]
-name = "inkstack-v8-poc"
-version = "0.0.0"
-dependencies = [
- "pretty_assertions",
- "v8",
-]
-
-[[package]]
-name = "inkstack-voice-host"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-install-context",
- "inkstack-process-hardening",
- "inkstack-realtime-webrtc",
- "inkstack-utils-cargo-bin",
- "cpal",
- "crossbeam-queue",
- "futures",
- "gstreamer",
- "gstreamer-app",
- "gstreamer-audio",
- "libloading",
- "opus",
- "pretty_assertions",
- "rand 0.9.3",
- "rtc",
- "rubato",
- "sonora",
- "tempfile",
- "tokio",
- "webrtc",
-]
-
-[[package]]
-name = "inkstack-web-search-extension"
-version = "0.0.0"
-dependencies = [
- "inkstack-api",
- "inkstack-core",
- "inkstack-extension-api",
- "inkstack-extension-items",
- "inkstack-http-client",
- "inkstack-login",
- "inkstack-model-provider",
- "inkstack-model-provider-info",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-tools",
- "http 1.4.0",
- "pretty_assertions",
- "schemars 0.8.22",
- "serde_json",
- "url",
-]
-
-[[package]]
-name = "inkstack-websocket-auth"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "clap",
- "inkstack-utils-absolute-path",
- "constant_time_eq",
- "hmac 0.12.1",
- "http 1.4.0",
- "jsonwebtoken",
- "pretty_assertions",
- "serde",
- "serde_json",
- "sha2 0.10.9",
- "time",
-]
-
-[[package]]
-name = "inkstack-websocket-client"
-version = "0.0.0"
-dependencies = [
- "inkstack-http-client",
- "inkstack-utils-rustls-provider",
- "futures",
- "pretty_assertions",
- "rcgen",
- "rustls",
- "tokio",
- "tokio-rustls",
- "tokio-tungstenite",
- "url",
-]
-
-[[package]]
-name = "inkstack-windows-sandbox"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64 0.22.1",
- "chrono",
- "inkstack-http-client",
- "inkstack-otel",
- "inkstack-protocol",
- "inkstack-utils-absolute-path",
- "inkstack-utils-cargo-bin",
- "inkstack-utils-process",
- "inkstack-utils-pty",
- "inkstack-utils-string",
- "inkstack-windows-sandbox-test-support",
- "dirs-next",
- "dunce",
- "glob",
- "pretty_assertions",
- "rand 0.8.6",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing-appender",
- "windows 0.58.0",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-windows-sandbox-service"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-cloud-config",
- "inkstack-config",
- "inkstack-core",
- "inkstack-windows-sandbox",
- "pretty_assertions",
- "serde_json",
- "tokio",
- "toml 0.9.11+spec-1.1.0",
- "windows 0.58.0",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "inkstack-windows-sandbox-test-support"
-version = "0.0.0"
-dependencies = [
- "dirs",
-]
-
-[[package]]
-name = "inkstack-workload-identity"
-version = "0.0.0"
-dependencies = [
- "inkstack-http-client",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "url",
- "wiremock",
-]
-
-[[package]]
-name = "inkstack-worktree"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "inkstack-git-utils",
- "inkstack-protocol",
- "inkstack-utils-cargo-bin",
- "dunce",
- "pretty_assertions",
- "serde",
- "serde_json",
- "tempfile",
- "uuid",
-]
-
-[[package]]
 name = "color-eyre"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5637,6 +2125,8 @@ dependencies = [
  "anyhow",
  "assert_cmd",
  "base64 0.22.1",
+ "ctor 0.6.3",
+ "futures",
  "inkstack-analytics",
  "inkstack-arg0",
  "inkstack-attachment-store",
@@ -5657,8 +2147,6 @@ dependencies = [
  "inkstack-utils-absolute-path",
  "inkstack-utils-cargo-bin",
  "inkstack-utils-path-uri",
- "ctor 0.6.3",
- "futures",
  "notify",
  "opentelemetry",
  "opentelemetry_sdk",
@@ -9283,6 +5771,3518 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79cf5c93f93228cf8efb3ba362535fb11199ac548a09ce117c9b1adc3030d706"
 dependencies = [
  "rustversion",
+]
+
+[[package]]
+name = "inkstack-agent-extension"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "core_test_support",
+ "inkstack-core",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-agent-graph-store"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-agent-identity"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "chrono",
+ "crypto_box",
+ "ed25519-dalek",
+ "http 1.4.0",
+ "inkstack-http-client",
+ "inkstack-protocol",
+ "jsonwebtoken",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "inkstack-agent-message-board-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "eventsource-stream",
+ "futures",
+ "http 1.4.0",
+ "inkstack-agent-message-board-extension",
+ "inkstack-extension-api",
+ "inkstack-http-client",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-agent-message-board-extension"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "caseless",
+ "chrono",
+ "futures",
+ "inkstack-extension-api",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-tools",
+ "inkstack-utils-output-truncation",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-agent-roles"
+version = "0.0.0"
+dependencies = [
+ "inkstack-config",
+ "inkstack-file-system",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "serde",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-analytics"
+version = "0.0.0"
+dependencies = [
+ "inkstack-app-server-protocol",
+ "inkstack-git-utils",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "os_info",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sha1 0.10.6",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-ansi-escape"
+version = "0.0.0"
+dependencies = [
+ "ansi-to-tui",
+ "pretty_assertions",
+ "ratatui",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "inkstack-api"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "assert_matches",
+ "async-channel",
+ "base64 0.22.1",
+ "bytes",
+ "chrono",
+ "eventsource-stream",
+ "futures",
+ "http 1.4.0",
+ "inkstack-client",
+ "inkstack-http-client",
+ "inkstack-protocol",
+ "inkstack-utils-rustls-provider",
+ "inkstack-websocket-client",
+ "pretty_assertions",
+ "rcgen",
+ "regex-lite",
+ "rustls",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-test",
+ "tokio-tungstenite",
+ "tokio-util",
+ "tracing",
+ "tungstenite",
+ "url",
+ "uuid",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-app-server"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "app_test_support",
+ "axum",
+ "base64 0.22.1",
+ "chrono",
+ "clap",
+ "core_test_support",
+ "flate2",
+ "futures",
+ "hmac 0.12.1",
+ "http 1.4.0",
+ "inkstack-agent-extension",
+ "inkstack-analytics",
+ "inkstack-app-server-protocol",
+ "inkstack-app-server-transport",
+ "inkstack-arg0",
+ "inkstack-aws-auth",
+ "inkstack-backend-client",
+ "inkstack-chatgpt",
+ "inkstack-cloud-config",
+ "inkstack-code-mode",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-core",
+ "inkstack-core-plugins",
+ "inkstack-diagnostics",
+ "inkstack-exec-server",
+ "inkstack-extension-api",
+ "inkstack-external-agent-migration",
+ "inkstack-features",
+ "inkstack-feedback",
+ "inkstack-file-search",
+ "inkstack-file-watcher",
+ "inkstack-git-attribution",
+ "inkstack-git-utils",
+ "inkstack-goal-extension",
+ "inkstack-guardian-v2",
+ "inkstack-history-notes-extension",
+ "inkstack-home",
+ "inkstack-hooks",
+ "inkstack-http-client",
+ "inkstack-image-generation-extension",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-mcp-extension",
+ "inkstack-memories-extension",
+ "inkstack-memories-write",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-network-proxy",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "inkstack-queue-extension",
+ "inkstack-rmcp-client",
+ "inkstack-rollout",
+ "inkstack-sandboxing",
+ "inkstack-shell-command",
+ "inkstack-skills",
+ "inkstack-skills-extension",
+ "inkstack-state",
+ "inkstack-thread-store",
+ "inkstack-tools",
+ "inkstack-uds",
+ "inkstack-user-verification",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-cli",
+ "inkstack-utils-json-to-toml",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "inkstack-web-search-extension",
+ "inkstack-websocket-auth",
+ "inkstack-windows-sandbox",
+ "keyring",
+ "libc",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "rcgen",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha2 0.10.9",
+ "shlex",
+ "sqlx",
+ "tar",
+ "tempfile",
+ "test-case",
+ "thiserror 2.0.18",
+ "tikv-jemallocator",
+ "time",
+ "tokio",
+ "tokio-rustls",
+ "tokio-tungstenite",
+ "tokio-util",
+ "toml 0.9.11+spec-1.1.0",
+ "toml_edit 0.24.0+spec-1.1.0",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "url",
+ "uuid",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-app-server-client"
+version = "0.0.0"
+dependencies = [
+ "futures",
+ "inkstack-app-server",
+ "inkstack-app-server-protocol",
+ "inkstack-arg0",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-exec-server",
+ "inkstack-feedback",
+ "inkstack-protocol",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-rustls-provider",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-tungstenite",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "inkstack-app-server-daemon"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "blake3",
+ "futures",
+ "inkstack-app-server-protocol",
+ "inkstack-app-server-transport",
+ "inkstack-features",
+ "inkstack-http-client",
+ "inkstack-install-context",
+ "inkstack-uds",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-home-dir",
+ "libc",
+ "pretty_assertions",
+ "semver",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-tungstenite",
+ "tracing",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-app-server-protocol"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-app-server-protocol-noop-macros",
+ "inkstack-experimental-api-macros",
+ "inkstack-extension-items",
+ "inkstack-history",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-secrets",
+ "inkstack-shell-command",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-redacted-string",
+ "inventory",
+ "pretty_assertions",
+ "rmcp",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "similar",
+ "strum_macros 0.28.0",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracing",
+ "ts-rs",
+ "uuid",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-app-server-protocol-noop-macros"
+version = "0.0.0"
+
+[[package]]
+name = "inkstack-app-server-test-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "inkstack-app-server-protocol",
+ "inkstack-core",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-utils-cli",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "tungstenite",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-app-server-transport"
+version = "0.0.0"
+dependencies = [
+ "axum",
+ "base64 0.22.1",
+ "chrono",
+ "futures",
+ "gethostname",
+ "httpdate",
+ "inkstack-api",
+ "inkstack-app-server-protocol",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-rustls-provider",
+ "inkstack-websocket-auth",
+ "inkstack-websocket-client",
+ "libc",
+ "owo-colors",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "signal-hook",
+ "tempfile",
+ "time",
+ "tokio",
+ "tokio-tungstenite",
+ "tokio-util",
+ "tracing",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-apply-patch"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "assert_cmd",
+ "assert_matches",
+ "inkstack-exec-server",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "similar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tree-sitter",
+ "tree-sitter-bash",
+]
+
+[[package]]
+name = "inkstack-arg0"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "dotenvy",
+ "inkstack-apply-patch",
+ "inkstack-async-utils",
+ "inkstack-exec-server",
+ "inkstack-install-context",
+ "inkstack-linux-sandbox",
+ "inkstack-sandboxing",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-pty",
+ "inkstack-windows-sandbox",
+ "pathdiff",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-async-utils"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "rand 0.9.3",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "inkstack-attachment-store"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "serde",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-aws-auth"
+version = "0.0.0"
+dependencies = [
+ "aws-config",
+ "aws-credential-types",
+ "aws-sigv4",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-types",
+ "bytes",
+ "http 1.4.0",
+ "http-body 1.0.1",
+ "http-body-util",
+ "inkstack-http-client",
+ "inkstack-utils-rustls-provider",
+ "pretty_assertions",
+ "rcgen",
+ "rustls",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-rustls",
+ "url",
+]
+
+[[package]]
+name = "inkstack-backend-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-backend-openapi-models",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tokio",
+ "url",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-backend-openapi-models"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "serde_with",
+]
+
+[[package]]
+name = "inkstack-build-info"
+version = "0.0.0"
+dependencies = [
+ "inkstack-install-context",
+ "pretty_assertions",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+]
+
+[[package]]
+name = "inkstack-bwrap"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "libc",
+ "pkg-config",
+]
+
+[[package]]
+name = "inkstack-chatgpt"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "inkstack-connectors",
+ "inkstack-core",
+ "inkstack-git-utils",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-plugin",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-cli",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-cli"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "app_test_support",
+ "assert_cmd",
+ "assert_matches",
+ "chrono",
+ "clap",
+ "clap_complete",
+ "crossterm",
+ "flate2",
+ "futures",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-app-server",
+ "inkstack-app-server-client",
+ "inkstack-app-server-daemon",
+ "inkstack-app-server-protocol",
+ "inkstack-app-server-test-client",
+ "inkstack-arg0",
+ "inkstack-aws-auth",
+ "inkstack-build-info",
+ "inkstack-chatgpt",
+ "inkstack-cloud-config",
+ "inkstack-cloud-tasks",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-core-plugins",
+ "inkstack-exec",
+ "inkstack-exec-server",
+ "inkstack-execpolicy",
+ "inkstack-extension-api",
+ "inkstack-features",
+ "inkstack-git-attribution",
+ "inkstack-git-utils",
+ "inkstack-history",
+ "inkstack-home",
+ "inkstack-http-client",
+ "inkstack-install-context",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-memories-write",
+ "inkstack-model-provider",
+ "inkstack-models-manager",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-responses-api-proxy",
+ "inkstack-rmcp-client",
+ "inkstack-rollout",
+ "inkstack-rollout-trace",
+ "inkstack-sandboxing",
+ "inkstack-skills-extension",
+ "inkstack-state",
+ "inkstack-stdio-to-uds",
+ "inkstack-tcp-tunnel",
+ "inkstack-terminal-detection",
+ "inkstack-thread-store",
+ "inkstack-tui",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-cli",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "inkstack-utils-redacted-string",
+ "inkstack-websocket-auth",
+ "inkstack-windows-sandbox",
+ "insta",
+ "jsonwebtoken",
+ "libc",
+ "os_info",
+ "owo-colors",
+ "predicates",
+ "pretty_assertions",
+ "regex-lite",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "sqlx",
+ "supports-color 3.0.2",
+ "sys-locale",
+ "tar",
+ "tempfile",
+ "tikv-jemallocator",
+ "tokio",
+ "tokio-tungstenite",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "unicode-segmentation",
+ "url",
+ "vt100",
+ "which 8.0.0",
+ "windows-sys 0.61.2",
+ "wiremock",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-client"
+version = "0.0.0"
+dependencies = [
+ "eventsource-stream",
+ "futures",
+ "http 1.4.0",
+ "inkstack-http-client",
+ "rand 0.9.3",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "inkstack-cloud-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-stream",
+ "bytes",
+ "futures",
+ "http 1.4.0",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "inkstack-http-client",
+ "pretty_assertions",
+ "prost",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-rustls",
+ "tonic",
+ "tonic-prost",
+ "tower",
+ "url",
+]
+
+[[package]]
+name = "inkstack-cloud-config"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "chrono",
+ "hmac 0.12.1",
+ "inkstack-agent-identity",
+ "inkstack-async-utils",
+ "inkstack-backend-client",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-cloud-tasks"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "clap",
+ "crossterm",
+ "http 1.4.0",
+ "inkstack-cloud-tasks-client",
+ "inkstack-cloud-tasks-mock-client",
+ "inkstack-core",
+ "inkstack-git-utils",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-tui",
+ "inkstack-utils-cli",
+ "insta",
+ "owo-colors",
+ "pretty_assertions",
+ "ratatui",
+ "serde",
+ "serde_json",
+ "supports-color 3.0.2",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "tracing-subscriber",
+ "unicode-segmentation",
+ "unicode-width 0.2.1",
+]
+
+[[package]]
+name = "inkstack-cloud-tasks-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "inkstack-api",
+ "inkstack-backend-client",
+ "inkstack-git-utils",
+ "inkstack-http-client",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "inkstack-cloud-tasks-mock-client"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "diffy",
+ "inkstack-cloud-tasks-client",
+]
+
+[[package]]
+name = "inkstack-code-mode"
+version = "0.0.0"
+dependencies = [
+ "futures",
+ "http-body-util",
+ "inkstack-code-mode-protocol",
+ "inkstack-http-client",
+ "inkstack-install-context",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "prost",
+ "rand 0.9.3",
+ "reqwest 0.12.28",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tonic",
+ "tower",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-code-mode-host"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "clap",
+ "futures",
+ "inkstack-code-mode",
+ "inkstack-code-mode-protocol",
+ "inkstack-code-mode-runtime",
+ "inkstack-http-client",
+ "inkstack-otel",
+ "inkstack-otel-trace-websocket",
+ "inkstack-protocol",
+ "inkstack-utils-cargo-bin",
+ "pretty_assertions",
+ "prost",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tonic",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-code-mode-protocol"
+version = "0.0.0"
+dependencies = [
+ "glob",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "prost",
+ "protoc-bin-vendored",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tonic",
+ "tonic-prost",
+ "tonic-prost-build",
+]
+
+[[package]]
+name = "inkstack-code-mode-runtime"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "deno_core_icudata",
+ "futures",
+ "inkstack-code-mode-protocol",
+ "inkstack-protocol",
+ "opentelemetry",
+ "pretty_assertions",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "v8",
+]
+
+[[package]]
+name = "inkstack-collaboration-mode-templates"
+version = "0.0.0"
+
+[[package]]
+name = "inkstack-config"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "core-foundation 0.9.4",
+ "dns-lookup",
+ "dunce",
+ "futures",
+ "gethostname",
+ "indexmap 2.14.0",
+ "inkstack-execpolicy",
+ "inkstack-features",
+ "inkstack-file-system",
+ "inkstack-git-utils",
+ "inkstack-model-provider-info",
+ "inkstack-network-proxy",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-redacted-string",
+ "inkstack-windows-sandbox",
+ "libc",
+ "multimap",
+ "pretty_assertions",
+ "prost",
+ "regex-lite",
+ "schemars 0.8.22",
+ "serde",
+ "serde_ignored",
+ "serde_json",
+ "serde_path_to_error",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "toml 0.9.11+spec-1.1.0",
+ "toml_edit 0.24.0+spec-1.1.0",
+ "tonic",
+ "tonic-prost",
+ "tonic-prost-build",
+ "tracing",
+ "wildmatch",
+ "winapi-util",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-config-schema"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "inkstack-config",
+]
+
+[[package]]
+name = "inkstack-connectors"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "indexmap 2.14.0",
+ "inkstack-config",
+ "inkstack-login",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sha1 0.10.6",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "urlencoding",
+]
+
+[[package]]
+name = "inkstack-connectors-extension"
+version = "0.0.0"
+dependencies = [
+ "inkstack-connectors",
+ "inkstack-core-plugins",
+ "inkstack-file-system",
+ "inkstack-plugin",
+ "inkstack-utils-path-uri",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-context-fragments"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+ "inkstack-utils-string",
+ "pretty_assertions",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-core"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "assert_cmd",
+ "assert_matches",
+ "async-channel",
+ "base64 0.22.1",
+ "bm25",
+ "chrono",
+ "core_test_support",
+ "ctor 0.6.3",
+ "dirs",
+ "dunce",
+ "eventsource-stream",
+ "futures",
+ "http 1.4.0",
+ "hyper-util",
+ "iana-time-zone",
+ "image",
+ "indexmap 2.14.0",
+ "inkstack-agent-graph-store",
+ "inkstack-agent-message-board-client",
+ "inkstack-agent-message-board-extension",
+ "inkstack-agent-roles",
+ "inkstack-analytics",
+ "inkstack-api",
+ "inkstack-app-server-protocol",
+ "inkstack-apply-patch",
+ "inkstack-async-utils",
+ "inkstack-attachment-store",
+ "inkstack-client",
+ "inkstack-code-mode",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-context-fragments",
+ "inkstack-core-plugins",
+ "inkstack-diagnostics",
+ "inkstack-exec-server",
+ "inkstack-exec-server-test-support",
+ "inkstack-execpolicy",
+ "inkstack-extension-api",
+ "inkstack-extension-items",
+ "inkstack-features",
+ "inkstack-feedback",
+ "inkstack-file-system",
+ "inkstack-git-utils",
+ "inkstack-guardian-context",
+ "inkstack-guardian-reviewer",
+ "inkstack-history",
+ "inkstack-home",
+ "inkstack-hooks",
+ "inkstack-http-client",
+ "inkstack-image-generation-extension",
+ "inkstack-install-context",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-mcp-extension",
+ "inkstack-memories-read",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-network-proxy",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "inkstack-response-debug-context",
+ "inkstack-rmcp-client",
+ "inkstack-rollout",
+ "inkstack-rollout-trace",
+ "inkstack-sandboxing",
+ "inkstack-shell-command",
+ "inkstack-skills",
+ "inkstack-skills-extension",
+ "inkstack-state",
+ "inkstack-terminal-detection",
+ "inkstack-test-binary-support",
+ "inkstack-thread-store",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-audio",
+ "inkstack-utils-cache",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-git-discovery",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-image",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "inkstack-utils-redacted-string",
+ "inkstack-utils-stream-parser",
+ "inkstack-utils-string",
+ "inkstack-web-search-extension",
+ "inkstack-windows-sandbox",
+ "inkstack-windows-sandbox-test-support",
+ "insta",
+ "libc",
+ "maplit",
+ "once_cell",
+ "openssl-sys",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "predicates",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "regex-lite",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha1 0.10.6",
+ "shlex",
+ "similar",
+ "tempfile",
+ "test-case",
+ "test-log",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "tokio-util",
+ "toml 0.9.11+spec-1.1.0",
+ "toml_edit 0.24.0+spec-1.1.0",
+ "tonic",
+ "tower",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "tracing-test",
+ "url",
+ "uuid",
+ "walkdir",
+ "which 8.0.0",
+ "whoami 1.6.1",
+ "windows-sys 0.61.2",
+ "wiremock",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-core-api"
+version = "0.0.0"
+dependencies = [
+ "inkstack-analytics",
+ "inkstack-app-server-protocol",
+ "inkstack-arg0",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-exec-server",
+ "inkstack-extension-api",
+ "inkstack-features",
+ "inkstack-history",
+ "inkstack-home",
+ "inkstack-image-generation-extension",
+ "inkstack-login",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-utils-absolute-path",
+]
+
+[[package]]
+name = "inkstack-core-plugin-common"
+version = "0.0.0"
+dependencies = [
+ "inkstack-utils-absolute-path",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "inkstack-core-plugins"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "dirs",
+ "flate2",
+ "futures",
+ "http 1.4.0",
+ "inkstack-analytics",
+ "inkstack-app-server-protocol",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-core-plugin-common",
+ "inkstack-exec-server",
+ "inkstack-exec-server-test-support",
+ "inkstack-git-utils",
+ "inkstack-hooks",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-model-provider",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-shell-command",
+ "inkstack-skills",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "inkstack-utils-process",
+ "libc",
+ "pretty_assertions",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "serde_yaml",
+ "sha2 0.10.9",
+ "tar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+ "tracing-subscriber",
+ "tracing-test",
+ "url",
+ "uuid",
+ "wiremock",
+ "zip",
+]
+
+[[package]]
+name = "inkstack-diagnostics"
+version = "0.0.0"
+dependencies = [
+ "libc",
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-exec"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "assert_cmd",
+ "clap",
+ "core_test_support",
+ "inkstack-app-server-client",
+ "inkstack-app-server-protocol",
+ "inkstack-apply-patch",
+ "inkstack-arg0",
+ "inkstack-cloud-config",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-features",
+ "inkstack-feedback",
+ "inkstack-git-utils",
+ "inkstack-history",
+ "inkstack-login",
+ "inkstack-model-provider-info",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-cli",
+ "inkstack-utils-oss",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-sandbox-summary",
+ "inkstack-worktree",
+ "insta",
+ "libc",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "owo-colors",
+ "predicates",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "supports-color 3.0.2",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "ts-rs",
+ "uuid",
+ "walkdir",
+ "wiremock",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-exec-server"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "axum",
+ "base64 0.22.1",
+ "bytes",
+ "clatter",
+ "ctor 0.6.3",
+ "dirs",
+ "futures",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-build-info",
+ "inkstack-config",
+ "inkstack-core-plugin-common",
+ "inkstack-exec-server-protocol",
+ "inkstack-exec-server-test-support",
+ "inkstack-file-system",
+ "inkstack-file-watcher",
+ "inkstack-http-client",
+ "inkstack-linux-sandbox",
+ "inkstack-mxc-sandbox",
+ "inkstack-network-proxy",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-sandboxing",
+ "inkstack-shell-command",
+ "inkstack-skills",
+ "inkstack-test-binary-support",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "inkstack-utils-redacted-string",
+ "inkstack-utils-rustls-provider",
+ "inkstack-websocket-auth",
+ "inkstack-websocket-client",
+ "inkstack-windows-sandbox-test-support",
+ "libc",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "prost",
+ "rcgen",
+ "rustix 1.1.4",
+ "rustls",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "tempfile",
+ "test-case",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "tokio-util",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "url",
+ "uuid",
+ "which 8.0.0",
+ "windows-sys 0.61.2",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-exec-server-protocol"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "inkstack-file-system",
+ "inkstack-install-context",
+ "inkstack-mxc-sandbox",
+ "inkstack-network-proxy",
+ "inkstack-protocol",
+ "inkstack-shell-command",
+ "inkstack-skills",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-exec-server-test-support"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "futures",
+ "inkstack-exec-server",
+ "inkstack-http-client",
+ "prost",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-execpolicy"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "inkstack-utils-absolute-path",
+ "multimap",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "shlex",
+ "starlark",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-experimental-api-macros"
+version = "0.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "inkstack-extension-api"
+version = "0.0.0"
+dependencies = [
+ "futures",
+ "inkstack-api",
+ "inkstack-config",
+ "inkstack-context-fragments",
+ "inkstack-exec-server-protocol",
+ "inkstack-file-system",
+ "inkstack-guardian-context",
+ "inkstack-history",
+ "inkstack-mcp",
+ "inkstack-protocol",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-extension-items"
+version = "0.0.0"
+dependencies = [
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "ts-rs",
+]
+
+[[package]]
+name = "inkstack-external-agent-migration"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "inkstack-analytics",
+ "inkstack-app-server-protocol",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-core-plugins",
+ "inkstack-hooks",
+ "inkstack-login",
+ "inkstack-memories-write",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-thread-store",
+ "inkstack-utils-output-truncation",
+ "linkify",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha2 0.10.9",
+ "tempfile",
+ "tokio",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-features"
+version = "0.0.0"
+dependencies = [
+ "inkstack-network-proxy",
+ "inkstack-protocol",
+ "inkstack-utils-redacted-string",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-feedback"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "flate2",
+ "http 1.4.0",
+ "httpdate",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-state",
+ "log",
+ "mime_guess",
+ "pretty_assertions",
+ "sentry",
+ "serde_json",
+ "tar",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-file-search"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "crossbeam-channel",
+ "ignore",
+ "nucleo",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-file-system"
+version = "0.0.0"
+dependencies = [
+ "bytes",
+ "futures",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "serde",
+]
+
+[[package]]
+name = "inkstack-file-watcher"
+version = "0.0.0"
+dependencies = [
+ "notify",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-git-attribution"
+version = "0.0.0"
+dependencies = [
+ "inkstack-backend-client",
+ "inkstack-extension-api",
+ "inkstack-http-client",
+ "inkstack-login",
+ "serde_json",
+ "tokio",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-git-utils"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "futures",
+ "gix",
+ "inkstack-file-system",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "once_cell",
+ "pretty_assertions",
+ "regex",
+ "schemars 0.8.22",
+ "serde",
+ "similar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "ts-rs",
+ "walkdir",
+]
+
+[[package]]
+name = "inkstack-goal-extension"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "inkstack-analytics",
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-otel",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-state",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-template",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-guardian-context"
+version = "0.0.0"
+dependencies = [
+ "inkstack-context-fragments",
+ "inkstack-history",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-guardian-reviewer"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-analytics",
+ "inkstack-extension-api",
+ "inkstack-feedback",
+ "inkstack-guardian-context",
+ "inkstack-mcp",
+ "inkstack-otel",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "serde",
+ "serde_json",
+ "test-case",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-guardian-v2"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "core_test_support",
+ "dirs",
+ "http 1.4.0",
+ "inkstack-analytics",
+ "inkstack-api",
+ "inkstack-config",
+ "inkstack-context-fragments",
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-features",
+ "inkstack-guardian-context",
+ "inkstack-guardian-reviewer",
+ "inkstack-history",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "inkstack-utils-cargo-bin",
+ "inkstack-websocket-client",
+ "insta",
+ "pretty_assertions",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+ "wiremock",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-history"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-history-notes-extension"
+version = "0.0.0"
+dependencies = [
+ "core_test_support",
+ "http 1.4.0",
+ "inkstack-analytics",
+ "inkstack-client",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-protocol",
+ "inkstack-tools",
+ "inkstack-utils-output-truncation",
+ "pretty_assertions",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-home"
+version = "0.0.0"
+dependencies = [
+ "inkstack-extension-api",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-hooks"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "chrono",
+ "futures",
+ "inkstack-config",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "libc",
+ "pretty_assertions",
+ "regex",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-http-client"
+version = "0.0.0"
+dependencies = [
+ "bytes",
+ "futures",
+ "http 1.4.0",
+ "http-body 1.0.1",
+ "httpdate",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-rustls-provider",
+ "native-tls",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "rcgen",
+ "reqwest 0.12.28",
+ "rustls",
+ "rustls-native-certs",
+ "rustls-pki-types",
+ "rustls-platform-verifier",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "sha2 0.10.9",
+ "system-configuration",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "windows-sys 0.61.2",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-image-generation-extension"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-core",
+ "inkstack-exec-server",
+ "inkstack-extension-api",
+ "inkstack-extension-items",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-protocol",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-image",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-install-context"
+version = "0.0.0"
+dependencies = [
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-home-dir",
+ "pretty_assertions",
+ "semver",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
+name = "inkstack-keyring-store"
+version = "0.0.0"
+dependencies = [
+ "keyring",
+ "pretty_assertions",
+ "secret-service",
+ "security-framework 3.5.1",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-linux-sandbox"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "globset",
+ "inkstack-core",
+ "inkstack-install-context",
+ "inkstack-network-proxy",
+ "inkstack-process-hardening",
+ "inkstack-protocol",
+ "inkstack-sandboxing",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "landlock",
+ "libc",
+ "pretty_assertions",
+ "rustix 1.1.4",
+ "seccompiler",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "test-case",
+ "tokio",
+ "url",
+]
+
+[[package]]
+name = "inkstack-lmstudio"
+version = "0.0.0"
+dependencies = [
+ "inkstack-core",
+ "inkstack-http-client",
+ "inkstack-model-provider-info",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "which 8.0.0",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-login"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "chrono",
+ "core_test_support",
+ "http 1.4.0",
+ "inkstack-agent-identity",
+ "inkstack-config",
+ "inkstack-http-client",
+ "inkstack-keyring-store",
+ "inkstack-model-provider-info",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-secrets",
+ "inkstack-terminal-detection",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-process",
+ "inkstack-utils-template",
+ "inkstack-workload-identity",
+ "jsonwebtoken",
+ "keyring",
+ "once_cell",
+ "opentelemetry_sdk",
+ "os_info",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "regex-lite",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tiny_http",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "urlencoding",
+ "webbrowser",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-mcp"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "assert_matches",
+ "async-channel",
+ "futures",
+ "inkstack-api",
+ "inkstack-async-utils",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-diagnostics",
+ "inkstack-exec-server",
+ "inkstack-exec-server-test-support",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-rmcp-client",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "inkstack-utils-process",
+ "insta",
+ "lru",
+ "pretty_assertions",
+ "regex-lite",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "sha1 0.10.6",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "inkstack-mcp-extension"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "core_test_support",
+ "futures",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-connectors-extension",
+ "inkstack-core",
+ "inkstack-core-plugins",
+ "inkstack-exec-server",
+ "inkstack-exec-server-test-support",
+ "inkstack-extension-api",
+ "inkstack-features",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-memories-extension"
+version = "0.0.0"
+dependencies = [
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-features",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-template",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-memories-read"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+ "inkstack-shell-command",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-memories-write"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "core_test_support",
+ "futures",
+ "inkstack-backend-client",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-features",
+ "inkstack-git-utils",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-rollout-trace",
+ "inkstack-secrets",
+ "inkstack-state",
+ "inkstack-terminal-detection",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-template",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "uuid",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-mermaid"
+version = "0.0.0"
+dependencies = [
+ "insta",
+ "pretty_assertions",
+ "unicode-width 0.2.1",
+]
+
+[[package]]
+name = "inkstack-message-history"
+version = "0.0.0"
+dependencies = [
+ "inkstack-config",
+ "memchr",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-model-provider"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "chrono",
+ "http 1.4.0",
+ "inkstack-agent-identity",
+ "inkstack-api",
+ "inkstack-aws-auth",
+ "inkstack-feedback",
+ "inkstack-http-client",
+ "inkstack-keyring-store",
+ "inkstack-login",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-response-debug-context",
+ "inkstack-secrets",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-process",
+ "inkstack-utils-redacted-string",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "url",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-model-provider-info"
+version = "0.0.0"
+dependencies = [
+ "http 1.4.0",
+ "inkstack-client",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-redacted-string",
+ "maplit",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "tempfile",
+ "toml 0.9.11+spec-1.1.0",
+ "url",
+]
+
+[[package]]
+name = "inkstack-models-manager"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-otel",
+ "inkstack-prompts",
+ "inkstack-protocol",
+ "inkstack-utils-output-truncation",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-mxc-sandbox"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "appcontainer_common",
+ "inkstack-network-proxy",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "inkstack-windows-sandbox",
+ "learning_mode_windows",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracelogging",
+ "windows-sys 0.61.2",
+ "wxc_common",
+]
+
+[[package]]
+name = "inkstack-network-proxy"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "chrono",
+ "clap",
+ "globset",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-rustls-provider",
+ "inkstack-windows-sandbox",
+ "libc",
+ "opentelemetry",
+ "pretty_assertions",
+ "rama-core",
+ "rama-dns",
+ "rama-http",
+ "rama-http-backend",
+ "rama-net",
+ "rama-socks5",
+ "rama-tcp",
+ "rama-tls-rustls",
+ "rama-unix",
+ "rand 0.9.3",
+ "rand_regex",
+ "regex",
+ "regex-automata",
+ "regex-syntax",
+ "rustls-native-certs",
+ "schannel",
+ "schemars 0.8.22",
+ "security-framework 3.5.1",
+ "serde",
+ "serde_ignored",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-ollama"
+version = "0.0.0"
+dependencies = [
+ "assert_matches",
+ "async-stream",
+ "bytes",
+ "futures",
+ "inkstack-core",
+ "inkstack-http-client",
+ "inkstack-model-provider-info",
+ "memchr",
+ "pretty_assertions",
+ "semver",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-otel"
+version = "0.0.0"
+dependencies = [
+ "bytes",
+ "chrono",
+ "eventsource-stream",
+ "gethostname",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-http-client",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-stream-parser",
+ "inkstack-utils-string",
+ "libc",
+ "opentelemetry",
+ "opentelemetry-appender-tracing",
+ "opentelemetry-http",
+ "opentelemetry-otlp",
+ "opentelemetry-semantic-conventions",
+ "opentelemetry_sdk",
+ "os_info",
+ "pretty_assertions",
+ "reqwest 0.12.28",
+ "seccompiler",
+ "serde",
+ "serde_json",
+ "strum_macros 0.28.0",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "inkstack-otel-trace-websocket"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "futures",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-plugin"
+version = "0.0.0"
+dependencies = [
+ "inkstack-config",
+ "inkstack-core-plugin-common",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "pretty_assertions",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "inkstack-process-hardening"
+version = "0.0.0"
+dependencies = [
+ "libc",
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-prompts"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-collaboration-mode-templates",
+ "inkstack-context-fragments",
+ "inkstack-execpolicy",
+ "inkstack-git-utils",
+ "inkstack-guardian-context",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-template",
+ "pretty_assertions",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-protocol"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chardetng",
+ "chrono",
+ "derive_more 2.1.1",
+ "encoding_rs",
+ "gix-url",
+ "globset",
+ "http 1.4.0",
+ "icu_decimal",
+ "icu_locale_core",
+ "icu_provider",
+ "inkstack-async-utils",
+ "inkstack-execpolicy",
+ "inkstack-extension-items",
+ "inkstack-http-client",
+ "inkstack-network-proxy",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-image",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-redacted-string",
+ "inkstack-utils-string",
+ "landlock",
+ "libc",
+ "pretty_assertions",
+ "quick-xml 0.41.0",
+ "schemars 0.8.22",
+ "seccompiler",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "strum 0.27.2",
+ "strum_macros 0.28.0",
+ "sys-locale",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "ts-rs",
+ "uuid",
+ "wildmatch",
+]
+
+[[package]]
+name = "inkstack-queue-extension"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "core_test_support",
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-thread-store",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-realtime-webrtc"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "ctor 0.6.3",
+ "futures",
+ "inkstack-build-info",
+ "inkstack-install-context",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-pty",
+ "libc",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-response-debug-context"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "http 1.4.0",
+ "inkstack-api",
+ "pretty_assertions",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-responses-api-proxy"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "ctor 0.6.3",
+ "inkstack-process-hardening",
+ "libc",
+ "pretty_assertions",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "tiny_http",
+ "zeroize",
+]
+
+[[package]]
+name = "inkstack-rmcp-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "base64 0.22.1",
+ "bytes",
+ "futures",
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-config",
+ "inkstack-exec-server",
+ "inkstack-http-client",
+ "inkstack-keyring-store",
+ "inkstack-network-proxy",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-secrets",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-pty",
+ "keyring",
+ "libc",
+ "memchr",
+ "oauth2",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha2 0.10.9",
+ "sse-stream",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tiny_http",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+ "tracing-test",
+ "url",
+ "urlencoding",
+ "webbrowser",
+ "which 8.0.0",
+ "windows-sys 0.61.2",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-rollout"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "inkstack-extension-items",
+ "inkstack-file-search",
+ "inkstack-git-utils",
+ "inkstack-history",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-state",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-path",
+ "inkstack-utils-process",
+ "inkstack-utils-string",
+ "memchr",
+ "pretty_assertions",
+ "regex",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "time",
+ "tokio",
+ "tracing",
+ "uuid",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-rollout-trace"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "http 1.4.0",
+ "inkstack-code-mode",
+ "inkstack-protocol",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-sandboxing"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "dunce",
+ "inkstack-mxc-sandbox",
+ "inkstack-network-proxy",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-pty",
+ "inkstack-windows-sandbox",
+ "libc",
+ "pretty_assertions",
+ "regex-lite",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "url",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "inkstack-secrets"
+version = "0.0.0"
+dependencies = [
+ "age",
+ "anyhow",
+ "base64 0.22.1",
+ "inkstack-git-utils",
+ "inkstack-keyring-store",
+ "keyring",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "regex",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-shell-command"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "libc",
+ "once_cell",
+ "pretty_assertions",
+ "regex",
+ "serde",
+ "serde_json",
+ "shlex",
+ "tempfile",
+ "tree-sitter",
+ "tree-sitter-bash",
+ "tree-sitter-powershell",
+ "url",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "inkstack-skills"
+version = "0.0.0"
+dependencies = [
+ "include_dir",
+ "inkstack-protocol",
+ "inkstack-shell-command",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "serde",
+ "serde_yaml",
+ "shlex",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-skills-extension"
+version = "0.0.0"
+dependencies = [
+ "assert_matches",
+ "blake3",
+ "dirs",
+ "dunce",
+ "futures",
+ "inkstack-analytics",
+ "inkstack-config",
+ "inkstack-exec-server",
+ "inkstack-extension-api",
+ "inkstack-mcp",
+ "inkstack-models-manager",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-skills",
+ "inkstack-tools",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "inkstack-utils-string",
+ "insta",
+ "opentelemetry_sdk",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "toml 0.9.11+spec-1.1.0",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "inkstack-state"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "file-id",
+ "inkstack-git-utils",
+ "inkstack-history",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "libsqlite3-sys",
+ "log",
+ "pretty_assertions",
+ "scopeguard",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "sqlx-macros",
+ "sqlx-sqlite",
+ "strum 0.27.2",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
+name = "inkstack-stdio-to-uds"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-uds",
+ "inkstack-utils-cargo-bin",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-tcp-tunnel"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "clap",
+ "h3",
+ "h3-quinn",
+ "http 1.4.0",
+ "pretty_assertions",
+ "quinn",
+ "rand 0.9.3",
+ "rcgen",
+ "rustls",
+ "rustls-native-certs",
+ "serde_json",
+ "tokio",
+ "url",
+]
+
+[[package]]
+name = "inkstack-terminal-detection"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-test-binary-support"
+version = "0.0.0"
+dependencies = [
+ "inkstack-arg0",
+ "tempfile",
+]
+
+[[package]]
+name = "inkstack-thread-manager-sample"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "inkstack-core-api",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-thread-store"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "futures",
+ "inkstack-app-server-protocol",
+ "inkstack-extension-items",
+ "inkstack-git-utils",
+ "inkstack-install-context",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-rollout",
+ "inkstack-state",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+ "pulldown-cmark",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "sqlx-macros",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+ "zstd",
+]
+
+[[package]]
+name = "inkstack-tools"
+version = "0.0.0"
+dependencies = [
+ "bitflags 2.13.1",
+ "inkstack-code-mode",
+ "inkstack-connectors",
+ "inkstack-extension-items",
+ "inkstack-features",
+ "inkstack-file-system",
+ "inkstack-protocol",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-output-truncation",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-string",
+ "jsonptr",
+ "pretty_assertions",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "urlencoding",
+]
+
+[[package]]
+name = "inkstack-tui"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "app_test_support",
+ "arboard",
+ "assert_matches",
+ "axum",
+ "base64 0.22.1",
+ "chrono",
+ "clap",
+ "color-eyre",
+ "core_test_support",
+ "crossterm",
+ "derive_more 2.1.1",
+ "diffy",
+ "dirs",
+ "dunce",
+ "futures",
+ "http 1.4.0",
+ "image",
+ "inkstack-ansi-escape",
+ "inkstack-app-server-client",
+ "inkstack-app-server-daemon",
+ "inkstack-app-server-protocol",
+ "inkstack-arg0",
+ "inkstack-backend-client",
+ "inkstack-build-info",
+ "inkstack-cloud-config",
+ "inkstack-config",
+ "inkstack-connectors",
+ "inkstack-context-fragments",
+ "inkstack-core-plugins",
+ "inkstack-exec-server",
+ "inkstack-features",
+ "inkstack-feedback",
+ "inkstack-file-search",
+ "inkstack-git-utils",
+ "inkstack-history",
+ "inkstack-http-client",
+ "inkstack-install-context",
+ "inkstack-login",
+ "inkstack-mcp",
+ "inkstack-mermaid",
+ "inkstack-message-history",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-models-manager",
+ "inkstack-otel",
+ "inkstack-plugin",
+ "inkstack-protocol",
+ "inkstack-realtime-webrtc",
+ "inkstack-rollout",
+ "inkstack-sandboxing",
+ "inkstack-shell-command",
+ "inkstack-state",
+ "inkstack-terminal-detection",
+ "inkstack-uds",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-approval-presets",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-cli",
+ "inkstack-utils-elapsed",
+ "inkstack-utils-fuzzy-match",
+ "inkstack-utils-home-dir",
+ "inkstack-utils-oss",
+ "inkstack-utils-path",
+ "inkstack-utils-path-uri",
+ "inkstack-utils-plugins",
+ "inkstack-utils-sandbox-summary",
+ "inkstack-utils-sleep-inhibitor",
+ "inkstack-utils-string",
+ "inkstack-windows-sandbox",
+ "inkstack-worktree",
+ "insta",
+ "itertools 0.14.0",
+ "lazy_static",
+ "libc",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "opentelemetry_sdk",
+ "pathdiff",
+ "pretty_assertions",
+ "pulldown-cmark",
+ "rand 0.9.3",
+ "ratatui",
+ "ratatui-macros",
+ "regex-lite",
+ "rmcp",
+ "semver",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sha2 0.10.9",
+ "shlex",
+ "strum 0.27.2",
+ "strum_macros 0.28.0",
+ "supports-color 3.0.2",
+ "syntect",
+ "tempfile",
+ "textwrap 0.16.2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite",
+ "tokio-util",
+ "toml 0.9.11+spec-1.1.0",
+ "toml_edit 0.24.0+spec-1.1.0",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "two-face",
+ "unicode-segmentation",
+ "unicode-width 0.2.1",
+ "url",
+ "urlencoding",
+ "uuid",
+ "vt100",
+ "webbrowser",
+ "which 8.0.0",
+ "windows-sys 0.61.2",
+ "winsplit",
+ "wiremock",
+ "zbus",
+]
+
+[[package]]
+name = "inkstack-uds"
+version = "0.0.0"
+dependencies = [
+ "async-io",
+ "libc",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "uds_windows",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-user-verification"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "block2",
+ "core-foundation 0.10.1",
+ "dirs",
+ "objc2",
+ "objc2-foundation",
+ "objc2-local-authentication",
+ "p256",
+ "pretty_assertions",
+ "security-framework 3.5.1",
+ "security-framework-sys",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-utils-absolute-path"
+version = "0.0.0"
+dependencies = [
+ "dirs",
+ "dunce",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "ts-rs",
+]
+
+[[package]]
+name = "inkstack-utils-approval-presets"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+]
+
+[[package]]
+name = "inkstack-utils-audio"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "inkstack-protocol",
+ "inkstack-utils-cache",
+ "inkstack-utils-string",
+ "pretty_assertions",
+ "symphonia",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-utils-cache"
+version = "0.0.0"
+dependencies = [
+ "lru",
+ "sha1 0.10.6",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-utils-cargo-bin"
+version = "0.0.0"
+dependencies = [
+ "assert_cmd",
+ "runfiles",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "inkstack-utils-cli"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "inkstack-protocol",
+ "inkstack-shell-command",
+ "pretty_assertions",
+ "serde",
+ "toml 0.9.11+spec-1.1.0",
+]
+
+[[package]]
+name = "inkstack-utils-elapsed"
+version = "0.0.0"
+
+[[package]]
+name = "inkstack-utils-fuzzy-match"
+version = "0.0.0"
+
+[[package]]
+name = "inkstack-utils-git-discovery"
+version = "0.0.0"
+dependencies = [
+ "futures",
+ "inkstack-git-utils",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "inkstack-utils-home-dir"
+version = "0.0.0"
+dependencies = [
+ "dirs",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "tempfile",
+]
+
+[[package]]
+name = "inkstack-utils-image"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "divan",
+ "image",
+ "inkstack-utils-cache",
+ "mime_guess",
+ "png",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-utils-json-to-toml"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "serde_json",
+ "toml 0.9.11+spec-1.1.0",
+]
+
+[[package]]
+name = "inkstack-utils-oss"
+version = "0.0.0"
+dependencies = [
+ "inkstack-core",
+ "inkstack-lmstudio",
+ "inkstack-model-provider-info",
+ "inkstack-ollama",
+]
+
+[[package]]
+name = "inkstack-utils-output-truncation"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+ "inkstack-utils-string",
+ "pretty_assertions",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-utils-path"
+version = "0.0.0"
+dependencies = [
+ "dunce",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "tempfile",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-utils-path-uri"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "inkstack-utils-absolute-path",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "ts-rs",
+ "url",
+ "urlencoding",
+]
+
+[[package]]
+name = "inkstack-utils-plugins"
+version = "0.0.0"
+dependencies = [
+ "inkstack-exec-server",
+ "inkstack-exec-server-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-utils-process"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-utils-pty"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "ctor 0.6.3",
+ "filedescriptor",
+ "inkstack-utils-cargo-bin",
+ "lazy_static",
+ "libc",
+ "log",
+ "portable-pty",
+ "pretty_assertions",
+ "shared_library",
+ "tempfile",
+ "tokio",
+ "winapi",
+]
+
+[[package]]
+name = "inkstack-utils-readiness"
+version = "0.0.0"
+dependencies = [
+ "assert_matches",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+]
+
+[[package]]
+name = "inkstack-utils-redacted-string"
+version = "0.0.0"
+dependencies = [
+ "schemars 0.8.22",
+ "serde",
+]
+
+[[package]]
+name = "inkstack-utils-rustls-provider"
+version = "0.0.0"
+dependencies = [
+ "rustls",
+]
+
+[[package]]
+name = "inkstack-utils-sandbox-summary"
+version = "0.0.0"
+dependencies = [
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-path-uri",
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-utils-sleep-inhibitor"
+version = "0.0.0"
+dependencies = [
+ "core-foundation 0.9.4",
+ "libc",
+ "tracing",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-utils-stream-parser"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-utils-string"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "regex-lite",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "inkstack-utils-template"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+]
+
+[[package]]
+name = "inkstack-v8-poc"
+version = "0.0.0"
+dependencies = [
+ "pretty_assertions",
+ "v8",
+]
+
+[[package]]
+name = "inkstack-voice-host"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "cpal",
+ "crossbeam-queue",
+ "futures",
+ "gstreamer",
+ "gstreamer-app",
+ "gstreamer-audio",
+ "inkstack-install-context",
+ "inkstack-process-hardening",
+ "inkstack-realtime-webrtc",
+ "inkstack-utils-cargo-bin",
+ "libloading",
+ "opus",
+ "pretty_assertions",
+ "rand 0.9.3",
+ "rtc",
+ "rubato",
+ "sonora",
+ "tempfile",
+ "tokio",
+ "webrtc",
+]
+
+[[package]]
+name = "inkstack-web-search-extension"
+version = "0.0.0"
+dependencies = [
+ "http 1.4.0",
+ "inkstack-api",
+ "inkstack-core",
+ "inkstack-extension-api",
+ "inkstack-extension-items",
+ "inkstack-http-client",
+ "inkstack-login",
+ "inkstack-model-provider",
+ "inkstack-model-provider-info",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-tools",
+ "pretty_assertions",
+ "schemars 0.8.22",
+ "serde_json",
+ "url",
+]
+
+[[package]]
+name = "inkstack-websocket-auth"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "clap",
+ "constant_time_eq",
+ "hmac 0.12.1",
+ "http 1.4.0",
+ "inkstack-utils-absolute-path",
+ "jsonwebtoken",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "time",
+]
+
+[[package]]
+name = "inkstack-websocket-client"
+version = "0.0.0"
+dependencies = [
+ "futures",
+ "inkstack-http-client",
+ "inkstack-utils-rustls-provider",
+ "pretty_assertions",
+ "rcgen",
+ "rustls",
+ "tokio",
+ "tokio-rustls",
+ "tokio-tungstenite",
+ "url",
+]
+
+[[package]]
+name = "inkstack-windows-sandbox"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "chrono",
+ "dirs-next",
+ "dunce",
+ "glob",
+ "inkstack-http-client",
+ "inkstack-otel",
+ "inkstack-protocol",
+ "inkstack-utils-absolute-path",
+ "inkstack-utils-cargo-bin",
+ "inkstack-utils-process",
+ "inkstack-utils-pty",
+ "inkstack-utils-string",
+ "inkstack-windows-sandbox-test-support",
+ "pretty_assertions",
+ "rand 0.8.6",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing-appender",
+ "windows 0.58.0",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-windows-sandbox-service"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "inkstack-cloud-config",
+ "inkstack-config",
+ "inkstack-core",
+ "inkstack-windows-sandbox",
+ "pretty_assertions",
+ "serde_json",
+ "tokio",
+ "toml 0.9.11+spec-1.1.0",
+ "windows 0.58.0",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "inkstack-windows-sandbox-test-support"
+version = "0.0.0"
+dependencies = [
+ "dirs",
+]
+
+[[package]]
+name = "inkstack-workload-identity"
+version = "0.0.0"
+dependencies = [
+ "inkstack-http-client",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+ "wiremock",
+]
+
+[[package]]
+name = "inkstack-worktree"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "dunce",
+ "inkstack-git-utils",
+ "inkstack-protocol",
+ "inkstack-utils-cargo-bin",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "uuid",
 ]
 
 [[package]]
@@ -15823,9 +15823,9 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 
 [[package]]
 name = "tracelogging"
-version = "1.2.3"
+version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4314470f3f54b29d582ff6776fceb7c819b023141828d559f19c790cee40e94"
+checksum = "c0015caf14cad7613b7bbbb9ee44399ad9a694307be545d8af4e2711178e547e"
 dependencies = [
  "tracelogging_macros",
 ]
