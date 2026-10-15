@@ -1,6 +1,6 @@
 ## Contributing
 
-We welcome community contributions through the [openai/inkstack issue tracker](https://github.com/openai/codex/issues). Bug reports, root-cause analyses, and feature requests help us understand what matters most and improve InkStack.
+We welcome community contributions through the [InkStack issue tracker](https://github.com/Grim-Saga/InkStack/issues) Bug reports, root-cause analyses, and feature requests help us understand what matters most and improve InkStack.
 
 **We do not accept external code contributions or pull requests.**
 
