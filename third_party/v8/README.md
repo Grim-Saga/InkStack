@@ -80,6 +80,34 @@ their raw names:
 - `src_binding_ptrcomp_sandbox_release_<target>.rs`
 
 The dedicated publishing workflow is `.github/workflows/rusty-v8-release.yml`.
+It also supports **Run workflow** for a repository's first release. Manual runs
+derive `rusty-v8-v<crate_version>` from `inkstack-rs/Cargo.lock` and create the tag
+at the built commit only after all builds and checksum checks succeed. An
+existing tag must identify that same commit, and published releases are never
+overwritten. Standard GitHub-hosted runners build locally when no BuildBuddy
+key is configured; native Intel and ARM macOS runners smoke test their own
+architectures.
+
+The publication job verifies the complete 14-pair matrix, including both
+profiles on Darwin/GNU/musl and the sandbox profile on Windows MSVC. It publishes
+two aggregate pin files alongside the archive/binding pairs:
+
+- `rusty_v8_<version>_release_manifests.sha256` authenticates the eight sandbox
+  pair manifests, including their original line endings.
+- `rusty_v8_<version>.sha256` records the ten Bazel artifact hashes, preserving
+  the Windows archive aliases used by `MODULE.bazel`.
+
+After the first successful InkStack release, independently verify these pins
+against the release assets and successful workflow run before committing them
+to this directory. Update the consumer URLs in `MODULE.bazel`,
+`.github/actions/setup-rusty-v8/action.yml`, and `scripts/codex_package/v8.py`
+together, then run `update-module-bazel` and `check-module-bazel` as above.
+The initial import still pins `openai/codex` artifacts; newly compiled archives
+must not be used with those old hashes. Private repositories require
+authenticated asset downloads, for example `gh release download --repo
+Grim-Saga/InkStack rusty-v8-v150.4.0`; the Cargo overrides also accept those
+downloaded files as local paths.
+
 Tagged runs build release artifacts from the Bazel graph itself:
 
 - `//third_party/v8:rusty_v8_release_pair_x86_64_apple_darwin`
