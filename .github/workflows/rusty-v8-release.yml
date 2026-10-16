@@ -83,6 +83,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             v8_cpu: x64
             variant: release
+            local_jobs: 2
           - runner: ubuntu-24.04
             bazel_config: ci-v8
             platform: linux_amd64
@@ -90,6 +91,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             v8_cpu: x64
             variant: ptrcomp-sandbox
+            local_jobs: 2
           - runner: ubuntu-24.04-arm
             bazel_config: ci-v8
             platform: linux_arm64
@@ -97,6 +99,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             v8_cpu: arm64
             variant: release
+            local_jobs: 2
           - runner: ubuntu-24.04-arm
             bazel_config: ci-v8
             platform: linux_arm64
@@ -104,6 +107,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             v8_cpu: arm64
             variant: ptrcomp-sandbox
+            local_jobs: 2
           - runner: macos-15-intel
             bazel_config: ci-macos
             platform: macos_amd64
@@ -111,6 +115,10 @@ jobs:
             target: x86_64-apple-darwin
             v8_cpu: x64
             variant: release
+            # macos-15-intel runners need four local workers to finish a V8
+            # release build inside the 6-hour hosted-runner job limit; the
+            # memory guard below still bounds concurrent actions.
+            local_jobs: 4
           - runner: macos-15-intel
             bazel_config: ci-macos
             platform: macos_amd64
@@ -118,6 +126,7 @@ jobs:
             target: x86_64-apple-darwin
             v8_cpu: x64
             variant: ptrcomp-sandbox
+            local_jobs: 4
           - runner: macos-15
             bazel_config: ci-macos
             platform: macos_arm64
@@ -125,6 +134,7 @@ jobs:
             target: aarch64-apple-darwin
             v8_cpu: arm64
             variant: release
+            local_jobs: 2
           - runner: macos-15
             bazel_config: ci-macos
             platform: macos_arm64
@@ -132,6 +142,7 @@ jobs:
             target: aarch64-apple-darwin
             v8_cpu: arm64
             variant: ptrcomp-sandbox
+            local_jobs: 2
           - runner: ubuntu-24.04
             bazel_config: ci-v8
             platform: linux_amd64_musl
@@ -139,6 +150,7 @@ jobs:
             target: x86_64-unknown-linux-musl
             v8_cpu: x64
             variant: release
+            local_jobs: 2
           - runner: ubuntu-24.04-arm
             bazel_config: ci-v8
             platform: linux_arm64_musl
@@ -146,6 +158,7 @@ jobs:
             target: aarch64-unknown-linux-musl
             v8_cpu: arm64
             variant: release
+            local_jobs: 2
           - runner: ubuntu-24.04
             bazel_config: ci-v8
             platform: linux_amd64_musl
@@ -153,6 +166,7 @@ jobs:
             target: x86_64-unknown-linux-musl
             v8_cpu: x64
             variant: ptrcomp-sandbox
+            local_jobs: 2
           - runner: ubuntu-24.04-arm
             bazel_config: ci-v8
             platform: linux_arm64_musl
@@ -160,6 +174,7 @@ jobs:
             target: aarch64-unknown-linux-musl
             v8_cpu: arm64
             variant: ptrcomp-sandbox
+            local_jobs: 2
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -184,6 +199,7 @@ jobs:
       - name: Build Bazel V8 release pair
         env:
           BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
+          LOCAL_JOBS: ${{ matrix.local_jobs }}
           PLATFORM: ${{ matrix.platform }}
           SANDBOX: ${{ matrix.sandbox }}
           TARGET: ${{ matrix.target }}
@@ -214,8 +230,9 @@ jobs:
           fi
           if [[ -z "${BUILDBUDDY_API_KEY}" ]]; then
             # Fresh repositories build locally on standard GitHub runners.
-            # Avoid the workspace's 30-job default exhausting runner memory.
-            bazel_args+=(--jobs=2 "--local_resources=memory=HOST_RAM*0.6")
+            # Avoid the workspace's 30-job default exhausting runner memory;
+            # the memory guard still bounds concurrent actions.
+            bazel_args+=("--jobs=${LOCAL_JOBS}" "--local_resources=memory=HOST_RAM*0.6")
           fi
 
           ./.github/scripts/run_bazel_with_buildbuddy.py \
