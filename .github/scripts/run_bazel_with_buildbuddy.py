@@ -4,10 +4,8 @@ import json
 import os
 import subprocess
 import sys
-from collections.abc import Mapping
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
-
 
 OPENAI_REPOSITORY = "openai/inkstack"
 # Remote configurations select cache/BES/download endpoints. Their -rbe forms
@@ -168,6 +166,7 @@ def bazel_args_with_remote_config(
         for env_name, option_prefix in (
             ("BAZEL_REPO_CONTENTS_CACHE", "--repo_contents_cache="),
             ("BAZEL_REPOSITORY_CACHE", "--repository_cache="),
+            ("BAZEL_DISTDIR", "--distdir="),
         )
         if env.get(env_name)
         and not any(

@@ -189,7 +189,9 @@ class RunBazelWithBuildBuddyTest(unittest.TestCase):
         }
 
         self.assertEqual(
-            run_bazel_with_buildbuddy.bazel_command("build", "//inkstack-rs/...", env=env),
+            run_bazel_with_buildbuddy.bazel_command(
+                "build", "//inkstack-rs/...", env=env
+            ),
             [
                 "bazel",
                 "--output_user_root=/tmp/bazel-output",
@@ -254,6 +256,36 @@ class RunBazelWithBuildBuddyTest(unittest.TestCase):
                 "--",
                 "--program-arg",
             ],
+        )
+
+    def test_bazel_command_adds_private_release_distdir_before_separator(self) -> None:
+        self.assertEqual(
+            run_bazel_with_buildbuddy.bazel_command(
+                "run",
+                "//inkstack-rs/cli:inkstack",
+                "--",
+                "--distdir=program-value",
+                env={"BAZEL_DISTDIR": "/tmp/private release"},
+            ),
+            [
+                "bazel",
+                "run",
+                "//inkstack-rs/cli:inkstack",
+                "--distdir=/tmp/private release",
+                "--",
+                "--distdir=program-value",
+            ],
+        )
+
+    def test_explicit_bazel_distdir_overrides_environment(self) -> None:
+        self.assertEqual(
+            run_bazel_with_buildbuddy.bazel_command(
+                "build",
+                "--distdir=/tmp/explicit",
+                "//inkstack-rs/...",
+                env={"BAZEL_DISTDIR": "/tmp/private-release"},
+            ),
+            ["bazel", "build", "--distdir=/tmp/explicit", "//inkstack-rs/..."],
         )
 
     def test_main_preserves_spaced_argument_and_child_exit_status(self) -> None:

@@ -4,17 +4,19 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
+import re
+import subprocess
 import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.request import urlopen
 
 from .targets import REPO_ROOT, TargetSpec
 
 DOWNLOAD_TIMEOUT_SECS = 120
 V8_ARTIFACT_PROFILE = "ptrcomp_sandbox_release"
+V8_RELEASE_REPOSITORY = "Grim-Saga/InkStack"
+V8_RELEASE_BASE_URL = f"https://github.com/{V8_RELEASE_REPOSITORY}/releases/download"
 
 
 @dataclass(frozen=True)
@@ -56,9 +58,7 @@ def fetch_inkstack_v8_artifacts(
     cache_root: Path | None = None,
 ) -> RustyV8ArtifactPair:
     version = version or resolved_v8_crate_version()
-    release_url = (
-        f"https://github.com/openai/codex/releases/download/rusty-v8-v{version}"
-    )
+    release_url = f"{V8_RELEASE_BASE_URL}/rusty-v8-v{version}"
     target = spec.target
     cache_dir = (cache_root or default_cache_root()) / f"rusty-v8-{version}-{target}"
 
@@ -209,13 +209,39 @@ def has_checksum(path: Path, expected: str) -> bool:
 
 
 def download_file(url: str, dest: Path) -> None:
+    release = re.fullmatch(
+        re.escape(f"{V8_RELEASE_BASE_URL}/")
+        + r"(rusty-v8-v[0-9]+\.[0-9]+\.[0-9]+)/([A-Za-z0-9_][A-Za-z0-9_.-]*)",
+        url,
+    )
+    if release is None or release.group(2) != dest.name:
+        raise ValueError(
+            f"Expected a trusted V8 release URL matching {dest.name}: {url}"
+        )
+    tag, asset_name = release.groups()
+
     dest.parent.mkdir(parents=True, exist_ok=True)
-    temp_path = dest.with_suffix(f"{dest.suffix}.tmp")
-    temp_path.unlink(missing_ok=True)
-    try:
-        with urlopen(url, timeout=DOWNLOAD_TIMEOUT_SECS) as response:
-            with temp_path.open("wb") as output:
-                shutil.copyfileobj(response, output)
-        temp_path.replace(dest)
-    finally:
-        temp_path.unlink(missing_ok=True)
+    # gh supplies authentication for private release assets from GH_TOKEN,
+    # GITHUB_TOKEN, or its credential store. Keep the temporary download on the
+    # cache filesystem so a successful fetch can replace the destination
+    # atomically; failed refreshes leave existing bytes untouched.
+    with tempfile.TemporaryDirectory(
+        prefix=".rusty-v8-download-", dir=dest.parent
+    ) as temporary:
+        subprocess.run(
+            [
+                "gh",
+                "release",
+                "download",
+                tag,
+                "--repo",
+                V8_RELEASE_REPOSITORY,
+                "--pattern",
+                asset_name,
+                "--dir",
+                temporary,
+            ],
+            check=True,
+            timeout=DOWNLOAD_TIMEOUT_SECS,
+        )
+        (Path(temporary) / asset_name).replace(dest)

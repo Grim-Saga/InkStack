@@ -263,6 +263,14 @@ if [[ "${RUNNER_OS:-}" == "Windows" && $windows_cross_compile -eq 1 && -z "${BUI
 fi
 
 post_config_bazel_args=()
+# CI configs may set a default target platform. Keep an explicit caller target
+# after those configs so the build matches the requested artifact and test ABI.
+for arg in "${bazel_args[@]}"; do
+  if [[ "$arg" == --platforms=* ]]; then
+    post_config_bazel_args+=("$arg")
+  fi
+done
+
 if [[ "${RUNNER_OS:-}" == "Windows" && $windows_msvc_host_platform -eq 1 ]]; then
   has_host_platform_override=0
   for arg in "${bazel_args[@]}"; do

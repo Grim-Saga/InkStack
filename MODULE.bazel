@@ -177,6 +177,15 @@ single_version_override(
 
 bazel_dep(name = "rules_python", version = "2.4.2")
 
+# Preserve locked sdist hashes when rules_python forwards requirements to pip.
+single_version_override(
+    module_name = "rules_python",
+    patch_strip = 1,
+    patches = [
+        "//patches:rules_python_sdist_requirement_hashes.patch",
+    ],
+)
+
 voice_python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 voice_python.defaults(python_version = "3.11")
 voice_python.toolchain(python_version = "3.12")
@@ -867,25 +876,25 @@ http_file(
     downloaded_file_path = "rusty_v8_release_aarch64-pc-windows-msvc.lib.gz",
     sha256 = "54722842af36b74248c403ff531254efac6ff65d281198bab0c6350fc1188ad4",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/rusty_v8_ptrcomp_sandbox_release_aarch64-pc-windows-msvc.lib.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/rusty_v8_ptrcomp_sandbox_release_aarch64-pc-windows-msvc.lib.gz",
     ],
 )
 
 http_file(
     name = "rusty_v8_150_4_0_x86_64_pc_windows_msvc_archive",
     downloaded_file_path = "rusty_v8_release_x86_64-pc-windows-msvc.lib.gz",
-    sha256 = "732ec5da4243aa166799780c8519a5eea6f32f6e47657a323342794dc3c239d6",
+    sha256 = "da5223d93f20b560a0685a74869cd765ee41faa27da8e63c78a955d6a766e702",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/rusty_v8_ptrcomp_sandbox_release_x86_64-pc-windows-msvc.lib.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/rusty_v8_ptrcomp_sandbox_release_x86_64-pc-windows-msvc.lib.gz",
     ],
 )
 
 http_file(
     name = "rusty_v8_150_4_0_aarch64_apple_darwin_archive",
     downloaded_file_path = "librusty_v8_ptrcomp_sandbox_release_aarch64-apple-darwin.a.gz",
-    sha256 = "00adbb48798848c77550441c68673a5e8529b8e1b73eabcdee232cb39b40f4a1",
+    sha256 = "f603606600949b2c19f7506ca6a89df648e9a667311fde874ac1a15aa9938174",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_aarch64-apple-darwin.a.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_aarch64-apple-darwin.a.gz",
     ],
 )
 
@@ -894,7 +903,7 @@ http_file(
     downloaded_file_path = "src_binding_ptrcomp_sandbox_release_aarch64-apple-darwin.rs",
     sha256 = "ca5adf0cf89c9a70ad460ae73648b2fe89b74aa113b3cb7f757b6a02b758394f",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_aarch64-apple-darwin.rs",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_aarch64-apple-darwin.rs",
     ],
 )
 
@@ -903,7 +912,7 @@ http_file(
     downloaded_file_path = "librusty_v8_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.a.gz",
     sha256 = "d1517eed405468537029b005d5fe997ec74d5c8d351f916b3a6df20b7d2811ba",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.a.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.a.gz",
     ],
 )
 
@@ -912,16 +921,16 @@ http_file(
     downloaded_file_path = "src_binding_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.rs",
     sha256 = "7727826ae479bdb645e807239fb12d1f8e2e23de7a6cf16f5ee592690d1d8506",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.rs",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_aarch64-unknown-linux-gnu.rs",
     ],
 )
 
 http_file(
     name = "rusty_v8_150_4_0_x86_64_apple_darwin_archive",
     downloaded_file_path = "librusty_v8_ptrcomp_sandbox_release_x86_64-apple-darwin.a.gz",
-    sha256 = "e0d9bb64e8b3a034c2930c83972f3f35760211148342fa0407b38250ef330856",
+    sha256 = "16e16aa7c2cde6dfa1a19f0309f48b6788c96c7fa2aada6cb4c1ebbdbf0e3e97",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_x86_64-apple-darwin.a.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_x86_64-apple-darwin.a.gz",
     ],
 )
 
@@ -930,7 +939,7 @@ http_file(
     downloaded_file_path = "src_binding_ptrcomp_sandbox_release_x86_64-apple-darwin.rs",
     sha256 = "ca5adf0cf89c9a70ad460ae73648b2fe89b74aa113b3cb7f757b6a02b758394f",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_x86_64-apple-darwin.rs",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_x86_64-apple-darwin.rs",
     ],
 )
 
@@ -939,7 +948,7 @@ http_file(
     downloaded_file_path = "librusty_v8_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.a.gz",
     sha256 = "a35c75d1f26e6a983885a45b33490a4ebe54f05050568b32b89cfb421b30b583",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.a.gz",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/librusty_v8_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.a.gz",
     ],
 )
 
@@ -948,7 +957,7 @@ http_file(
     downloaded_file_path = "src_binding_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.rs",
     sha256 = "7727826ae479bdb645e807239fb12d1f8e2e23de7a6cf16f5ee592690d1d8506",
     urls = [
-        "https://github.com/openai/codex/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.rs",
+        "https://github.com/Grim-Saga/InkStack/releases/download/rusty-v8-v150.4.0/src_binding_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.rs",
     ],
 )
 

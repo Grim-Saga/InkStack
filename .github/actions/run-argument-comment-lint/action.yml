@@ -17,6 +17,18 @@ runs:
       with:
         target: ${{ inputs.target }}
 
+    - name: Fetch verified private rusty_v8 release artifacts
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TARGET: ${{ runner.os }}
+      run: |
+        python3 "${GITHUB_WORKSPACE}/.github/scripts/fetch_rusty_v8.py" \
+          --target "${TARGET}" \
+          --cache-root "${RUNNER_TEMP}/rusty-v8" \
+          --github-env "${GITHUB_ENV}" \
+          --bazel
+
     - name: Install Linux sandbox build dependencies
       if: ${{ runner.os == 'Linux' }}
       shell: bash

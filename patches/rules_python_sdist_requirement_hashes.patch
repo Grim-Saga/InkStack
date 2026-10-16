@@ -1,0 +1,16 @@
+# Keep the original lockfile hashes when building a selected sdist. Otherwise
+# pip's --require-hashes rejects the hashless normalized requirement even though
+# the repository rule has already verified the source archive's digest.
+
+diff --git a/python/private/pypi/parse_requirements.bzl b/python/private/pypi/parse_requirements.bzl
+--- a/python/private/pypi/parse_requirements.bzl
++++ b/python/private/pypi/parse_requirements.bzl
+@@ -503,7 +503,7 @@ def _package_srcs(
+             logger.debug(lambda: "The whl dist is: {}".format(dist.filename if dist else dist))
+ 
+             if extract_url_srcs and dist:
+-                req_line = r.srcs.requirement
++                req_line = r.srcs.requirement_line
+             elif can_fallback or (not extract_url_srcs and dist):
+                 dist = struct(
+                     url = "",
