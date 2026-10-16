@@ -52,6 +52,20 @@ runs:
         restore-keys: |
           ${{ steps.cache_bazel_repository_key.outputs.repository-cache-restore-key }}
 
+    # Only consumer setup fetches prebuilts. V8 release and canary producers
+    # call setup-bazel-ci directly so they can build before a release exists.
+    - name: Fetch verified private rusty_v8 release artifacts
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        python3 "${GITHUB_WORKSPACE}/.github/scripts/fetch_rusty_v8.py" \
+          --target "${TARGET}" \
+          --cache-root "${RUNNER_TEMP}/rusty-v8" \
+          --github-env "${GITHUB_ENV}" \
+          --bazel
+
     - name: Set up Bazel execution logs
       shell: bash
       run: |

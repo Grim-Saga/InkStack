@@ -1,5 +1,6 @@
 import hashlib
-import io
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -10,8 +11,8 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from inkstack_package import v8
-from inkstack_package.targets import TARGET_SPECS, TargetSpec
+from codex_package import v8
+from codex_package.targets import TARGET_SPECS, TargetSpec
 
 
 class FetchInkStackV8ArtifactsTest(unittest.TestCase):
@@ -91,6 +92,12 @@ class FetchInkStackV8ArtifactsTest(unittest.TestCase):
             self.assertEqual(artifacts.binding.read_bytes(), b"trusted V8 binding")
             self.assertEqual(download.call_args_list[0].args[1].name, manifest_name)
             self.assertEqual(download.call_count, 3)
+            for call in download.call_args_list:
+                self.assertEqual(
+                    call.args[0],
+                    "https://github.com/Grim-Saga/InkStack/releases/download/"
+                    f"rusty-v8-v150.4.0/{call.args[1].name}",
+                )
 
     def test_authenticates_windows_manifest_with_crlf(self) -> None:
         with self.release("x86_64-pc-windows-msvc", line_ending=b"\r\n") as (
@@ -243,7 +250,12 @@ class FetchInkStackV8ArtifactsTest(unittest.TestCase):
             manifest.symlink_to(backing)
             download.reset_mock()
             download.side_effect = actual_download
-            with patch.object(v8, "urlopen", return_value=io.BytesIO(expected)):
+
+            def gh_download(command, **_kwargs):
+                destination = Path(command[command.index("--dir") + 1])
+                (destination / manifest.name).write_bytes(expected)
+
+            with patch("subprocess.run", side_effect=gh_download):
                 refreshed = v8.fetch_inkstack_v8_artifacts(
                     spec, version=self.version, cache_root=self.root / "cache"
                 )
@@ -257,12 +269,6 @@ class FetchInkStackV8ArtifactsTest(unittest.TestCase):
     def test_interrupted_refresh_preserves_cache(self) -> None:
         actual_download = v8.download_file
 
-        class InterruptedResponse(io.BytesIO):
-            def read(self, size=-1):
-                if self.tell():
-                    raise OSError("interrupted download")
-                return super().read(size)
-
         with self.release("x86_64-unknown-linux-gnu") as (spec, download, name):
             artifacts = v8.fetch_inkstack_v8_artifacts(
                 spec, version=self.version, cache_root=self.root / "cache"
@@ -271,11 +277,15 @@ class FetchInkStackV8ArtifactsTest(unittest.TestCase):
             manifest.write_bytes(b"stale manifest")
             download.reset_mock()
             download.side_effect = actual_download
+
+            def interrupted_download(command, **_kwargs):
+                destination = Path(command[command.index("--dir") + 1])
+                (destination / manifest.name).write_bytes(b"partial")
+                raise subprocess.CalledProcessError(1, command)
+
             with (
-                patch.object(
-                    v8, "urlopen", return_value=InterruptedResponse(b"partial")
-                ),
-                self.assertRaisesRegex(OSError, "interrupted download"),
+                patch("subprocess.run", side_effect=interrupted_download),
+                self.assertRaises(subprocess.CalledProcessError),
             ):
                 v8.fetch_inkstack_v8_artifacts(
                     spec, version=self.version, cache_root=self.root / "cache"
@@ -306,6 +316,121 @@ class FetchInkStackV8ArtifactsTest(unittest.TestCase):
                     v8.resolve_inkstack_v8_cargo_env(spec, environ=environ), {}
                 )
                 fetch.assert_not_called()
+
+
+class DownloadPrivateV8ArtifactTest(unittest.TestCase):
+    url = (
+        "https://github.com/Grim-Saga/InkStack/releases/download/"
+        "rusty-v8-v150.4.0/"
+        "librusty_v8_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.a.gz"
+    )
+    filename = "librusty_v8_ptrcomp_sandbox_release_x86_64-unknown-linux-gnu.a.gz"
+
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.destination = self.root / "cache" / self.filename
+        self.destination.parent.mkdir()
+        self.destination.write_bytes(b"existing cached bytes")
+        # On the old implementation this guard produces a red result without
+        # allowing an unauthenticated real request to escape the test process.
+        unauthenticated = patch.object(
+            v8,
+            "urlopen",
+            create=True,
+            side_effect=AssertionError("V8 download must authenticate with gh"),
+        )
+        unauthenticated.start()
+        self.addCleanup(unauthenticated.stop)
+
+    def test_authenticated_fetch_uses_fixed_repo_and_atomically_replaces_cache(
+        self,
+    ) -> None:
+        staged_directories = []
+
+        def gh_download(command, **kwargs):
+            self.assertEqual(
+                command[:8],
+                [
+                    "gh",
+                    "release",
+                    "download",
+                    "rusty-v8-v150.4.0",
+                    "--repo",
+                    "Grim-Saga/InkStack",
+                    "--pattern",
+                    self.filename,
+                ],
+            )
+            self.assertEqual(command[8], "--dir")
+            self.assertEqual(len(command), 10)
+            self.assertEqual(kwargs, {"check": True, "timeout": 120})
+            self.assertEqual(os.environ["GH_TOKEN"], "test-github-token")
+            self.assertEqual(self.destination.read_bytes(), b"existing cached bytes")
+            staging = Path(command[9])
+            self.assertEqual(staging.parent, self.destination.parent)
+            (staging / self.filename).write_bytes(b"authenticated download bytes")
+            staged_directories.append(staging)
+
+        with (
+            patch.dict(os.environ, {"GH_TOKEN": "test-github-token"}),
+            patch("subprocess.run", side_effect=gh_download),
+        ):
+            v8.download_file(self.url, self.destination)
+        self.assertEqual(self.destination.read_bytes(), b"authenticated download bytes")
+        self.assertEqual(len(staged_directories), 1)
+        self.assertFalse(staged_directories[0].exists())
+        self.assertEqual(list(self.destination.parent.iterdir()), [self.destination])
+
+    def test_failed_authenticated_download_preserves_cache_and_removes_partial_file(
+        self,
+    ) -> None:
+        def failed_download(command, **_kwargs):
+            staging = Path(command[command.index("--dir") + 1])
+            (staging / self.filename).write_bytes(b"partial failed download")
+            raise subprocess.CalledProcessError(1, command)
+
+        with (
+            patch("subprocess.run", side_effect=failed_download),
+            self.assertRaises(subprocess.CalledProcessError),
+        ):
+            v8.download_file(self.url, self.destination)
+        self.assertEqual(self.destination.read_bytes(), b"existing cached bytes")
+        self.assertEqual(list(self.destination.parent.iterdir()), [self.destination])
+
+    def test_missing_gh_or_timeout_preserves_cache(self) -> None:
+        for error in (
+            FileNotFoundError("gh"),
+            subprocess.TimeoutExpired(["gh"], timeout=120),
+        ):
+            with (
+                self.subTest(error=error),
+                patch("subprocess.run", side_effect=error),
+                self.assertRaises(type(error)),
+            ):
+                v8.download_file(self.url, self.destination)
+            self.assertEqual(self.destination.read_bytes(), b"existing cached bytes")
+            self.assertEqual(
+                list(self.destination.parent.iterdir()), [self.destination]
+            )
+
+    def test_rejects_untrusted_repositories_and_nonliteral_asset_patterns(self) -> None:
+        for url in (
+            self.url.replace("Grim-Saga/InkStack", "openai/codex"),
+            self.url.replace(self.filename, "../../archive.gz"),
+            self.url.replace(self.filename, "*.a.gz"),
+            self.url + "?download=1",
+            self.url + "#fragment",
+        ):
+            with (
+                self.subTest(url=url),
+                patch("subprocess.run") as download,
+                self.assertRaisesRegex(ValueError, "trusted V8 release URL"),
+            ):
+                v8.download_file(url, self.destination)
+            download.assert_not_called()
+        self.assertEqual(self.destination.read_bytes(), b"existing cached bytes")
 
 
 if __name__ == "__main__":

@@ -3,14 +3,14 @@
 This directory wires the `v8` crate to exact-version Bazel inputs.
 Bazel consumer builds use:
 
-- Codex-published sandbox archive/binding pairs on Darwin and GNU Linux (x64
+- InkStack-published sandbox archive/binding pairs on Darwin and GNU Linux (x64
   and arm64), with checksums pinned from the trusted release manifests
-- the existing Codex-published Windows MSVC archives
+- the existing InkStack-published Windows MSVC archives
 - source-built V8 archives on musl Linux and Windows GNU
 
 Local Cargo builds still use upstream prebuilt `rusty_v8` archives by default.
 Selected Cargo CI, release, and package builds override
-`RUSTY_V8_ARCHIVE`/`RUSTY_V8_SRC_BINDING_PATH` with Codex release assets. Bazel
+`RUSTY_V8_ARCHIVE`/`RUSTY_V8_SRC_BINDING_PATH` with InkStack release assets. Bazel
 sets those variables independently in `MODULE.bazel`, selecting the pair above
 for its consumers. All Bazel compilation modes use the same published V8
 release archive on supported platforms.
@@ -31,12 +31,12 @@ Current pinned versions:
 
 Use this as the maintainer flow for a version bump:
 
-1. Bump the `v8` crate version and refresh `codex-rs/Cargo.lock`.
+1. Bump the `v8` crate version and refresh `inkstack-rs/Cargo.lock`.
 2. Update the Bazel versioned inputs in `MODULE.bazel`, then refresh the
    matching checksum manifest and generated checksums as described below.
 3. Publish a release-candidate PR and validate that `v8-canary` passes.
 4. If the canary is green, publish the release tag and release build.
-5. Independently verify the published Codex-built checksum manifests and record
+5. Independently verify the published InkStack-built checksum manifests and record
    their SHA-256 digests in
    `third_party/v8/rusty_v8_<version>_release_manifests.sha256`.
 6. Once the release build completes, rerun the build on the candidate branch
@@ -99,14 +99,32 @@ two aggregate pin files alongside the archive/binding pairs:
 
 After the first successful InkStack release, independently verify these pins
 against the release assets and successful workflow run before committing them
-to this directory. Update the consumer URLs in `MODULE.bazel`,
-`.github/actions/setup-rusty-v8/action.yml`, and `scripts/codex_package/v8.py`
-together, then run `update-module-bazel` and `check-module-bazel` as above.
-The initial import still pins `openai/codex` artifacts; newly compiled archives
-must not be used with those old hashes. Private repositories require
-authenticated asset downloads, for example `gh release download --repo
-Grim-Saga/InkStack rusty-v8-v150.4.0`; the Cargo overrides also accept those
-downloaded files as local paths.
+to this directory, then run `update-module-bazel` and `check-module-bazel` as
+above. The consumer URLs in `MODULE.bazel`, the Cargo CI action, and the package
+builder all use `Grim-Saga/InkStack`. The initial-import checksum pins must be
+replaced with verified source-release pins before those consumers can use the
+newly compiled archives; checksum verification fails closed until they match.
+
+Private release downloads use `gh release download`, authenticated through
+`GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth login`. Cargo CI and local packaging
+share the same verified downloader. Normal Bazel CI prefetches its target pair
+in `prepare-bazel-ci` and passes the verified directory to Bazel's `--distdir`
+option. The producer release and canary jobs use `setup-bazel-ci` directly and
+build from source without downloading their own release.
+
+For local Bazel consumption, authenticate with GitHub and prefetch the native
+pair, then use the shared wrapper (substitute your target as needed):
+
+```bash
+python3 .github/scripts/fetch_rusty_v8.py \
+  --target x86_64-unknown-linux-gnu --cache-root "$HOME/.cache/inkstack-v8" --bazel
+export BAZEL_DISTDIR="$HOME/.cache/inkstack-v8/rusty-v8-150.4.0-x86_64-unknown-linux-gnu"
+python3 .github/scripts/run_bazel_with_buildbuddy.py build //inkstack-rs/v8-poc:v8-poc
+```
+
+Cargo's `RUSTY_V8_ARCHIVE` and `RUSTY_V8_SRC_BINDING_PATH` overrides also accept
+these downloaded files as local paths. Musl and Windows GNU Bazel targets
+continue building V8 from source.
 
 Tagged runs build release artifacts from the Bazel graph itself:
 
@@ -129,7 +147,7 @@ The same run also builds the matching sandbox pair targets:
 The workflow also builds sandbox-enabled
 `x86_64-pc-windows-msvc` and `aarch64-pc-windows-msvc` archive/binding pairs
 from upstream `rusty_v8` source. Those ABI-specific outputs cannot be produced
-by Codex's Bazel Windows GNU toolchain.
+by InkStack's Bazel Windows GNU toolchain.
 
 The Bazel graph pins the same libc++, libc++abi, and llvm-libc source revisions
 used by `rusty_v8 v150.4.0`, compiles published artifact targets with
@@ -156,10 +174,10 @@ it cannot truthfully reproduce upstream's `*-pc-windows-msvc` archives until we
 add a real MSVC-targeting C++ toolchain to the Bazel graph.
 
 Release and CI Cargo builds for Darwin and Linux use `RUSTY_V8_ARCHIVE` plus a
-downloaded `RUSTY_V8_SRC_BINDING_PATH` to point at those `openai/codex` release
+downloaded `RUSTY_V8_SRC_BINDING_PATH` to point at those `Grim-Saga/InkStack` release
 assets directly. We do not use `RUSTY_V8_MIRROR` because the upstream `v8` crate
 hardcodes a `v<crate_version>` tag layout, while our artifacts are published
 under `rusty-v8-v<crate_version>`.
 
 Do not mix artifacts across crate versions. The archive and binding must match
-the exact resolved `v8` crate version in `codex-rs/Cargo.lock`.
+the exact resolved `v8` crate version in `inkstack-rs/Cargo.lock`.
