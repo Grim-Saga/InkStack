@@ -249,15 +249,14 @@ index b432f86..28c567b 100644
      ],
      outs = [
          "include/inspector/Debugger.h",
-@@ -4462,15 +4467,19 @@ genrule(
+@@ -4462,15 +4467,16 @@ genrule(
          "src/inspector/protocol/Schema.cpp",
          "src/inspector/protocol/Schema.h",
      ],
 -    cmd = "$(location :code_generator) --jinja_dir . \
 -           --inspector_protocol_dir third_party/inspector_protocol \
 +    cmd = "INSPECTOR_PROTOCOL_DIR=$$(dirname $(execpath third_party/inspector_protocol/code_generator.py)); \
-+           PYTHONPATH=$$INSPECTOR_PROTOCOL_DIR:external/rules_python++pip+v8_python_deps_311_jinja2/site-packages:external/rules_python++pip+v8_python_deps_311_markupsafe/site-packages:$${PYTHONPATH-} \
-+           $(execpath @rules_python//python/bin:python) $(execpath third_party/inspector_protocol/code_generator.py) --jinja_dir . \
++           $(execpath :code_generator) --jinja_dir . \
 +           --inspector_protocol_dir $$INSPECTOR_PROTOCOL_DIR \
             --config $(location :src/inspector/inspector_protocol_config.json) \
             --config_value protocol.path=$(location :include/js_protocol.pdl) \
@@ -266,10 +265,7 @@ index b432f86..28c567b 100644
 -    local = 1,
      message = "Generating inspector files",
      tools = [
--        ":code_generator",
-+        "@rules_python//python/bin:python",
-+        requirement("jinja2"),
-+        requirement("markupsafe"),
+         ":code_generator",
      ],
  )
  
