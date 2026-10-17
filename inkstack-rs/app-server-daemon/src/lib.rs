@@ -24,6 +24,7 @@ mod settings;
 pub mod telemetry;
 mod thread_recovery;
 mod update_loop;
+pub mod verified_installer;
 
 use std::collections::BTreeMap;
 use std::path::Path;

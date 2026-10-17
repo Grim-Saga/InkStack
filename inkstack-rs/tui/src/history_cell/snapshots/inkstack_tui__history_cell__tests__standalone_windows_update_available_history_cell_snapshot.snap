@@ -2,11 +2,10 @@
 source: tui/src/history_cell/tests.rs
 expression: rendered
 ---
-╭────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ ✨ Update available! 0.0.0 -> 9.9.9                                                                        │
-│ Run powershell -ExecutionPolicy Bypass -c '$env:INKSTACK_NON_INTERACTIVE=1; irm                            │
-│ https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex' to update.               │
-│                                                                                                            │
-│ See full release notes:                                                                                    │
-│ https://github.com/Grim-Saga/InkStack/releases                                                             │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────╮
+│ ✨ Update available! 0.0.0 -> 9.9.9            │
+│ Run inkstack update to update.                 │
+│                                                │
+│ See full release notes:                        │
+│ https://github.com/Grim-Saga/InkStack/releases │
+╰────────────────────────────────────────────────╯

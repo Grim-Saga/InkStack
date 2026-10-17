@@ -20,9 +20,11 @@ pub enum UpdateAction {
     PnpmGlobalLatest,
     /// Update via `brew upgrade inkstack`.
     BrewUpgrade,
-    /// Update via `curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh`.
+    /// Update via `inkstack update`, which fetches the installer from a verified
+    /// InkStack application release and runs it from a staged file.
     StandaloneUnix,
-    /// Update via `$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex`.
+    /// Update via `inkstack update` on Windows, using the same verified-release
+    /// installer bootstrap as the Unix path.
     StandaloneWindows,
 }
 
@@ -52,22 +54,8 @@ impl UpdateAction {
             UpdateAction::VitePlusGlobalLatest => ("vp", &["install", "-g", "inkstack"]),
             UpdateAction::PnpmGlobalLatest => ("pnpm", &["add", "-g", "inkstack"]),
             UpdateAction::BrewUpgrade => ("brew", &["upgrade", "--cask", "inkstack"]),
-            UpdateAction::StandaloneUnix => (
-                "sh",
-                &[
-                    "-c",
-                    "curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh",
-                ],
-            ),
-            UpdateAction::StandaloneWindows => (
-                "powershell",
-                &[
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-c",
-                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex",
-                ],
-            ),
+            UpdateAction::StandaloneUnix => ("inkstack", &["update"]),
+            UpdateAction::StandaloneWindows => ("inkstack", &["update"]),
         }
     }
 
@@ -156,32 +144,18 @@ mod tests {
     }
 
     #[test]
-    fn standalone_update_commands_rerun_latest_installer() {
-        // The bootstrap URL only ever resolves to a non-prerelease release
-        // that carries installer assets: the V8 dependency release is a
-        // prerelease and has no install.sh asset, so the URL fails cleanly
-        // instead of ever selecting it.
+    fn standalone_update_commands_use_the_verified_cli_bootstrap() {
+        // Standalone updates run through `inkstack update`, which downloads
+        // the installer from a verified InkStack application release and
+        // executes it from a staged file — never a pipe-to-interpreter
+        // bootstrap whose download failures could look like successes.
         assert_eq!(
             UpdateAction::StandaloneUnix.command_args(),
-            (
-                "sh",
-                &[
-                    "-c",
-                    "curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh"
-                ][..],
-            )
+            ("inkstack", &["update"][..]),
         );
         assert_eq!(
             UpdateAction::StandaloneWindows.command_args(),
-            (
-                "powershell",
-                &[
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-c",
-                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex"
-                ][..],
-            )
+            ("inkstack", &["update"][..]),
         );
     }
 }

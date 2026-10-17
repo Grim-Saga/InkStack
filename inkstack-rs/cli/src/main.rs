@@ -806,6 +806,21 @@ fn run_update_action(
         println!("Relaunch InkStack to reconnect.");
         return Ok(());
     }
+    if matches!(
+        action,
+        UpdateAction::StandaloneUnix | UpdateAction::StandaloneWindows
+    ) {
+        // Standalone updates never pipe a remote script straight into an
+        // interpreter: the installer is fetched from a verified InkStack
+        // application release (its bytes are checked against the SHA-256
+        // digest GitHub records for the release asset), staged into a
+        // temporary file, and only then executed. A failed download or
+        // verification aborts the update without touching the current
+        // installation.
+        println!();
+        println!("Updating InkStack via a verified InkStack release...");
+        return run_verified_standalone_update();
+    }
     println!();
     let cmd_str = action.command_str();
     println!("Updating InkStack via `{cmd_str}`...");
@@ -863,7 +878,7 @@ fn resolve_windows_update_command_from_path(
         std::env::join_paths(std::env::split_paths(path_env).filter(|path| path.is_absolute()))?;
     if path_env.is_empty() {
         anyhow::bail!(
-            "Could not find an absolute update command `{command}` on PATH. Please update manually: https://developers.openai.com/codex/cli/"
+            "Could not find an absolute update command `{command}` on PATH. Please update manually: https://github.com/Grim-Saga/InkStack/releases"
         );
     }
     which::which_in_global(command, Some(&path_env))?
@@ -883,11 +898,80 @@ fn run_update_command() -> anyhow::Result<()> {
     {
         let Some(action) = inkstack_tui::get_update_action() else {
             anyhow::bail!(
-                "Could not detect the InkStack installation method. Please update manually: https://developers.openai.com/codex/cli/"
+                "Could not detect the InkStack installation method. Please update manually: https://github.com/Grim-Saga/InkStack/releases"
             );
         };
         run_update_action(action, /*cli_executable*/ None)
     }
+}
+
+/// Fetches the standalone installer from a verified InkStack application
+/// release and runs it from a staged temporary file.
+///
+/// The script's bytes are verified against the SHA-256 digest GitHub records
+/// for the exact release asset before any interpreter is invoked, and the
+/// installer's real exit status is propagated. The staged file is removed
+/// afterwards. A failed download or verification aborts the update without
+/// modifying the current installation.
+fn run_verified_standalone_update() -> anyhow::Result<()> {
+    let script = fetch_verified_installer_script_blocking()?;
+    let staging = tempfile::tempdir()?;
+    let script_path = staging.path().join(inkstack_app_server_daemon::verified_installer::installer_file_name());
+    std::fs::write(&script_path, &script)?;
+
+    let status = {
+        #[cfg(unix)]
+        {
+            std::process::Command::new("sh")
+                .arg(&script_path)
+                .env("INKSTACK_NON_INTERACTIVE", "1")
+                .status()?
+        }
+        #[cfg(windows)]
+        {
+            // The staged script is a .ps1 file; run it explicitly instead of
+            // piping an unverified stream into iex. A fresh working directory
+            // keeps project-local configuration out of the updater.
+            std::process::Command::new("powershell.exe")
+                .arg("-ExecutionPolicy")
+                .arg("Bypass")
+                .arg("-File")
+                .arg(&script_path)
+                .env("INKSTACK_NON_INTERACTIVE", "1")
+                .current_dir(staging.path())
+                .status()?
+        }
+    };
+    anyhow::ensure!(
+        status.success(),
+        "InkStack standalone update failed with status {status}"
+    );
+    println!("\n🎉 Update ran successfully! Please restart InkStack.");
+    Ok(())
+}
+
+/// Runs the verified installer fetch on a dedicated thread with its own
+/// runtime, because the update action may execute on the CLI's async runtime.
+fn fetch_verified_installer_script_blocking() -> anyhow::Result<Vec<u8>> {
+    let handle = std::thread::Builder::new()
+        .name("inkstack-verified-update".into())
+        .spawn(|| -> anyhow::Result<Vec<u8>> {
+            let runtime = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()?;
+            runtime.block_on(async {
+                let config = ConfigBuilder::default().build().await?;
+                let http_client_factory = updater_http_client_factory(Ok(config))?;
+                let http = inkstack_app_server_daemon::verified_installer::installer_http_pool(
+                    http_client_factory,
+                );
+                inkstack_app_server_daemon::verified_installer::fetch_installer_script(&http).await
+            })
+        })
+        .expect("spawn the verified-update thread");
+    handle
+        .join()
+        .map_err(|_| anyhow::anyhow!("the verified-update thread panicked"))?
 }
 
 fn run_execpolicycheck(cmd: ExecPolicyCheckCommand) -> anyhow::Result<()> {
@@ -2819,7 +2903,7 @@ mod tests {
         assert_eq!(
             err.to_string(),
             format!(
-                "Could not find an absolute update command `{command}` on PATH. Please update manually: https://developers.openai.com/codex/cli/"
+                "Could not find an absolute update command `{command}` on PATH. Please update manually: https://github.com/Grim-Saga/InkStack/releases"
             )
         );
     }
@@ -2867,7 +2951,7 @@ enabled = true
 [application.network.domains]
 "bedrock-mantle.us-gov-west-1.api.aws" = "allow"
 "chatgpt.com" = "deny"
-"releases.openai.com" = "deny"
+"unlisted.example" = "deny"
 "#,
         )
         .expect("write managed requirements");
@@ -2880,7 +2964,11 @@ enabled = true
             .await
             .expect("load managed configuration");
         let factory = updater_http_client_factory(Ok(config)).expect("updater configuration");
-        for host in ["chatgpt.com", "releases.openai.com", "unlisted.example"] {
+        // OpenAI distribution hosts must stay blocked by the updater network
+        // policy, alongside unlisted destinations; these are deny-list probes
+        // for this test only and are never contacted by any update path.
+        const DENIED_UPDATE_PROBE_HOSTS: [&str; 3] = ["chatgpt.com", "releases.openai.com", "unlisted.example"];
+        for host in DENIED_UPDATE_PROBE_HOSTS {
             assert_eq!(
                 factory
                     .network_policy()

@@ -6,15 +6,6 @@ use pretty_assertions::assert_eq;
 #[cfg(unix)]
 use tempfile::TempDir;
 
-use super::INKSTACK_RELEASES_API_URL;
-use super::INKSTACK_RELEASES_DOWNLOAD_URL;
-use super::INSTALLER_ASSET_NAME;
-use super::InstallerHttp;
-use super::InstallerResponse;
-use super::RELEASES_PER_PAGE;
-use super::fetch_installer_script;
-use super::find_application_release;
-use super::is_application_release_tag;
 #[cfg(unix)]
 use super::manual_update::run as manual_update_once;
 #[cfg(unix)]
@@ -29,9 +20,29 @@ use crate::UpdateStatus;
 use crate::managed_install::executable_identity;
 #[cfg(unix)]
 use crate::managed_install::executable_identity_from_reader;
+use crate::verified_installer::INKSTACK_RELEASES_API_URL;
+use crate::verified_installer::INKSTACK_RELEASES_DOWNLOAD_URL;
+use crate::verified_installer::INSTALLER_ASSET_NAME;
+use crate::verified_installer::InstallerHttp;
+use crate::verified_installer::InstallerResponse;
+use crate::verified_installer::RELEASES_PER_PAGE;
+use crate::verified_installer::fetch_verified_installer_script;
+use crate::verified_installer::is_application_release_tag;
+use crate::verified_installer::resolve_installer_release;
 
 const APPLICATION_RELEASE_TAG: &str = "rust-v0.142.5";
 const V8_DEPENDENCY_RELEASE_TAG: &str = "rusty-v8-v150.4.0";
+
+fn sha256_hex(bytes: &[u8]) -> String {
+    use sha2::Digest;
+    let digest = sha2::Sha256::digest(bytes);
+    let mut encoded = String::with_capacity(64);
+    for byte in digest {
+        use std::fmt::Write;
+        let _ = write!(encoded, "{byte:02x}");
+    }
+    encoded
+}
 
 fn releases_list_url(page: usize) -> String {
     format!("{INKSTACK_RELEASES_API_URL}/releases?per_page={RELEASES_PER_PAGE}&page={page}")
@@ -45,29 +56,46 @@ fn releases_list_json(releases: &[serde_json::Value]) -> InstallerResponse {
     InstallerResponse::Success(serde_json::json!(releases).to_string().into_bytes())
 }
 
-fn release_entry(tag: &str, asset_names: &[&str]) -> serde_json::Value {
+fn release_entry(
+    tag: &str,
+    asset_names: &[&str],
+    installer_digest: Option<&str>,
+) -> serde_json::Value {
     serde_json::json!({
         "tag_name": tag,
         "assets": asset_names
             .iter()
-            .map(|name| serde_json::json!({"name": name, "digest": format!("sha256:{}", "a".repeat(64))}))
+            .map(|name| serde_json::json!({
+                "name": name,
+                "digest": if *name == INSTALLER_ASSET_NAME && installer_digest.is_some() {
+                    format!("sha256:{}", installer_digest.unwrap())
+                } else {
+                    format!("sha256:{}", "a".repeat(64))
+                },
+            }))
             .collect::<Vec<_>>(),
     })
+}
+
+/// A release-list entry whose installer digest matches the served script.
+fn installer_release_entry(script: &[u8]) -> serde_json::Value {
+    release_entry(
+        APPLICATION_RELEASE_TAG,
+        &[INSTALLER_ASSET_NAME],
+        Some(&sha256_hex(script)),
+    )
 }
 
 #[tokio::test]
 async fn installer_fetch_uses_exact_urls_and_preserves_bytes() {
     let script = b"#!/bin/sh\nprintf 'update bytes'\n".to_vec();
     let http = FakeInstallerHttp::with_list(
-        releases_list_json(&[release_entry(
-            APPLICATION_RELEASE_TAG,
-            &[INSTALLER_ASSET_NAME],
-        )]),
+        releases_list_json(&[installer_release_entry(&script)]),
         InstallerResponse::Success(script.clone()),
     );
 
     assert_eq!(
-        fetch_installer_script(&http)
+        fetch_verified_installer_script(&http)
             .await
             .expect("installer fetch should succeed"),
         script
@@ -88,7 +116,7 @@ async fn installer_fetch_rejects_non_success_status() {
         InstallerResponse::Success(b"unused".to_vec()),
     );
 
-    let error = fetch_installer_script(&http)
+    let error = fetch_verified_installer_script(&http)
         .await
         .expect_err("non-success response should fail");
 
@@ -103,13 +131,14 @@ async fn installer_fetch_skips_v8_dependency_releases() {
             release_entry(
                 V8_DEPENDENCY_RELEASE_TAG,
                 &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+                None,
             ),
-            release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME]),
+            installer_release_entry(b"#!/bin/sh\nprintf 'installer'\n"),
         ]),
         InstallerResponse::Success(b"#!/bin/sh\nprintf 'installer'\n".to_vec()),
     );
 
-    let script = fetch_installer_script(&http)
+    let script = fetch_verified_installer_script(&http)
         .await
         .expect("application release should be selected");
 
@@ -133,13 +162,13 @@ async fn installer_fetch_skips_v8_dependency_releases() {
 async fn installer_fetch_skips_application_releases_without_installer_assets() {
     let http = FakeInstallerHttp::with_list(
         releases_list_json(&[
-            release_entry("rust-v0.142.4", &["inkstack-package_SHA256SUMS"]),
-            release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME]),
+            release_entry("rust-v0.142.4", &["inkstack-package_SHA256SUMS"], None),
+            installer_release_entry(b"#!/bin/sh\nexit 0\n"),
         ]),
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
 
-    fetch_installer_script(&http)
+    fetch_verified_installer_script(&http)
         .await
         .expect("release with installer assets should be selected");
 
@@ -158,11 +187,12 @@ async fn installer_fetch_fails_cleanly_without_application_releases() {
         releases_list_json(&[release_entry(
             V8_DEPENDENCY_RELEASE_TAG,
             &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+            None,
         )]),
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
 
-    let error = fetch_installer_script(&http)
+    let error = fetch_verified_installer_script(&http)
         .await
         .expect_err("V8-only repositories must not yield an installer");
 
@@ -185,20 +215,18 @@ async fn installer_fetch_paginates_large_release_lists() {
         page_one.push(release_entry(
             V8_DEPENDENCY_RELEASE_TAG,
             &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+            None,
         ));
     }
     let http = FakeInstallerHttp::with_pages(
         vec![
             releases_list_json(&page_one),
-            releases_list_json(&[release_entry(
-                APPLICATION_RELEASE_TAG,
-                &[INSTALLER_ASSET_NAME],
-            )]),
+            releases_list_json(&[installer_release_entry(b"#!/bin/sh\nexit 0\n")]),
         ],
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
 
-    fetch_installer_script(&http)
+    fetch_verified_installer_script(&http)
         .await
         .expect("paginated scan should find the application release");
 
@@ -219,7 +247,7 @@ async fn installer_fetch_rejects_malformed_release_lists() {
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
 
-    let error = fetch_installer_script(&http)
+    let error = fetch_verified_installer_script(&http)
         .await
         .expect_err("malformed metadata must fail");
 
@@ -247,17 +275,107 @@ fn application_release_tags_match_the_installer_contract() {
 }
 
 #[tokio::test]
-async fn find_application_release_rejects_foreign_status() {
+async fn resolve_installer_release_rejects_foreign_status() {
     let http = FakeInstallerHttp::with_list(
         InstallerResponse::Unsuccessful { status: 404 },
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
 
-    let error = find_application_release(&http)
+    let error = resolve_installer_release(&http)
         .await
         .expect_err("unavailable listing must fail");
 
     assert!(error.to_string().contains("404"));
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_digest_mismatches() {
+    // The served script does not match the digest GitHub recorded for the
+    // asset, so the fetch fails before any bytes can be executed.
+    let script = b"#!/bin/sh\nprintf 'tampered'\n".to_vec();
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[release_entry(
+            APPLICATION_RELEASE_TAG,
+            &[INSTALLER_ASSET_NAME],
+            Some(&"b".repeat(64)),
+        )]),
+        InstallerResponse::Success(script),
+    );
+
+    let error = fetch_verified_installer_script(&http)
+        .await
+        .expect_err("digest mismatch must fail");
+
+    assert!(error.to_string().contains("did not match the digest"));
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_missing_asset_digests() {
+    let mut entry = installer_release_entry(b"#!/bin/sh\nexit 0\n");
+    entry["assets"][0]
+        .as_object_mut()
+        .expect("asset object")
+        .remove("digest");
+
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[entry]),
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    let error = fetch_verified_installer_script(&http)
+        .await
+        .expect_err("missing digest must fail");
+
+    assert!(error.to_string().contains("does not publish a digest"));
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_malformed_asset_digests() {
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[release_entry(
+            APPLICATION_RELEASE_TAG,
+            &[INSTALLER_ASSET_NAME],
+            Some("not-a-sha256-digest"),
+        )]),
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    let error = fetch_verified_installer_script(&http)
+        .await
+        .expect_err("malformed digest must fail");
+
+    assert!(error.to_string().contains("invalid digest"));
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_empty_installer_bodies() {
+    // A truncated or empty response must never satisfy the update fetch.
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[installer_release_entry(b"")]),
+        InstallerResponse::Success(Vec::new()),
+    );
+
+    let error = fetch_verified_installer_script(&http)
+        .await
+        .expect_err("empty installer body must fail");
+
+    assert!(error.to_string().contains("was empty"));
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_installer_asset_http_failures() {
+    // The release list resolves, but the installer asset download fails:
+    // the error must propagate, never appear as a successful empty update.
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[installer_release_entry(b"#!/bin/sh\nexit 0\n")]),
+        InstallerResponse::Unsuccessful { status: 503 },
+    );
+
+    let error = fetch_verified_installer_script(&http)
+        .await
+        .expect_err("asset download failure must fail");
+
+    assert!(error.to_string().contains("503"));
 }
 
 #[cfg(unix)]
@@ -565,15 +683,16 @@ printf '{release}' > "$root/auto-update-version"
 
 impl FakeInstallerHttp {
     /// Serves `response` for installer asset requests and a default
-    /// one-entry application release list for list requests.
+    /// one-entry application release list whose installer digest matches
+    /// the served script bytes (failure responses get a placeholder).
     fn new(response: InstallerResponse) -> Self {
-        Self::with_list(
-            releases_list_json(&[release_entry(
-                APPLICATION_RELEASE_TAG,
-                &[INSTALLER_ASSET_NAME],
-            )]),
-            response,
-        )
+        let entry = match &response {
+            InstallerResponse::Success(body) => installer_release_entry(body),
+            InstallerResponse::Unsuccessful { .. } => {
+                release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME], None)
+            }
+        };
+        Self::with_list(releases_list_json(&[entry]), response)
     }
 
     fn with_list(list_response: InstallerResponse, response: InstallerResponse) -> Self {
@@ -1480,11 +1599,9 @@ async fn update_rejects_a_package_root_change_during_download() {
     struct ChangingRoot<'a>(&'a std::path::Path);
     impl InstallerHttp for ChangingRoot<'_> {
         async fn get(&self, url: &str) -> anyhow::Result<InstallerResponse> {
-            if url.starts_with(super::INKSTACK_RELEASES_API_URL) && url.contains("/releases?") {
-                return Ok(releases_list_json(&[release_entry(
-                    APPLICATION_RELEASE_TAG,
-                    &[INSTALLER_ASSET_NAME],
-                )]));
+            if url.starts_with(INKSTACK_RELEASES_API_URL) && url.contains("/releases?") {
+                let guard_script = b"# INKSTACK_INSTALL_IF_LATEST\nexit 99\n";
+                return Ok(releases_list_json(&[installer_release_entry(guard_script)]));
             }
             std::os::unix::fs::symlink(
                 self.0.join("packages/standalone"),

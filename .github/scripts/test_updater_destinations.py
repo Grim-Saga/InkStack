@@ -1,11 +1,13 @@
-"""Guard updater execution paths against OpenAI Codex destinations.
+"""Guard updater execution paths against unverified or foreign bootstrap.
 
 InkStack's TUI and daemon must never fetch installers, updates, or release
-notes from OpenAI's Codex infrastructure. This scans the updater sources
-(the standalone update commands, the daemon's installer bootstrap, the
-release-notes link, and the daemon's install documentation) so those
-destinations cannot silently return. Unrelated fixtures and protocol test
-data elsewhere in the workspace are intentionally out of scope.
+notes from OpenAI's Codex infrastructure, and standalone updates must never
+pipe a remote script straight into an interpreter: the installer has to be
+resolved from a verified InkStack application release, checked against the
+SHA-256 digest GitHub records for the release asset, and executed from a
+staged file. This scans the updater sources and the CLI update path so
+those guarantees cannot silently regress. Unrelated fixtures and protocol
+test data elsewhere in the workspace are intentionally out of scope.
 """
 
 import unittest
@@ -23,6 +25,7 @@ UPDATER_PATH_FILES = (
     "inkstack-rs/app-server-daemon/src/manual_update.rs",
     "inkstack-rs/app-server-daemon/src/migration.rs",
     "inkstack-rs/app-server-daemon/README.md",
+    "inkstack-rs/cli/src/main.rs",
     "inkstack-rs/cli/src/doctor/updates.rs",
 )
 
@@ -31,6 +34,18 @@ FORBIDDEN_DESTINATIONS = (
     "github.com/openai/codex/releases",
     "releases.openai.com",
     "api.github.com/repos/openai",
+)
+
+# Unverified pipe-to-interpreter execution of remote downloads. These apply
+# to updater execution-path code; the daemon README deliberately documents a
+# human-run first-install bootstrap, which is a different trust model.
+FORBIDDEN_EXECUTION_PATTERNS = (
+    "| INKSTACK_NON_INTERACTIVE=1 sh",
+    "| iex",
+)
+
+DOCUMENTATION_FILES = (
+    "inkstack-rs/app-server-daemon/README.md",
 )
 
 
@@ -47,6 +62,11 @@ class UpdaterDestinationTest(unittest.TestCase):
             for number, line in enumerate(text.splitlines(), start=1):
                 for destination in FORBIDDEN_DESTINATIONS:
                     if destination in line:
+                        # Explicitly-declared deny-list probes (used by tests
+                        # to prove OpenAI destinations stay network-blocked)
+                        # are assertions, not destinations we contact.
+                        if "DENIED_UPDATE_PROBE_HOSTS" in line:
+                            continue
                         findings.append(
                             f"{relative}:{number}: {destination}: {line.strip()}"
                         )
@@ -57,26 +77,59 @@ class UpdaterDestinationTest(unittest.TestCase):
             + "\n".join(findings),
         )
 
+    def test_updater_code_never_pipes_remote_scripts_into_interpreters(self) -> None:
+        code_files = [
+            relative for relative in UPDATER_PATH_FILES
+            if relative not in DOCUMENTATION_FILES
+        ]
+        findings: list[str] = []
+        for relative in code_files:
+            text = (ROOT / relative).read_text(encoding="utf-8", errors="replace")
+            for number, line in enumerate(text.splitlines(), start=1):
+                for pattern in FORBIDDEN_EXECUTION_PATTERNS:
+                    if pattern in line:
+                        findings.append(
+                            f"{relative}:{number}: {pattern}: {line.strip()}"
+                        )
+        self.assertEqual(
+            findings,
+            [],
+            "Updater execution paths must verify downloads before execution:\n"
+            + "\n".join(findings),
+        )
+
     def test_installer_bootstrap_uses_inkstack_releases(self) -> None:
         update_action = (
             ROOT / "inkstack-rs/tui/src/update_action.rs"
         ).read_text(encoding="utf-8")
+        # Standalone updates must run the CLI's verified bootstrap rather
+        # than a remote pipe-to-interpreter command.
+        self.assertIn('UpdateAction::StandaloneUnix => ("inkstack", &["update"])', update_action)
         self.assertIn(
-            "https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh",
-            update_action,
+            'UpdateAction::StandaloneWindows => ("inkstack", &["update"])', update_action
         )
+        cli_main = (ROOT / "inkstack-rs/cli/src/main.rs").read_text(encoding="utf-8")
+        self.assertIn("fetch_verified_installer_script_blocking", cli_main)
         self.assertIn(
-            "https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1",
-            update_action,
+            "verified_installer::fetch_installer_script", cli_main
         )
         update_loop = (
             ROOT / "inkstack-rs/app-server-daemon/src/update_loop.rs"
         ).read_text(encoding="utf-8")
-        self.assertIn("https://api.github.com/repos/Grim-Saga/InkStack", update_loop)
+        self.assertIn("fetch_verified_installer_script", update_loop)
+        verified_installer = (
+            ROOT / "inkstack-rs/app-server-daemon/src/verified_installer.rs"
+        ).read_text(encoding="utf-8")
+        self.assertIn("https://api.github.com/repos/Grim-Saga/InkStack", verified_installer)
         self.assertIn(
             "https://github.com/Grim-Saga/InkStack/releases/download",
-            update_loop,
+            verified_installer,
         )
+        # The fetched bytes are compared against the digest GitHub records
+        # for the exact release asset before execution.
+        self.assertIn("verify_installer_bytes", verified_installer)
+        self.assertIn("did not match the digest", verified_installer)
+        self.assertIn("was empty", verified_installer)
 
 
 if __name__ == "__main__":
