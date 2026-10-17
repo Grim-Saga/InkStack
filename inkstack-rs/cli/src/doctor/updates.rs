@@ -7,14 +7,16 @@
 use std::path::Path;
 #[cfg(target_os = "macos")]
 use std::path::PathBuf;
+#[cfg(any(target_os = "macos", test))]
 use std::time::Duration;
 
+#[cfg(test)]
+use http::Method;
 use inkstack_core::config::Config;
 use inkstack_http_client::ClientRouteClass;
 use inkstack_http_client::RouteAwareClientPool;
 use inkstack_install_context::InstallContext;
 use inkstack_install_context::InstallMethod;
-use http::Method;
 use serde::Deserialize;
 
 use super::CheckStatus;
@@ -24,10 +26,10 @@ use super::desktop::platform::InstalledApp;
 use super::doctor_install_context;
 use super::doctor_managed_by_npm;
 
+#[cfg(test)]
 const MAX_VERSION_RESPONSE_BYTES: usize = 1024 * 1024;
 
 const VERSION_FILE_NAME: &str = "version.json";
-const GITHUB_LATEST_RELEASE_URL: &str = "https://api.github.com/repos/Grim-Saga/InkStack/releases/latest";
 
 /// Builds the update-health row for the current installation.
 ///
@@ -202,18 +204,12 @@ async fn fetch_latest_version(
 async fn fetch_latest_github_release_version(
     client: &RouteAwareClientPool,
 ) -> Result<String, String> {
-    #[derive(Deserialize)]
-    struct ReleaseInfo {
-        tag_name: String,
-    }
-
-    let info = http_get_json::<ReleaseInfo>(client, GITHUB_LATEST_RELEASE_URL).await?;
-    info.tag_name
-        .strip_prefix("rust-v")
-        .map(str::to_string)
-        .ok_or_else(|| format!("failed to parse latest tag {}", info.tag_name))
+    inkstack_app_server_daemon::verified_installer::latest_application_version(client)
+        .await
+        .map_err(|error| error.to_string())
 }
 
+#[cfg(test)]
 async fn http_get_json<T>(client: &RouteAwareClientPool, url: &str) -> Result<T, String>
 where
     T: for<'de> Deserialize<'de>,
@@ -245,18 +241,7 @@ where
 }
 
 fn is_newer(latest: &str, current: &str) -> Option<bool> {
-    match (parse_version(latest), parse_version(current)) {
-        (Some(latest), Some(current)) => Some(latest > current),
-        (Some(_), None) | (None, Some(_)) | (None, None) => None,
-    }
-}
-
-fn parse_version(value: &str) -> Option<(u64, u64, u64)> {
-    let mut parts = value.trim().split('.');
-    let major = parts.next()?.parse::<u64>().ok()?;
-    let minor = parts.next()?.parse::<u64>().ok()?;
-    let patch = parts.next()?.parse::<u64>().ok()?;
-    Some((major, minor, patch))
+    inkstack_app_server_daemon::verified_installer::is_newer_application_version(latest, current)
 }
 
 #[derive(Deserialize)]
@@ -272,6 +257,11 @@ struct VersionInfo {
 mod tests {
     use super::*;
     use pretty_assertions::assert_eq;
+
+    #[test]
+    fn alpha_updates_compare_numerically() {
+        assert_eq!(is_newer("1.0.0-alpha.10", "1.0.0-alpha.9"), Some(true));
+    }
 
     #[tokio::test]
     async fn version_http_probe_decodes_json_and_rejects_invalid_responses() {
@@ -394,7 +384,7 @@ mod tests {
     fn is_newer_compares_plain_semver() {
         assert_eq!(is_newer("1.2.4", "1.2.3"), Some(true));
         assert_eq!(is_newer("1.2.3", "1.2.4"), Some(false));
-        assert_eq!(is_newer("1.2.3-beta.1", "1.2.2"), None);
+        assert_eq!(is_newer("1.2.3-beta.1", "1.2.2"), Some(true));
     }
 
     #[test]

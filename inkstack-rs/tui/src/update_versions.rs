@@ -1,9 +1,6 @@
 #[cfg(any(not(debug_assertions), test))]
 pub(crate) fn is_newer(latest: &str, current: &str) -> Option<bool> {
-    match (parse_version(latest), parse_version(current)) {
-        (Some(l), Some(c)) => Some(l > c),
-        _ => None,
-    }
+    inkstack_app_server_daemon::verified_installer::is_newer_application_version(latest, current)
 }
 
 #[cfg(any(not(debug_assertions), test))]
@@ -58,6 +55,11 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
+    fn alpha_updates_compare_numerically() {
+        assert_eq!(is_newer("1.0.0-alpha.10", "1.0.0-alpha.9"), Some(true));
+    }
+
+    #[test]
     fn extracts_version_from_latest_tag() {
         assert_eq!(
             extract_version_from_latest_tag("rust-v1.5.0").expect("failed to parse version"),
@@ -71,9 +73,9 @@ mod tests {
     }
 
     #[test]
-    fn prerelease_version_is_not_considered_newer() {
-        assert_eq!(is_newer("0.11.0-beta.1", "0.11.0"), None);
-        assert_eq!(is_newer("1.0.0-rc.1", "1.0.0"), None);
+    fn prerelease_version_is_older_than_its_stable_release() {
+        assert_eq!(is_newer("0.11.0-beta.1", "0.11.0"), Some(false));
+        assert_eq!(is_newer("1.0.0-rc.1", "1.0.0"), Some(false));
     }
 
     #[test]

@@ -1,9 +1,8 @@
-#![cfg(not(debug_assertions))]
+#![cfg(any(not(debug_assertions), test))]
 
 use crate::legacy_core::config::Config;
 use crate::update_action;
 use crate::update_action::UpdateAction;
-use crate::update_versions::extract_version_from_latest_tag;
 use crate::update_versions::is_newer;
 use crate::update_versions::is_source_build_version;
 use crate::updates_cache::VersionInfo;
@@ -14,8 +13,6 @@ use chrono::Utc;
 use inkstack_http_client::ClientRouteClass;
 use inkstack_http_client::HttpClientFactory;
 use inkstack_http_client::RouteAwareClientPool;
-use inkstack_login::default_client::default_headers;
-use serde::Deserialize;
 use std::path::Path;
 
 use crate::version::INKSTACK_CLI_VERSION;
@@ -55,13 +52,6 @@ pub fn get_upgrade_version(config: &Config) -> Option<String> {
     })
 }
 
-const LATEST_RELEASE_URL: &str = "https://api.github.com/repos/Grim-Saga/InkStack/releases/latest";
-
-#[derive(Deserialize, Debug, Clone)]
-struct ReleaseInfo {
-    tag_name: String,
-}
-
 async fn check_for_update(
     version_file: &Path,
     action: Option<UpdateAction>,
@@ -98,17 +88,7 @@ async fn check_for_update(
 async fn fetch_latest_github_release_version(
     client_pool: &RouteAwareClientPool,
 ) -> anyhow::Result<String> {
-    let ReleaseInfo {
-        tag_name: latest_tag_name,
-    } = client_pool
-        .get(LATEST_RELEASE_URL)
-        .headers(default_headers())
-        .send()
-        .await?
-        .error_for_status()?
-        .json::<ReleaseInfo>()
-        .await?;
-    extract_version_from_latest_tag(&latest_tag_name)
+    inkstack_app_server_daemon::verified_installer::latest_application_version(client_pool).await
 }
 
 /// Returns the latest version to show in a popup, if it should be shown.

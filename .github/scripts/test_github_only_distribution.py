@@ -8,6 +8,12 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class GitHubOnlyDistributionTest(unittest.TestCase):
+    def test_update_notices_share_application_release_discovery(self):
+        for relative in ("inkstack-rs/tui/src/updates.rs", "inkstack-rs/cli/src/doctor/updates.rs"):
+            text = (ROOT / relative).read_text()
+            self.assertNotIn("/releases/latest", text)
+            self.assertIn("latest_application_version", text)
+
     def test_no_external_publishers_or_foreign_publication_targets(self):
         forbidden = (
             "publish-r2", "publish-npm:", "OpenAI.InkStack",

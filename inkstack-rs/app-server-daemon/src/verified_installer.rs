@@ -13,6 +13,51 @@ use anyhow::Result;
 use inkstack_http_client::ClientRouteClass;
 use inkstack_http_client::RouteAwareClientPool;
 
+#[cfg(test)]
+mod version_discovery_tests {
+    use super::*;
+    use serde_json::json;
+
+    struct History(serde_json::Value);
+
+    impl InstallerHttp for History {
+        async fn get(&self, _url: &str) -> Result<InstallerResponse> {
+            Ok(InstallerResponse::Success(serde_json::to_vec(&self.0)?))
+        }
+    }
+
+    fn release(tag: &str, draft: bool) -> serde_json::Value {
+        json!({
+            "tag_name": tag, "draft": draft,
+            "assets": [{"name": installer_file_name(), "digest": format!("sha256:{}", "a".repeat(64))}]
+        })
+    }
+
+    #[tokio::test]
+    async fn version_discovery_accepts_prereleases_and_skips_dependency_and_draft_releases() {
+        let history = History(json!([
+            release("rusty-v8-v150.4.0", false),
+            release("rust-v9.0.0", true),
+            release("rust-v1.0.0-alpha.10", false)
+        ]));
+        assert_eq!(
+            resolve_installer_release(&history).await.unwrap().tag,
+            "rust-v1.0.0-alpha.10"
+        );
+    }
+
+    #[tokio::test]
+    async fn version_discovery_fails_safely_without_application_assets() {
+        for history in [
+            json!([]),
+            json!([release("rusty-v8-v150.4.0", false)]),
+            json!([{"tag_name":"rust-v1.0.0","assets":[]}]),
+        ] {
+            assert!(resolve_installer_release(&History(history)).await.is_err());
+        }
+    }
+}
+
 pub(crate) const INKSTACK_RELEASES_API_URL: &str =
     "https://api.github.com/repos/Grim-Saga/InkStack";
 pub(crate) const INKSTACK_RELEASES_DOWNLOAD_URL: &str =
@@ -84,6 +129,48 @@ pub fn installer_http_pool(
     RouteAwareClientPool::new_without_request_logging(factory, ClientRouteClass::Other)
 }
 
+/// Discover application versions using the same published-release history as
+/// the verified updater, including prereleases and excluding dependency releases.
+/// This is metadata only: it does not download or execute an installer.
+pub async fn latest_application_version(http: &RouteAwareClientPool) -> Result<String> {
+    struct MetadataHttp<'a>(&'a RouteAwareClientPool);
+    impl InstallerHttp for MetadataHttp<'_> {
+        async fn get(&self, url: &str) -> Result<InstallerResponse> {
+            let mut response = self.0.get(url).send().await?;
+            if !response.status().is_success() {
+                return Ok(InstallerResponse::Unsuccessful {
+                    status: response.status().as_u16(),
+                });
+            }
+            // Release lists contain many asset records, unlike /latest.
+            const MAX_METADATA_BYTES: usize = 16 * 1024 * 1024;
+            let mut body = Vec::new();
+            while let Some(chunk) = response.chunk().await? {
+                anyhow::ensure!(
+                    chunk.len() <= MAX_METADATA_BYTES.saturating_sub(body.len()),
+                    "release metadata exceeds size limit"
+                );
+                body.extend_from_slice(&chunk);
+            }
+            Ok(InstallerResponse::Success(body))
+        }
+    }
+    let release = tokio::time::timeout(
+        std::time::Duration::from_secs(5),
+        resolve_installer_release(&MetadataHttp(http)),
+    )
+    .await
+    .context("application version request timed out")??;
+    Ok(release.tag.trim_start_matches("rust-v").to_string())
+}
+
+/// Compare SemVer precedence, including numeric prerelease components.
+pub fn is_newer_application_version(latest: &str, current: &str) -> Option<bool> {
+    let latest = semver::Version::parse(latest.trim()).ok()?;
+    let current = semver::Version::parse(current.trim()).ok()?;
+    Some(latest.cmp_precedence(&current).is_gt())
+}
+
 /// Resolves the installer script of the most recently published InkStack
 /// application release, together with the digest GitHub recorded for it.
 ///
@@ -112,6 +199,9 @@ pub(crate) async fn resolve_installer_release(
             .as_array()
             .context("InkStack release list was not an array")?;
         for release in releases {
+            if release["draft"].as_bool() == Some(true) {
+                continue;
+            }
             let Some(tag) = release["tag_name"].as_str() else {
                 continue;
             };
