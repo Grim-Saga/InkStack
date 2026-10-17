@@ -26,7 +26,6 @@ UTILITY_NAME_EXCEPTIONS = {
     "path-utils": "inkstack-utils-path",
 }
 MANIFEST_FEATURE_EXCEPTIONS = {
-    "inkstack-rs/code-mode/Cargo.toml": {"sandbox": ("v8/v8_enable_sandbox",)},
     "inkstack-rs/v8-poc/Cargo.toml": {"sandbox": ("v8/v8_enable_sandbox",)},
 }
 OPTIONAL_DEPENDENCY_EXCEPTIONS = set()

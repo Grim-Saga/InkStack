@@ -51,7 +51,7 @@ class VerifyPyPIReleaseTest(unittest.TestCase):
         self.assertEqual(urlopen.call_count, 15)
         self.assertEqual(sleep.call_count, 14)
         urlopen.assert_called_with(
-            "https://pypi.org/pypi/openai-codex/1.2.3/json", timeout=30
+            "https://pypi.org/pypi/inkstack/1.2.3/json", timeout=30
         )
 
     def test_uses_canonical_version_for_lookup_and_artifact_names(self) -> None:
@@ -73,7 +73,7 @@ class VerifyPyPIReleaseTest(unittest.TestCase):
         ):
             verify_release("inkstack", "1.2.3b01")
         urlopen.assert_called_once_with(
-            "https://pypi.org/pypi/openai-codex/1.2.3b1/json", timeout=30
+            "https://pypi.org/pypi/inkstack/1.2.3b1/json", timeout=30
         )
         sleep.assert_not_called()
 
