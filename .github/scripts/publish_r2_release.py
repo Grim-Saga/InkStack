@@ -36,7 +36,12 @@ from releases import (
 
 BUCKET = "releases"
 PREFIX = "inkstack"
-REPOSITORY = "openai/inkstack"
+# InkStack's own repository: the source of release assets and the canonical
+# download location advertised in published metadata.
+REPOSITORY = "Grim-Saga/InkStack"
+# No InkStack-controlled CDN hostname is configured; the verified GitHub
+# release asset URL is the canonical distribution location.
+GITHUB_RELEASES_DOWNLOAD_URL = f"https://github.com/{REPOSITORY}/releases/download"
 RELEASE_METADATA_NAME = "release.json"
 INSTALLER_NAMES = ("install.sh", "install.ps1")
 MAX_UPLOAD_WORKERS = 8
@@ -473,8 +478,8 @@ def main() -> int:
                     "name": asset.path.name,
                     "digest": f"sha256:{asset.sha256}",
                     "browser_download_url": (
-                        f"https://releases.openai.com/{PREFIX}/releases/"
-                        f"{version}/{quote(asset.path.name, safe='')}"
+                        f"{GITHUB_RELEASES_DOWNLOAD_URL}/{args.tag}/"
+                        f"{quote(asset.path.name, safe='')}"
                     ),
                 }
                 for asset in assets

@@ -1719,8 +1719,14 @@ jobs:
             echo "make_latest=false" >> $GITHUB_OUTPUT
             echo "prerelease=true" >> $GITHUB_OUTPUT
           else
-            make_latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" \
-              | python3 .github/scripts/releases.py "$version" --check-github latest)"
+            # `--include` prefixes the response with the HTTP status line so
+            # releases.py can distinguish a genuine 404 (no latest release
+            # exists yet — the first stable release may become latest) from
+            # authentication, rate-limit, and server errors, which fail the
+            # release rather than being mistaken for a first release.
+            gh_api_response="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --include 2>&1 || true)"
+            make_latest="$(printf '%s\n' "$gh_api_response" \
+              | python3 .github/scripts/releases.py "$version" --check-github latest-response)"
             echo "make_latest=${make_latest}" >> $GITHUB_OUTPUT
             echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
@@ -1793,7 +1799,10 @@ jobs:
   publish-r2-assets:
     name: publish-r2-assets
     needs: release
-    if: ${{ !cancelled() && needs.release.result == 'success' }}
+    # Optional R2 distribution: disabled unless the repository explicitly
+    # opts in. Requires the inkstack-r2-publisher environment with
+    # INKSTACK_R2_* credentials and endpoint variables to be configured.
+    if: ${{ !cancelled() && needs.release.result == 'success' && vars.INKSTACK_PUBLISH_R2 == 'true' }}
     permissions:
       contents: read
     uses: ./.github/workflows/r2-release.yml
@@ -1813,7 +1822,8 @@ jobs:
         !cancelled() &&
         needs.release.result == 'success' &&
         needs.publish-dotslash.result == 'success' &&
-        needs.publish-r2-assets.result == 'success'
+        needs.publish-r2-assets.result == 'success' &&
+        vars.INKSTACK_PUBLISH_R2 == 'true'
       }}
     permissions:
       contents: read
@@ -1861,12 +1871,17 @@ jobs:
   # npm docs: https://docs.npmjs.com/trusted-publishers
   publish-npm:
     concurrency: *release-publication
-    # Publish to npm for stable releases, numbered alphas, and alpha hotfixes.
+    # Optional npm distribution: disabled unless the repository explicitly
+    # opts in. Requires verified ownership of the published package names
+    # on the npm registry (the publishing step currently configures the
+    # upstream @openai scope and publishes the inkstack wrapper and SDK
+    # packages; npm trusted-publisher registration must be verified first).
     if: >-
       ${{
         !cancelled() &&
         needs.release.result == 'success' &&
-        needs.release.outputs.should_publish_npm == 'true'
+        needs.release.outputs.should_publish_npm == 'true' &&
+        vars.INKSTACK_PUBLISH_NPM == 'true'
       }}
     name: publish-npm
     needs: release
@@ -2032,13 +2047,16 @@ jobs:
   deploy-dev-website:
     name: Trigger developers.openai.com deploy
     needs: release
-    # Only trigger the deploy for a stable release.
-    # The deploy updates developers.openai.com with the new config schema json file.
+    # Optional website deploy hook: disabled unless the repository explicitly
+    # opts in. The hook currently targets developers.openai.com, which is
+    # OpenAI-controlled; re-enabling requires an InkStack-owned destination
+    # and a configured deploy-hook secret.
     if: >-
       ${{
         !cancelled() &&
         needs.release.result == 'success' &&
-        !contains(needs.release.outputs.version, '-')
+        !contains(needs.release.outputs.version, '-') &&
+        vars.INKSTACK_PUBLISH_DEV_WEBSITE == 'true'
       }}
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -2062,13 +2080,16 @@ jobs:
     concurrency: *release-publication
     name: winget
     needs: release
-    # Only publish stable/mainline releases to WinGet; pre-releases include a
-    # '-' in the semver string (e.g., 1.2.3-alpha.1).
+    # Optional WinGet distribution: disabled unless the repository explicitly
+    # opts in. The job currently submits to the OpenAI.InkStack winget
+    # package ID through the openai-oss-forks fork, which are OpenAI-owned;
+    # an InkStack-owned package ID and fork must be configured first.
     if: >-
       ${{
         !cancelled() &&
         needs.release.result == 'success' &&
-        !contains(needs.release.outputs.version, '-')
+        !contains(needs.release.outputs.version, '-') &&
+        vars.INKSTACK_PUBLISH_WINGET == 'true'
       }}
     # komac opens the winget-pkgs PR using the published Windows archives;
     # it runs on Linux and does not execute the Windows binaries.
@@ -2123,13 +2144,15 @@ jobs:
   update-branch:
     concurrency: *release-publication
     name: Update latest-alpha-cli branch
+    # Optional publishers may be disabled (skipped) without blocking the
+    # canary branch update; only a real publication failure should.
     if: >-
       ${{
         !cancelled() &&
         needs.release.result == 'success' &&
         needs.release.outputs.npm_tag == 'alpha' &&
-        needs.publish-r2.result == 'success' &&
-        needs.publish-npm.result == 'success'
+        needs.publish-r2.result != 'failure' &&
+        needs.publish-npm.result != 'failure'
       }}
     permissions:
       contents: write
