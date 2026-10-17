@@ -45,7 +45,6 @@ pub use auth::AuthRuntimeConfig;
 pub use auth::CLIENT_ID;
 pub use auth::CLIENT_ID_OVERRIDE_ENV_VAR;
 pub use auth::INKSTACK_ACCESS_TOKEN_ENV_VAR;
-pub use auth::INKSTACK_API_KEY_ENV_VAR;
 pub use auth::InkStackAuth;
 pub use auth::ExternalAuth;
 pub use auth::ExternalAuthFuture;

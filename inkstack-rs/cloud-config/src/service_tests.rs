@@ -70,7 +70,7 @@ async fn auth_manager_with_api_key() -> Arc<AuthManager> {
     Arc::new(
         AuthManager::new(
             tmp.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -101,7 +101,7 @@ async fn auth_manager_with_plan_and_identity(
     Arc::new(
         AuthManager::new(
             tmp.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -957,7 +957,7 @@ async fn get_bundle_recovers_after_unauthorized_reload() {
     let auth_manager = Arc::new(
         AuthManager::new(
             auth_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -1014,7 +1014,7 @@ async fn get_bundle_recovers_after_unauthorized_reload_updates_cache_identity() 
     let auth_manager = Arc::new(
         AuthManager::new(
             auth_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -1079,7 +1079,7 @@ async fn get_bundle_surfaces_auth_recovery_message() {
     let auth_manager = Arc::new(
         AuthManager::new(
             auth_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -1133,7 +1133,7 @@ async fn get_bundle_refreshes_external_auth_after_unauthorized() {
     let auth_manager = Arc::new(
         AuthManager::new(
             auth_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::Ephemeral,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,

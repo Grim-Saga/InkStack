@@ -78,7 +78,7 @@ pub(crate) fn validate_provisioning_request(
                 let cloud_config_bundle = cloud_config_bundle_loader_for_storage_without_cache(
                     bootstrap_auth_config(inkstack_home, &bootstrap_config)
                         .context("resolve cloud configuration authentication")?,
-                    /*enable_inkstack_api_key_env*/ false,
+                    /*enable_openai_api_key_env*/ false,
                 )
                 .await
                 .context("initialize cloud configuration authentication")?;

@@ -2180,7 +2180,7 @@ async fn run_debug_prompt_input_command(
         config.inkstack_home.clone(),
     ));
     let auth_manager =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await?;
     let mut extensions = inkstack_extension_api::ExtensionRegistryBuilder::new();
     inkstack_git_attribution::install(
         &mut extensions,
@@ -2227,7 +2227,7 @@ async fn run_debug_models_command(
             .build()
             .await?;
         let auth_manager =
-            AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ true).await?;
+            AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ true).await?;
         let models_manager = build_models_manager(&config, auth_manager);
         models_manager
             .raw_model_catalog(

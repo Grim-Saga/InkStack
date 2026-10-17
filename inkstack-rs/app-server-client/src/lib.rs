@@ -226,8 +226,8 @@ pub struct InProcessClientStartArgs {
     pub config_warnings: Vec<ConfigWarningNotification>,
     /// Session source recorded in app-server thread metadata.
     pub session_source: SessionSource,
-    /// Whether auth loading should honor the `INKSTACK_API_KEY` environment variable.
-    pub enable_inkstack_api_key_env: bool,
+    /// Whether auth loading should honor the `OPENAI_API_KEY` environment variable.
+    pub enable_openai_api_key_env: bool,
     /// Client name reported during initialize.
     pub client_name: String,
     /// Client version reported during initialize.
@@ -285,7 +285,7 @@ impl InProcessClientStartArgs {
             environment_manager: self.environment_manager,
             config_warnings: self.config_warnings,
             session_source: self.session_source,
-            enable_inkstack_api_key_env: self.enable_inkstack_api_key_env,
+            enable_openai_api_key_env: self.enable_openai_api_key_env,
             initialize,
             channel_capacity: self.channel_capacity,
         }
@@ -940,7 +940,7 @@ mod tests {
             environment_manager: Arc::new(EnvironmentManager::default_for_tests()),
             config_warnings: Vec::new(),
             session_source,
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             client_name: "inkstack-app-server-client-test".to_string(),
             client_version: "0.0.0-test".to_string(),
             experimental_api: true,
@@ -2166,7 +2166,7 @@ mod tests {
             environment_manager: environment_manager.clone(),
             config_warnings: Vec::new(),
             session_source: SessionSource::Exec,
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             client_name: "inkstack-app-server-client-test".to_string(),
             client_version: "0.0.0-test".to_string(),
             experimental_api: true,

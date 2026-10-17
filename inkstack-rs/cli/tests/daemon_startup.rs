@@ -214,7 +214,7 @@ async fn daemon_startup(command: &str) -> Result<()> {
     for key in [
         "INKSTACK_EXEC_SERVER_URL",
         "INKSTACK_ACCESS_TOKEN",
-        "INKSTACK_API_KEY",
+        "OPENAI_API_KEY",
         "INKSTACK_CLOUD_TASKS_MODE",
         "OPENAI_API_KEY",
         "OPENAI_FEDERATION_RULE_ID",

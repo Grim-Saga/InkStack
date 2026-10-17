@@ -2196,7 +2196,7 @@ async fn plugin_read_hides_apps_for_api_key_auth() -> Result<()> {
         .without_auto_env()
         .with_env_overrides(&[
             ("INKSTACK_ACCESS_TOKEN", None),
-            ("INKSTACK_API_KEY", None),
+            ("OPENAI_API_KEY", None),
             ("OPENAI_API_KEY", None),
         ])
         .build_initialized_with_timeout(DEFAULT_TIMEOUT)

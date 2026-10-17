@@ -71,7 +71,7 @@ pub(crate) async fn chatgpt_get_request_with_timeout<T: DeserializeOwned>(
     let client = chatgpt_client(config.http_client_factory().with_network_policy(policy));
     let chatgpt_base_url = &config.chatgpt_base_url;
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager
         .auth()
         .await

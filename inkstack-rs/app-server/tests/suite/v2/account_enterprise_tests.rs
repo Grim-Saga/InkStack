@@ -189,7 +189,7 @@ async fn enterprise_login_attempt_lifecycle() -> Result<()> {
                 format!("{}/oauth/token", oauth_server.uri()),
             )
             .env_remove("OPENAI_API_KEY")
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove(INKSTACK_ACCESS_TOKEN_ENV_VAR)
             .current_dir(home.path())
             .output()
@@ -306,7 +306,7 @@ oauth = {{ client_id = "mcp-client", authorization_server_issuer = "{origin}/as"
         config_warnings: Vec::new(),
         embedded_network_policy: Default::default(),
         session_source: SessionSource::Cli,
-        enable_inkstack_api_key_env: false,
+        enable_openai_api_key_env: false,
         initialize: InitializeParams {
             client_info: ClientInfo {
                 name: "inkstack-app-server-tests".into(),
@@ -628,7 +628,7 @@ async fn enterprise_login_setup_is_cancelled_by_account_changes() -> Result<()> 
                 format!("{}/oauth/token", oauth_server.uri()),
             )
             .env_remove("OPENAI_API_KEY")
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove(INKSTACK_ACCESS_TOKEN_ENV_VAR)
             .current_dir(home.path())
             .output()
@@ -752,7 +752,7 @@ oauth = {{ client_id = "mcp-client", authorization_server_issuer = "{origin}/as"
             config_warnings: Vec::new(),
             embedded_network_policy: Default::default(),
             session_source: SessionSource::Cli,
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             initialize: InitializeParams {
                 client_info: ClientInfo {
                     name: "inkstack-app-server-tests".into(),

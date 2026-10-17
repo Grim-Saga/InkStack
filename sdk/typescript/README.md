@@ -129,7 +129,7 @@ const inkstack = new InkStack({
 });
 ```
 
-The SDK still injects its required variables (such as `INKSTACK_API_KEY`) on top of the environment you provide. If you set
+The SDK still injects its required variables (such as `OPENAI_API_KEY` when you pass `apiKey`) on top of the environment you provide. If you set
 `baseUrl`, the SDK passes it as a `--config openai_base_url=...` override.
 
 ### Passing `--config` overrides

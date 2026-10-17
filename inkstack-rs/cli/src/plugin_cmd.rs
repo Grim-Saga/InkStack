@@ -786,7 +786,7 @@ async fn load_plugin_command_context(
 }
 
 pub(crate) async fn load_cli_auth_manager(config: &Config) -> Result<Arc<AuthManager>> {
-    Ok(AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ true).await?)
+    Ok(AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ true).await?)
 }
 
 struct PluginSelection {

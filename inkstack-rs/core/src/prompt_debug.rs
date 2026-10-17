@@ -33,7 +33,7 @@ pub async fn build_prompt_input(
     config.ephemeral = true;
 
     let auth_manager =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false)
             .await
             .map_err(|err| InkStackErr::Fatal(err.to_string()))?;
 

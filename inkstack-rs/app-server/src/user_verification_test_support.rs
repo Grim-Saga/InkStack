@@ -127,7 +127,7 @@ impl Harness {
         );
         let auth = AuthManager::shared_from_config(
             config.as_ref(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
         )
         .await?;
         let provider = Arc::new(BlockingProvider::default());

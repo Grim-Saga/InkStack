@@ -161,7 +161,7 @@ async fn exec_resumes_and_forks_the_saved_daybreak_choice() -> anyhow::Result<()
     let output = test
         .cmd_with_server(&server)
         .env_remove("INKSTACK_ACCESS_TOKEN")
-        .env_remove("INKSTACK_API_KEY")
+        .env_remove("OPENAI_API_KEY")
         .env_remove("OPENAI_API_KEY")
         .args(["--skip-git-repo-check", "--json", "hello"])
         .output()?;
@@ -226,7 +226,7 @@ async fn exec_resumes_and_forks_the_saved_daybreak_choice() -> anyhow::Result<()
             responses::mount_sse_once(&server, responses::sse_completed("continued")).await;
         test.cmd_with_server(&server)
             .env_remove("INKSTACK_ACCESS_TOKEN")
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove("OPENAI_API_KEY")
             .arg("--skip-git-repo-check")
             .args(args)
@@ -248,7 +248,7 @@ async fn exec_explicit_cyber_program_overrides_daybreak_for_one_turn() -> anyhow
     let output = test
         .cmd_with_server(&server)
         .env_remove("INKSTACK_ACCESS_TOKEN")
-        .env_remove("INKSTACK_API_KEY")
+        .env_remove("OPENAI_API_KEY")
         .env_remove("OPENAI_API_KEY")
         .args([
             "--skip-git-repo-check",
@@ -270,7 +270,7 @@ async fn exec_explicit_cyber_program_overrides_daybreak_for_one_turn() -> anyhow
         responses::mount_sse_once(&server, responses::sse_completed("saved-daybreak")).await;
     test.cmd_with_server(&server)
         .env_remove("INKSTACK_ACCESS_TOKEN")
-        .env_remove("INKSTACK_API_KEY")
+        .env_remove("OPENAI_API_KEY")
         .env_remove("OPENAI_API_KEY")
         .args(["--skip-git-repo-check", "resume", &thread_id, "continue"])
         .assert()
@@ -290,7 +290,7 @@ async fn exec_resume_override_does_not_change_a_standard_thread() -> anyhow::Res
     let output = test
         .cmd_with_server(&server)
         .env_remove("INKSTACK_ACCESS_TOKEN")
-        .env_remove("INKSTACK_API_KEY")
+        .env_remove("OPENAI_API_KEY")
         .env_remove("OPENAI_API_KEY")
         .args([
             "--skip-git-repo-check",
@@ -325,7 +325,7 @@ async fn exec_resume_override_does_not_change_a_standard_thread() -> anyhow::Res
                 .await;
         test.cmd_with_server(&server)
             .env_remove("INKSTACK_ACCESS_TOKEN")
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove("OPENAI_API_KEY")
             .arg("--skip-git-repo-check")
             .args(args)

@@ -437,7 +437,7 @@ mod tests {
         write_chatgpt_auth_json(&inkstack_home);
         let auth_manager = AuthManager::shared(
             inkstack_home.clone(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -627,7 +627,7 @@ mod tests {
         let auth_manager = Arc::new(
             AuthManager::new(
                 inkstack_home.clone(),
-                /*enable_inkstack_api_key_env*/ false,
+                /*enable_openai_api_key_env*/ false,
                 AuthCredentialsStoreMode::Ephemeral,
                 /*forced_chatgpt_workspace_id*/ None,
                 /*chatgpt_base_url*/ None,

@@ -51,7 +51,6 @@ use inkstack_install_context::StandalonePlatform;
 use inkstack_login::AuthDotJson;
 use inkstack_login::AuthManager;
 use inkstack_login::INKSTACK_ACCESS_TOKEN_ENV_VAR;
-use inkstack_login::INKSTACK_API_KEY_ENV_VAR;
 use inkstack_login::InkStackAuth;
 use inkstack_login::OPENAI_API_KEY_ENV_VAR;
 use inkstack_login::default_client::create_client_without_request_logging;
@@ -398,7 +397,7 @@ async fn build_report(
             )
             .await;
             let auth_manager_result =
-                AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ true).await;
+                AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ true).await;
             let auth_manager = auth_manager_result.as_ref().ok().cloned();
             let reachability_plan = provider_reachability_plan(config);
             #[cfg(target_os = "macos")]
@@ -1218,7 +1217,6 @@ fn auth_check(config: &Config) -> DoctorCheck {
 
     let env_auth_vars = [
         OPENAI_API_KEY_ENV_VAR,
-        INKSTACK_API_KEY_ENV_VAR,
         INKSTACK_ACCESS_TOKEN_ENV_VAR,
     ]
     .into_iter()
@@ -1407,7 +1405,7 @@ fn stored_auth_issues(
                 .as_deref()
                 .is_some_and(|key| !key.trim().is_empty());
             let env_key_present =
-                env_var_present(OPENAI_API_KEY_ENV_VAR) || env_var_present(INKSTACK_API_KEY_ENV_VAR);
+                env_var_present(OPENAI_API_KEY_ENV_VAR);
             if !stored_key_present && !env_key_present {
                 issues.push("API key auth is missing an API key");
             }
@@ -2607,7 +2605,7 @@ fn provider_auth_reachability_mode_from_auth(
     if provider_base_url.is_some_and(|url| !url.trim().is_empty())
         && provider_env_key
             .is_some_and(|env_key| !env_key.trim().is_empty() && env_var_present(env_key))
-        || env_var_present(INKSTACK_API_KEY_ENV_VAR)
+        || env_var_present(OPENAI_API_KEY_ENV_VAR)
     {
         return ProviderAuthReachabilityMode::ApiKey;
     }
@@ -3594,7 +3592,7 @@ mod tests {
                 /*requires_openai_auth*/ true,
                 /*provider_env_key*/ None,
                 /*provider_base_url*/ None,
-                |name| name == INKSTACK_API_KEY_ENV_VAR,
+                |name| name == OPENAI_API_KEY_ENV_VAR,
                 /*stored_auth*/ None,
             ),
             ProviderAuthReachabilityMode::ApiKey
@@ -3611,6 +3609,16 @@ mod tests {
                 /*provider_env_key*/ None,
                 Some("https://custom.example/v1"),
                 |name| name == OPENAI_API_KEY_ENV_VAR,
+                Some(&chatgpt_auth),
+            ),
+            ProviderAuthReachabilityMode::ApiKey
+        );
+        assert_eq!(
+            provider_auth_reachability_mode_from_auth(
+                true,
+                None,
+                None,
+                |name| name == "INKSTACK_API_KEY",
                 Some(&chatgpt_auth),
             ),
             ProviderAuthReachabilityMode::Chatgpt
@@ -3630,7 +3638,7 @@ mod tests {
                 /*requires_openai_auth*/ true,
                 /*provider_env_key*/ None,
                 /*provider_base_url*/ None,
-                |name| name == INKSTACK_API_KEY_ENV_VAR,
+                |name| name == OPENAI_API_KEY_ENV_VAR,
                 Some(&chatgpt_auth),
             ),
             ProviderAuthReachabilityMode::ApiKey

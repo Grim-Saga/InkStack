@@ -63,7 +63,7 @@ pub(crate) async fn config_builder(
             bootstrap_auth_config(inkstack_home.as_path(), &bootstrap_config)
                 .context("failed to resolve cloud configuration authentication")?,
         ),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .context("failed to initialize cloud configuration authentication")?;

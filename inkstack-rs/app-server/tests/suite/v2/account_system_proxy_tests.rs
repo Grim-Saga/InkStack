@@ -74,7 +74,7 @@ async fn browser_login_bootstraps_through_system_proxy() -> Result<()> {
                     .env(TEST_MODE, mode)
                     .env("INKSTACK_APP_SERVER_LOGIN_ISSUER", BLOCKED_ORIGIN)
                     .env_remove("OPENAI_API_KEY")
-                    .env_remove("INKSTACK_API_KEY")
+                    .env_remove("OPENAI_API_KEY")
                     .output(),
             )
             .await??;
@@ -195,7 +195,7 @@ async fn browser_login_bootstraps_through_system_proxy() -> Result<()> {
         environment_manager: Arc::new(EnvironmentManager::default_for_tests()),
         config_warnings: Vec::new(),
         session_source: SessionSource::Cli,
-        enable_inkstack_api_key_env: false,
+        enable_openai_api_key_env: false,
         initialize: InitializeParams {
             client_info: ClientInfo {
                 name: "inkstack-app-server-tests".to_string(),

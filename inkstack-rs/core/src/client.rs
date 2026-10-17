@@ -560,12 +560,12 @@ impl ModelClient {
         request_contributors: Vec<Arc<dyn inkstack_extension_api::ModelRequestContributor>>,
     ) -> Self {
         let model_provider = create_model_provider(provider_info, auth_manager);
-        let inkstack_api_key_env_enabled = model_provider
+        let openai_api_key_env_enabled = model_provider
             .auth_manager()
             .as_ref()
-            .is_some_and(|manager| manager.inkstack_api_key_env_enabled());
+            .is_some_and(|manager| manager.openai_api_key_env_enabled());
         let auth_env_telemetry =
-            collect_auth_env_telemetry(model_provider.info(), inkstack_api_key_env_enabled);
+            collect_auth_env_telemetry(model_provider.info(), openai_api_key_env_enabled);
         let include_attestation = model_provider.supports_attestation();
         // Fixed-effort workers use request-level effort even when managed requirements
         // pin the feature on. Share this decision with update injection and pinning.

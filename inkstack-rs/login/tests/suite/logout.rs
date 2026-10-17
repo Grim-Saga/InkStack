@@ -202,7 +202,7 @@ async fn auth_manager_logout_with_revoke_uses_cached_auth() -> Result<()> {
     )?;
     let manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,

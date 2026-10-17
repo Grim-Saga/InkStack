@@ -74,11 +74,11 @@ Agent Identity JWT in `INKSTACK_ACCESS_TOKEN` can opt into that auth path with
 `--use-agent-identity-auth`; InkStack then registers an Agent task and sends the
 derived AgentAssertion headers on the registry request.
 
-Alternatively, API users can instead use `INKSTACK_API_KEY`;
+Alternatively, API users can instead use `OPENAI_API_KEY`;
 InkStack sends it as a bearer token on the registration request. For example:
 
 ```sh
-INKSTACK_API_KEY="$OPENAI_API_KEY" \
+OPENAI_API_KEY="$OPENAI_API_KEY" \
 inkstack exec-server \
   --remote ... \
   --environment-id "$ENVIRONMENT_ID"

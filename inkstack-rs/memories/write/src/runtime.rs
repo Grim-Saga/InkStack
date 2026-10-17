@@ -117,7 +117,7 @@ fn build_session_telemetry(
     let account_email = auth.and_then(InkStackAuth::get_account_email);
     let auth_env_telemetry = collect_auth_env_telemetry(
         &config.model_provider,
-        auth_manager.inkstack_api_key_env_enabled(),
+        auth_manager.openai_api_key_env_enabled(),
     );
     SessionTelemetry::new(
         thread_id,

@@ -42,7 +42,7 @@ pub(super) async fn bootstrap_cloud_config_bundle(
     .await?;
     Ok(cloud_config_bundle_loader_for_storage(
         bootstrap_auth_config(inkstack_home.as_path(), &bootstrap_config)?,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await?)
 }

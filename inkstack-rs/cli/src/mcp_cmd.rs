@@ -637,7 +637,7 @@ async fn run_logout(config: &Config, logout_args: LogoutArgs) -> Result<()> {
 
     if matches!(server.auth, McpServerAuth::EmaAuth) {
         let auth_manager =
-            AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ true).await?;
+            AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ true).await?;
         let auth = auth_manager.auth().await;
         let scope = ema_auth_scope(auth.as_ref())
             .context("Sign in to your InkStack account before removing enterprise authorization")?;
@@ -690,7 +690,7 @@ async fn run_logout(config: &Config, logout_args: LogoutArgs) -> Result<()> {
 async fn run_list(config: &Config, list_args: ListArgs) -> Result<()> {
     let mcp_manager = load_mcp_manager(config).await?;
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ true).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ true).await?;
     let auth = auth_manager.auth().await;
     let mcp_servers = mcp_manager.configured_servers(config).await;
     let effective_mcp_servers = mcp_manager.effective_servers(config, auth.as_ref()).await;

@@ -301,7 +301,7 @@ describe("InkStackExec", () => {
       expect(spawnEnv.INKSTACK_HOME).toBe("/tmp/inkstack-home");
       expect(spawnEnv.CUSTOM_ENV).toBe("custom");
       expect(spawnEnv.INKSTACK_ENV_SHOULD_NOT_LEAK).toBeUndefined();
-      expect(spawnEnv.INKSTACK_API_KEY).toBe("test");
+      expect(spawnEnv.OPENAI_API_KEY).toBe("test");
       expect(spawnEnv.INKSTACK_INTERNAL_ORIGINATOR_OVERRIDE).toBeDefined();
       expect(commandArgs).toContain("--config");
       expect(commandArgs).toContain(`openai_base_url=${JSON.stringify("https://example.test")}`);

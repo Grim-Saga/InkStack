@@ -1,4 +1,4 @@
-use inkstack_login::INKSTACK_API_KEY_ENV_VAR;
+use inkstack_login::OPENAI_API_KEY_ENV_VAR;
 use std::path::Path;
 use tempfile::TempDir;
 use wiremock::MockServer;
@@ -17,7 +17,7 @@ impl TestInkStackExecBuilder {
         cmd.current_dir(self.cwd.path())
             .env("INKSTACK_HOME", self.home.path())
             .env("INKSTACK_SQLITE_HOME", self.home.path())
-            .env(INKSTACK_API_KEY_ENV_VAR, "dummy");
+            .env(OPENAI_API_KEY_ENV_VAR, "dummy");
         cmd
     }
     pub fn cmd_with_server(&self, server: &MockServer) -> assert_cmd::Command {

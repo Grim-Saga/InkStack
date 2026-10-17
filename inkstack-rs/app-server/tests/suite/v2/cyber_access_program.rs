@@ -667,7 +667,7 @@ async fn start_api_key_app(home: &Path, server: &MockServer) -> Result<TestAppSe
         .without_managed_config()
         .with_env_overrides(&[
             ("OPENAI_API_KEY", None),
-            ("INKSTACK_API_KEY", None),
+            ("OPENAI_API_KEY", None),
             ("OPENAI_BASE_URL", None),
         ])
         .build_initialized()

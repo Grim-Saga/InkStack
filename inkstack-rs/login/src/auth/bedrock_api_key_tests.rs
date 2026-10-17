@@ -74,7 +74,7 @@ async fn login_with_bedrock_api_key_replaces_openai_auth() -> anyhow::Result<()>
 
     let auth_manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -126,7 +126,7 @@ async fn logout_removes_bedrock_auth() -> anyhow::Result<()> {
     )?;
     let auth_manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -157,7 +157,7 @@ async fn access_keys_auth_round_trips_and_logs_out() -> anyhow::Result<()> {
     )?;
     let auth_manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         Some(vec!["allowed-workspace".to_string()]),
         /*chatgpt_base_url*/ None,
@@ -205,7 +205,7 @@ async fn bedrock_only_auth_storage_creates_primary_auth() -> anyhow::Result<()> 
 
     let auth_manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,

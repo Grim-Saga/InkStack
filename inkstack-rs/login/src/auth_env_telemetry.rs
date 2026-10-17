@@ -1,15 +1,13 @@
 use inkstack_model_provider_info::ModelProviderInfo;
 use inkstack_otel::AuthEnvTelemetryMetadata;
 
-use crate::INKSTACK_API_KEY_ENV_VAR;
 use crate::OPENAI_API_KEY_ENV_VAR;
 use crate::REFRESH_TOKEN_URL_OVERRIDE_ENV_VAR;
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct AuthEnvTelemetry {
     pub openai_api_key_env_present: bool,
-    pub inkstack_api_key_env_present: bool,
-    pub inkstack_api_key_env_enabled: bool,
+    pub openai_api_key_env_enabled: bool,
     pub provider_env_key_name: Option<String>,
     pub provider_env_key_present: Option<bool>,
     pub refresh_token_url_override_present: bool,
@@ -19,8 +17,7 @@ impl AuthEnvTelemetry {
     pub fn to_otel_metadata(&self) -> AuthEnvTelemetryMetadata {
         AuthEnvTelemetryMetadata {
             openai_api_key_env_present: self.openai_api_key_env_present,
-            inkstack_api_key_env_present: self.inkstack_api_key_env_present,
-            inkstack_api_key_env_enabled: self.inkstack_api_key_env_enabled,
+            openai_api_key_env_enabled: self.openai_api_key_env_enabled,
             provider_env_key_name: self.provider_env_key_name.clone(),
             provider_env_key_present: self.provider_env_key_present,
             refresh_token_url_override_present: self.refresh_token_url_override_present,
@@ -30,12 +27,11 @@ impl AuthEnvTelemetry {
 
 pub fn collect_auth_env_telemetry(
     provider: &ModelProviderInfo,
-    inkstack_api_key_env_enabled: bool,
+    openai_api_key_env_enabled: bool,
 ) -> AuthEnvTelemetry {
     AuthEnvTelemetry {
         openai_api_key_env_present: env_var_present(OPENAI_API_KEY_ENV_VAR),
-        inkstack_api_key_env_present: env_var_present(INKSTACK_API_KEY_ENV_VAR),
-        inkstack_api_key_env_enabled,
+        openai_api_key_env_enabled,
         provider_env_key_name: provider.env_key.as_ref().map(|_| "configured".to_string()),
         provider_env_key_present: provider.env_key.as_deref().map(env_var_present),
         refresh_token_url_override_present: env_var_present(REFRESH_TOKEN_URL_OVERRIDE_ENV_VAR),
@@ -84,7 +80,7 @@ mod tests {
         };
 
         let telemetry =
-            collect_auth_env_telemetry(&provider, /*inkstack_api_key_env_enabled*/ false);
+            collect_auth_env_telemetry(&provider, /*openai_api_key_env_enabled*/ false);
 
         assert_eq!(
             telemetry.provider_env_key_name,

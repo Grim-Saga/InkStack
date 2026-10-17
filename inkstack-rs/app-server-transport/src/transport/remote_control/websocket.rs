@@ -2283,7 +2283,7 @@ mod tests {
         let state_db = remote_control_state_runtime(&inkstack_home).await;
         let auth_manager = AuthManager::shared(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -2383,7 +2383,7 @@ mod tests {
         let state_db = remote_control_state_runtime(&inkstack_home).await;
         let auth_manager = AuthManager::shared(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -2513,7 +2513,7 @@ mod tests {
         let state_db = remote_control_state_runtime(&inkstack_home).await;
         let auth_manager = AuthManager::shared(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,

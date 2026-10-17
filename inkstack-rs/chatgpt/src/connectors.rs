@@ -34,7 +34,7 @@ const DEFAULT_APPS_PRODUCT_SKU: &str = "inkstack";
 
 async fn apps_enabled(config: &Config) -> anyhow::Result<bool> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager.auth().await;
     Ok(config
         .features
@@ -43,7 +43,7 @@ async fn apps_enabled(config: &Config) -> anyhow::Result<bool> {
 
 async fn connector_auth(config: &Config) -> anyhow::Result<InkStackAuth> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager
         .auth()
         .await

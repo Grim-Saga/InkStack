@@ -124,7 +124,7 @@ async fn run_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
     let state_db = init_state_db(&config).await;
 
     let auth_manager =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await?;
     let local_runtime_paths = ExecServerRuntimeOptions::from_optional_paths(
         config.inkstack_self_exe.clone(),
         config.inkstack_linux_sandbox_exe.clone(),

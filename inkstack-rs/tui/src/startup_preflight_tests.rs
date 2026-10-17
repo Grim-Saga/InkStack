@@ -56,17 +56,14 @@ fn startup_delays_composer_for_homes_without_authentication_state() -> std::io::
         || Ok(false),
         |name| { (name == inkstack_login::INKSTACK_ACCESS_TOKEN_ENV_VAR).then(|| "access-token".into()) },
     ));
-    for disabled_credential in [
-        inkstack_login::OPENAI_API_KEY_ENV_VAR,
-        inkstack_login::INKSTACK_API_KEY_ENV_VAR,
-    ] {
-        assert!(should_delay_startup_composer_for_first_login(
-            &inkstack_home,
-            Ok(system_config_path.clone()),
-            || Ok(false),
-            |name| (name == disabled_credential).then(|| "disabled-key".into()),
-        ));
-    }
+    // An OpenAI API-key env var does not suppress the first-login composer:
+    // the TUI still requires an explicit sign-in.
+    assert!(should_delay_startup_composer_for_first_login(
+        &inkstack_home,
+        Ok(system_config_path.clone()),
+        || Ok(false),
+        |name| (name == inkstack_login::OPENAI_API_KEY_ENV_VAR).then(|| "api-key".into()),
+    ));
 
     for existing_state in ["history.jsonl", "log", "sessions"] {
         let state_path = inkstack_home.join(existing_state);

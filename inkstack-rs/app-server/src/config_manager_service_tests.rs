@@ -1341,7 +1341,7 @@ async fn managed_auth_policy_survives_unusable_requirements_file_changes() -> Re
     );
     let startup = service.load_latest_config(/*fallback_cwd*/ None).await?;
     let auth_manager = inkstack_login::AuthManager::shared_from_config(
-        &startup, /*enable_inkstack_api_key_env*/ false,
+        &startup, /*enable_openai_api_key_env*/ false,
     )
     .await?;
     std::fs::write(
@@ -2727,7 +2727,7 @@ async fn allowed_login_methods_follow_current_forced_workspaces() -> Result<()> 
     );
     let config = service.load_latest_config(/*fallback_cwd*/ None).await?;
     let auth = inkstack_login::AuthManager::shared_from_config(
-        &config, /*enable_inkstack_api_key_env*/ false,
+        &config, /*enable_openai_api_key_env*/ false,
     )
     .await?;
     for (workspaces, expected) in [

@@ -1331,7 +1331,7 @@ impl Session {
                 .to_string();
             let auth_env_telemetry = collect_auth_env_telemetry(
                 session_configuration.provider.info(),
-                auth_manager.inkstack_api_key_env_enabled(),
+                auth_manager.openai_api_key_env_enabled(),
             );
             let mut session_telemetry = SessionTelemetry::new(
                 thread_id,

@@ -42,7 +42,7 @@ async fn denied_oauth_refresh_terminates_401_recovery_and_preserves_auth() -> Re
     std::fs::write(home.path().join("auth.json"), &auth_json)?;
     let auth = AuthManager::shared(
         home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,

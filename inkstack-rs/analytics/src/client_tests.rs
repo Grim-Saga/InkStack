@@ -1157,7 +1157,7 @@ async fn account_switch_between_batches_does_not_send_old_credentials() {
     let manager = Arc::new(
         inkstack_login::AuthManager::new(
             home.clone(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             Store::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,

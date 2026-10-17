@@ -92,8 +92,7 @@ fn find_span_event_by_name_attr<'a>(
 fn auth_env_metadata() -> AuthEnvTelemetryMetadata {
     AuthEnvTelemetryMetadata {
         openai_api_key_env_present: true,
-        inkstack_api_key_env_present: false,
-        inkstack_api_key_env_enabled: true,
+        openai_api_key_env_enabled: true,
         provider_env_key_name: Some("configured".to_string()),
         provider_env_key_present: Some(true),
         refresh_token_url_override_present: true,
@@ -808,7 +807,7 @@ fn otel_export_routing_policy_routes_api_request_auth_observability() {
     );
     assert_eq!(
         request_log_attrs
-            .get("auth.env_inkstack_api_key_enabled")
+            .get("auth.env_openai_api_key_enabled")
             .map(String::as_str),
         Some("true")
     );

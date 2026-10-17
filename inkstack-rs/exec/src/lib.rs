@@ -406,7 +406,7 @@ pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result
         let gate_cloud_config = cloud_config_bundle_loader_for_storage(
             embedded_network_policy
                 .bind_bootstrap_auth(bootstrap_auth_config(&inkstack_home, &gate_bootstrap)?),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
         )
         .await?;
         let gate_config = ConfigBuilder::default()
@@ -502,10 +502,10 @@ pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result
         .bind_bootstrap_auth(bootstrap_auth_config(&inkstack_home, &bootstrap_config)?);
     // API keys cannot fetch workspace-managed configuration. Preserve the
     // existing ChatGPT bootstrap identity even when model requests allow
-    // INKSTACK_API_KEY.
+    // OPENAI_API_KEY.
     let cloud_config_bundle = cloud_config_bundle_loader_for_storage(
         bootstrap_auth_config,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await?;
     if let Some(worktree) = managed_worktree.as_ref() {
@@ -737,7 +737,7 @@ pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result
         environment_manager: std::sync::Arc::new(environment_manager),
         config_warnings,
         session_source: SessionSource::Exec,
-        enable_inkstack_api_key_env: true,
+        enable_openai_api_key_env: true,
         client_name: "inkstack_exec".to_string(),
         client_version: env!("CARGO_PKG_VERSION").to_string(),
         experimental_api: true,

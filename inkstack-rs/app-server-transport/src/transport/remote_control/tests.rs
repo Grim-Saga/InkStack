@@ -1309,7 +1309,7 @@ async fn remote_control_start_allows_missing_auth_when_enabled() {
     let inkstack_home = TempDir::new().expect("temp dir should create");
     let auth_manager = AuthManager::shared(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -2170,7 +2170,7 @@ async fn remote_control_waits_for_account_id_before_enrolling() {
     let state_db = remote_control_state_runtime(&inkstack_home).await;
     let auth_manager = AuthManager::shared(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -2268,7 +2268,7 @@ async fn persisted_enable_does_not_follow_auth_to_an_account_without_a_preferenc
     let state_db = remote_control_state_runtime(&inkstack_home).await;
     let auth_manager = AuthManager::shared(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,

@@ -221,7 +221,6 @@ async fn logout_survives_enterprise_cleanup_failure_with_xaa_disabled() -> Resul
             .current_dir(home.path())
             .env("NO_PROXY", "127.0.0.1,localhost")
             .env("no_proxy", "127.0.0.1,localhost")
-            .env_remove("INKSTACK_API_KEY")
             .env_remove("OPENAI_API_KEY")
             .env_remove(INKSTACK_ACCESS_TOKEN_ENV_VAR)
             .args([
@@ -244,7 +243,6 @@ async fn logout_survives_enterprise_cleanup_failure_with_xaa_disabled() -> Resul
             REVOKE_TOKEN_URL_OVERRIDE_ENV_VAR,
             format!("{}/oauth/revoke", server.uri()),
         )
-        .env_remove("INKSTACK_API_KEY")
         .env_remove("OPENAI_API_KEY")
         .env_remove(INKSTACK_ACCESS_TOKEN_ENV_VAR)
         .args(["logout"])

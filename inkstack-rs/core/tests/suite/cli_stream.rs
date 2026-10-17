@@ -1,7 +1,7 @@
 use inkstack_git_utils::SanitizedGitUrl;
 use inkstack_git_utils::collect_git_info;
 use inkstack_login::INKSTACK_ACCESS_TOKEN_ENV_VAR;
-use inkstack_login::INKSTACK_API_KEY_ENV_VAR;
+use inkstack_login::OPENAI_API_KEY_ENV_VAR;
 use inkstack_protocol::protocol::GitInfo;
 use core_test_support::fs_wait;
 use core_test_support::responses;
@@ -83,7 +83,7 @@ fn personal_access_token_exec_command(server: &MockServer, home: &TempDir) -> Co
     cmd.env("INKSTACK_HOME", home.path())
         .env(INKSTACK_ACCESS_TOKEN_ENV_VAR, PERSONAL_ACCESS_TOKEN)
         .env("INKSTACK_AUTHAPI_BASE_URL", server.uri())
-        .env_remove(INKSTACK_API_KEY_ENV_VAR)
+        .env_remove(OPENAI_API_KEY_ENV_VAR)
         .env_remove("OPENAI_API_KEY");
     cmd
 }
@@ -482,7 +482,7 @@ async fn integration_creates_and_checks_session_file() -> anyhow::Result<()> {
         .arg(&repo_root)
         .arg(&prompt);
     cmd.env("INKSTACK_HOME", home.path())
-        .env(INKSTACK_API_KEY_ENV_VAR, "dummy");
+        .env(OPENAI_API_KEY_ENV_VAR, "dummy");
 
     let output = run_cli_command(&mut cmd).unwrap();
     assert!(

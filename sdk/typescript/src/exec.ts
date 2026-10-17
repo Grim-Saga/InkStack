@@ -194,7 +194,7 @@ export class InkStackExec {
       env[INTERNAL_ORIGINATOR_ENV] = TYPESCRIPT_SDK_ORIGINATOR;
     }
     if (args.apiKey) {
-      env.INKSTACK_API_KEY = args.apiKey;
+      env.OPENAI_API_KEY = args.apiKey;
     }
     if (this.pathDirs.length > 0) {
       prependPathDirs(env, this.pathDirs);

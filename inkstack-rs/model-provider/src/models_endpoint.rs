@@ -201,11 +201,11 @@ impl OpenAiModelsEndpoint {
     }
 
     fn auth_env(&self) -> AuthEnvTelemetry {
-        let inkstack_api_key_env_enabled = self
+        let openai_api_key_env_enabled = self
             .auth_manager
             .as_ref()
-            .is_some_and(|auth_manager| auth_manager.inkstack_api_key_env_enabled());
-        collect_auth_env_telemetry(&self.provider_info, inkstack_api_key_env_enabled)
+            .is_some_and(|auth_manager| auth_manager.openai_api_key_env_enabled());
+        collect_auth_env_telemetry(&self.provider_info, openai_api_key_env_enabled)
     }
 }
 
@@ -330,8 +330,7 @@ impl RequestTelemetry for ModelsRequestTelemetry {
             auth.header_attached = self.auth_header_attached,
             auth.header_name = self.auth_header_name,
             auth.env_openai_api_key_present = self.auth_env.openai_api_key_env_present,
-            auth.env_inkstack_api_key_present = self.auth_env.inkstack_api_key_env_present,
-            auth.env_inkstack_api_key_enabled = self.auth_env.inkstack_api_key_env_enabled,
+            auth.env_openai_api_key_enabled = self.auth_env.openai_api_key_env_enabled,
             auth.env_provider_key_name = self.auth_env.provider_env_key_name.as_deref(),
             auth.env_provider_key_present = self.auth_env.provider_env_key_present,
             auth.env_refresh_token_url_override_present = self.auth_env.refresh_token_url_override_present,
@@ -356,8 +355,7 @@ impl RequestTelemetry for ModelsRequestTelemetry {
             auth.header_attached = self.auth_header_attached,
             auth.header_name = self.auth_header_name,
             auth.env_openai_api_key_present = self.auth_env.openai_api_key_env_present,
-            auth.env_inkstack_api_key_present = self.auth_env.inkstack_api_key_env_present,
-            auth.env_inkstack_api_key_enabled = self.auth_env.inkstack_api_key_env_enabled,
+            auth.env_openai_api_key_enabled = self.auth_env.openai_api_key_env_enabled,
             auth.env_provider_key_name = self.auth_env.provider_env_key_name.as_deref(),
             auth.env_provider_key_present = self.auth_env.provider_env_key_present,
             auth.env_refresh_token_url_override_present = self.auth_env.refresh_token_url_override_present,

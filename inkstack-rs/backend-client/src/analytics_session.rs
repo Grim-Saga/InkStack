@@ -33,7 +33,7 @@ impl AnalyticsSession {
         http_client_factory: HttpClientFactory,
     ) -> Result<Self, String> {
         let auth_manager =
-            AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false)
+            AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false)
                 .await
                 .map_err(|_| {
                     "Couldn't load local sign-in. Sign in with ChatGPT and retry.".to_string()

@@ -74,10 +74,10 @@ where
 
 pub async fn cloud_config_bundle_loader_for_storage(
     auth_config: AuthConfig,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
 ) -> std::io::Result<CloudConfigBundleLoader> {
     let service =
-        cloud_config_bundle_service_for_storage(auth_config, enable_inkstack_api_key_env).await?;
+        cloud_config_bundle_service_for_storage(auth_config, enable_openai_api_key_env).await?;
     let (loader, _) = cloud_config_bundle_loader_for_service(service);
     Ok(loader)
 }
@@ -86,10 +86,10 @@ pub async fn cloud_config_bundle_loader_for_storage(
 /// the disk cache or starting a background refresher.
 pub async fn cloud_config_bundle_loader_for_storage_without_cache(
     auth_config: AuthConfig,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
 ) -> std::io::Result<CloudConfigBundleLoader> {
     let service = Arc::new(
-        cloud_config_bundle_service_for_storage(auth_config, enable_inkstack_api_key_env)
+        cloud_config_bundle_service_for_storage(auth_config, enable_openai_api_key_env)
             .await?
             .without_cache(),
     );
@@ -101,10 +101,10 @@ pub async fn cloud_config_bundle_loader_for_storage_without_cache(
 
 async fn cloud_config_bundle_service_for_storage(
     auth_config: AuthConfig,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
 ) -> std::io::Result<CloudConfigBundleService<BackendBundleClient>> {
     let auth_manager =
-        AuthManager::shared_from_auth_config(auth_config.clone(), enable_inkstack_api_key_env).await?;
+        AuthManager::shared_from_auth_config(auth_config.clone(), enable_openai_api_key_env).await?;
     Ok(CloudConfigBundleService::new(
         auth_manager,
         Arc::new(BackendBundleClient::new(

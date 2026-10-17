@@ -262,7 +262,7 @@ computer_use_only = false
         .with_inkstack_home(inkstack_home.path())
         .with_env_overrides(&[
             ("OPENAI_API_KEY", None),
-            ("INKSTACK_API_KEY", None),
+            ("OPENAI_API_KEY", None),
             ("INKSTACK_ACCESS_TOKEN", None),
             ("OPENAI_FEDERATION_RULE_ID", None),
             ("OPENAI_IDENTITY_TOKEN_FILE", None),

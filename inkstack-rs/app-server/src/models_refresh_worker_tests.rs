@@ -125,7 +125,7 @@ async fn refreshes_immediately_periodically_and_stops_when_dropped() {
     ));
     let auth_manager = inkstack_login::AuthManager::shared_from_config(
         config.as_ref(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .expect("test auth manager");
@@ -206,7 +206,7 @@ async fn background_refresh_blocks_invalid_requirements_then_recovers() -> anyho
     ));
     let auth_manager = inkstack_login::AuthManager::shared_from_config(
         config.as_ref(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .expect("test auth manager");
@@ -297,7 +297,7 @@ async fn catalog_reload_recovers_after_cloud_failure() -> anyhow::Result<()> {
     let config = Arc::new(manager.load_non_project_config().await?);
     let auth = inkstack_login::AuthManager::shared_from_config(
         config.as_ref(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await?;
     let models = inkstack_core::build_models_manager(&config, Arc::clone(&auth));
@@ -348,7 +348,7 @@ async fn catalog_reload_recovers_original_project_after_startup_fallback() -> an
     let config = Arc::new(startup.config);
     let auth = inkstack_login::AuthManager::shared_from_config(
         config.as_ref(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await?;
     let models = inkstack_core::build_models_manager(&config, Arc::clone(&auth));

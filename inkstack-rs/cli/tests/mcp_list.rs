@@ -10,7 +10,7 @@ use anyhow::Result;
 use inkstack_config::types::McpServerTransportConfig;
 use inkstack_core::config::edit::ConfigEditsBuilder;
 use inkstack_core::config::load_global_mcp_servers;
-use inkstack_login::INKSTACK_API_KEY_ENV_VAR;
+use inkstack_login::OPENAI_API_KEY_ENV_VAR;
 use predicates::prelude::PredicateBooleanExt;
 use predicates::str::contains;
 use pretty_assertions::assert_eq;
@@ -94,7 +94,7 @@ enabled = true
 
     let mut list_cmd = inkstack_command(inkstack_home.path())?;
     list_cmd
-        .env(INKSTACK_API_KEY_ENV_VAR, "sk-test")
+        .env(OPENAI_API_KEY_ENV_VAR, "sk-test")
         .args(["mcp", "list", "--json"])
         .assert()
         .success()
@@ -102,7 +102,7 @@ enabled = true
 
     let mut get_cmd = inkstack_command(inkstack_home.path())?;
     get_cmd
-        .env(INKSTACK_API_KEY_ENV_VAR, "sk-test")
+        .env(OPENAI_API_KEY_ENV_VAR, "sk-test")
         .args(["mcp", "get", "api-docs", "--json"])
         .assert()
         .success()

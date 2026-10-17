@@ -448,7 +448,7 @@ pub async fn run_login_status(cli_config_overrides: CliConfigOverrides) -> ! {
     let config = load_config_or_exit(cli_config_overrides).await;
 
     if is_workload_identity_selected() {
-        match AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await {
+        match AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await {
             Ok(_) => {
                 eprintln!("Logged in using workload identity");
                 std::process::exit(0);
@@ -462,7 +462,7 @@ pub async fn run_login_status(cli_config_overrides: CliConfigOverrides) -> ! {
 
     let auth_config = config.auth_config();
     match auth_config
-        .load_auth(/*enable_inkstack_api_key_env*/ false)
+        .load_auth(/*enable_openai_api_key_env*/ false)
         .await
     {
         Ok(Some(auth)) => match auth.auth_mode() {
@@ -523,7 +523,7 @@ pub async fn run_logout(cli_config_overrides: CliConfigOverrides) -> ! {
         };
         let auth = config
             .auth_config()
-            .load_auth(/*enable_inkstack_api_key_env*/ false)
+            .load_auth(/*enable_openai_api_key_env*/ false)
             .await?;
         let Some(scope) = ema_auth_scope(auth.as_ref()) else {
             return Ok(None);

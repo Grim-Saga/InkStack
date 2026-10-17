@@ -378,7 +378,7 @@ async fn stored_agent_identity_jwt_keeps_auth_json_unchanged() -> anyhow::Result
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -568,7 +568,7 @@ async fn chatgpt_auth_registers_agent_identity_when_enabled() -> anyhow::Result<
     )?;
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -651,7 +651,7 @@ async fn chatgpt_auth_registers_agent_identity_when_enabled() -> anyhow::Result<
 
     let reloaded = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -694,7 +694,7 @@ async fn chatgpt_auth_retries_transient_agent_identity_registration() -> anyhow:
     )?;
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -761,7 +761,7 @@ async fn chatgpt_auth_registration_retry_exhaustion_is_fallback_eligible() -> an
     )?;
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -823,7 +823,7 @@ async fn chatgpt_auth_task_registration_retry_exhaustion_is_fallback_eligible() 
     storage.save(&auth_json)?;
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -880,7 +880,7 @@ async fn chatgpt_auth_non_retryable_registration_error_is_hard_failure() -> anyh
     )?;
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -1026,7 +1026,7 @@ async fn pro_account_with_no_api_key_uses_chatgpt_auth() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -1090,7 +1090,7 @@ async fn loads_api_key_from_auth_json() {
 
     let auth = super::load_auth(
         dir.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -1144,7 +1144,7 @@ async fn unauthorized_recovery_reports_mode_and_step_names() {
     let dir = tempdir().unwrap();
     let manager = AuthManager::shared(
         dir.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -1188,7 +1188,7 @@ async fn refresh_failure_is_scoped_to_the_matching_auth_snapshot() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -1505,7 +1505,7 @@ async fn external_auth_provider_can_install_headers() {
     let inkstack_home = tempdir().expect("tempdir");
     let manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::Ephemeral,
         /*forced_chatgpt_workspace_id*/ None,
         /*chatgpt_base_url*/ None,
@@ -1952,7 +1952,7 @@ async fn shared_from_config_prefers_workload_identity_to_explicit_access_token()
     let _rule_guard = EnvVarGuard::set(OPENAI_FEDERATION_RULE_ID_ENV_VAR, "rule-one");
     let _assertion_file_guard = EnvVarGuard::remove(OPENAI_IDENTITY_TOKEN_FILE_ENV_VAR);
 
-    let error = AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false)
+    let error = AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false)
         .await
         .expect_err("partial workload identity config should fail closed");
 
@@ -1993,7 +1993,7 @@ async fn load_auth_reads_access_token_from_env() {
     let chatgpt_base_url = format!("{authapi_base_url}/backend-api");
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -2042,7 +2042,7 @@ async fn load_auth_reads_personal_access_token_from_env() {
     ] {
         let auth = super::load_auth(
             inkstack_home.path(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             auth_credentials_store_mode,
             /*allowed_login_methods*/ None,
             /*forced_chatgpt_workspace_id*/ None,
@@ -2098,7 +2098,7 @@ async fn auth_manager_rejects_env_personal_access_token_workspace_mismatch() {
 
     let manager = AuthManager::new(
         inkstack_home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         Some(vec![WORKSPACE_ID_ALLOWED.to_string()]),
         /*chatgpt_base_url*/ None,
@@ -2150,7 +2150,7 @@ async fn auth_manager_rejects_stored_personal_access_token_workspace_mismatch() 
 
         let manager = AuthManager::new(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             auth_credentials_store_mode,
             Some(vec![WORKSPACE_ID_ALLOWED.to_string()]),
             /*chatgpt_base_url*/ None,
@@ -2184,7 +2184,7 @@ async fn personal_access_token_does_not_offer_unauthorized_recovery() {
     let manager = Arc::new(
         AuthManager::new(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,
@@ -2207,16 +2207,118 @@ async fn personal_access_token_does_not_offer_unauthorized_recovery() {
 
 #[tokio::test]
 #[serial(inkstack_auth_env)]
-async fn load_auth_keeps_inkstack_api_key_env_precedence() {
+async fn load_auth_ignores_inkstack_api_key_env_var() {
+    // InkStack does not issue its own API keys: INKSTACK_API_KEY is not a
+    // credential source and must never authenticate, even when env-key
+    // authentication is enabled. With no other credential present, the
+    // retired variable alone leaves the session unauthenticated.
+    let inkstack_home = tempdir().unwrap();
+    let _access_token_guard = remove_access_token_env_var();
+    let _retired_key_guard = EnvVarGuard::set("INKSTACK_API_KEY", "sk-retired");
+    let _openai_key_guard = EnvVarGuard::remove(OPENAI_API_KEY_ENV_VAR);
+
+    let auth = super::load_auth(
+        inkstack_home.path(),
+        /*enable_openai_api_key_env*/ true,
+        AuthCredentialsStoreMode::File,
+        /*allowed_login_methods*/ None,
+        /*forced_chatgpt_workspace_id*/ None,
+        /*chatgpt_base_url*/ None,
+        AuthKeyringBackendKind::Direct,
+        /*agent_identity_authapi_base_url*/ None,
+        &crate::test_support::transport_default_auth_route_config(),
+    )
+    .await
+    .expect("auth loading should succeed");
+
+    assert_eq!(auth, None);
+}
+
+#[tokio::test]
+#[serial(inkstack_auth_env)]
+async fn load_auth_prefers_openai_api_key_over_retired_inkstack_var() {
+    // When both variables are set, only the OPENAI_API_KEY value can win;
+    // the retired variable never takes precedence.
     let inkstack_home = tempdir().unwrap();
     let record = agent_identity_record(WORKSPACE_ID_ALLOWED);
     let agent_identity = fake_agent_identity_jwt(&record).expect("fake agent identity");
     let _access_token_guard = EnvVarGuard::set(INKSTACK_ACCESS_TOKEN_ENV_VAR, &agent_identity);
-    let _api_key_guard = EnvVarGuard::set(INKSTACK_API_KEY_ENV_VAR, "sk-env");
+    let _retired_key_guard = EnvVarGuard::set("INKSTACK_API_KEY", "sk-retired");
+    let _api_key_guard = EnvVarGuard::set(OPENAI_API_KEY_ENV_VAR, "sk-env");
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ true,
+        /*enable_openai_api_key_env*/ true,
+        AuthCredentialsStoreMode::File,
+        /*allowed_login_methods*/ None,
+        /*forced_chatgpt_workspace_id*/ None,
+        /*chatgpt_base_url*/ None,
+        AuthKeyringBackendKind::Direct,
+        /*agent_identity_authapi_base_url*/ None,
+        &crate::test_support::transport_default_auth_route_config(),
+    )
+    .await
+    .expect("env auth should load")
+    .expect("env auth should be present");
+
+    assert_eq!(auth.api_key(), Some("sk-env"));
+}
+
+#[tokio::test]
+#[serial(inkstack_auth_env)]
+async fn env_api_key_does_not_overwrite_stored_credentials() {
+    // An env-var key is used for the session; the persisted auth file
+    // keeps the previously stored credential untouched.
+    let inkstack_home = tempdir().unwrap();
+    let record = agent_identity_record(WORKSPACE_ID_ALLOWED);
+    let agent_identity = fake_agent_identity_jwt(&record).expect("fake agent identity");
+    let _access_token_guard = EnvVarGuard::set(INKSTACK_ACCESS_TOKEN_ENV_VAR, &agent_identity);
+    let stored = login_with_api_key(
+        inkstack_home.path(),
+        "sk-stored",
+        AuthCredentialsStoreMode::File,
+        AuthKeyringBackendKind::Direct,
+    )
+    .expect("seed stored api key");
+
+    let _api_key_guard = EnvVarGuard::set(OPENAI_API_KEY_ENV_VAR, "sk-env");
+    let auth = super::load_auth(
+        inkstack_home.path(),
+        /*enable_openai_api_key_env*/ true,
+        AuthCredentialsStoreMode::File,
+        /*allowed_login_methods*/ None,
+        /*forced_chatgpt_workspace_id*/ None,
+        /*chatgpt_base_url*/ None,
+        AuthKeyringBackendKind::Direct,
+        /*agent_identity_authapi_base_url*/ None,
+        &crate::test_support::transport_default_auth_route_config(),
+    )
+    .await
+    .expect("env auth should load")
+    .expect("env auth should be present");
+    assert_eq!(auth.api_key(), Some("sk-env"));
+
+    let auth_path = get_auth_file(inkstack_home.path());
+    let reloaded: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&auth_path).expect("read stored auth file"),
+    )
+    .expect("parse stored auth file");
+    assert_eq!(reloaded["OPENAI_API_KEY"], "sk-stored");
+    drop(stored);
+}
+
+#[tokio::test]
+#[serial(inkstack_auth_env)]
+async fn load_auth_uses_openai_api_key_env_when_enabled() {
+    let inkstack_home = tempdir().unwrap();
+    let record = agent_identity_record(WORKSPACE_ID_ALLOWED);
+    let agent_identity = fake_agent_identity_jwt(&record).expect("fake agent identity");
+    let _access_token_guard = EnvVarGuard::set(INKSTACK_ACCESS_TOKEN_ENV_VAR, &agent_identity);
+    let _api_key_guard = EnvVarGuard::set(OPENAI_API_KEY_ENV_VAR, "sk-env");
+
+    let auth = super::load_auth(
+        inkstack_home.path(),
+        /*enable_openai_api_key_env*/ true,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -2282,7 +2384,7 @@ async fn auth_manager_rejects_disallowed_stored_and_external_auth() {
     .await;
     config.managed_auth_policy.allowed_login_methods = Some(vec![ForcedLoginMethod::Chatgpt]);
     let manager =
-        AuthManager::shared_from_auth_config(config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_auth_config(config, /*enable_openai_api_key_env*/ false)
             .await
             .expect("auth manager");
 
@@ -2313,7 +2415,7 @@ async fn api_only_policy_rejects_access_tokens_before_hydration() {
     .await;
     config.managed_auth_policy.allowed_login_methods = Some(vec![ForcedLoginMethod::Api]);
     let manager =
-        AuthManager::shared_from_auth_config(config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_auth_config(config, /*enable_openai_api_key_env*/ false)
             .await
             .expect("auth manager");
 
@@ -2348,7 +2450,7 @@ async fn workspace_policy_rejects_agent_identity_before_hydration() {
     config.managed_auth_policy.allowed_chatgpt_workspaces =
         Some(vec![WORKSPACE_ID_ALLOWED.to_string()]);
     let manager =
-        AuthManager::shared_from_auth_config(config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_auth_config(config, /*enable_openai_api_key_env*/ false)
             .await
             .expect("auth manager");
 
@@ -2384,7 +2486,7 @@ async fn workspace_policy_rejects_agent_identity_before_hydration() {
         config.managed_auth_policy.allowed_chatgpt_workspaces =
             Some(vec![WORKSPACE_ID_ALLOWED.to_string()]);
         let manager =
-            AuthManager::shared_from_auth_config(config, /*enable_inkstack_api_key_env*/ false)
+            AuthManager::shared_from_auth_config(config, /*enable_openai_api_key_env*/ false)
                 .await
                 .expect("auth manager");
         assert_eq!(manager.auth().await, None);
@@ -2422,7 +2524,7 @@ async fn workspace_policy_checks_the_selected_request_account() {
     )
     .await;
     let manager =
-        AuthManager::shared_from_auth_config(config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_auth_config(config, /*enable_openai_api_key_env*/ false)
             .await
             .expect("auth manager");
 
@@ -2682,7 +2784,7 @@ async fn enforce_login_restrictions_allows_api_key_if_login_method_not_set_but_f
 #[tokio::test]
 #[serial(inkstack_auth_env)]
 async fn enforce_login_restrictions_blocks_env_api_key_when_chatgpt_required() {
-    let _guard = EnvVarGuard::set(INKSTACK_API_KEY_ENV_VAR, "sk-env");
+    let _guard = EnvVarGuard::set(OPENAI_API_KEY_ENV_VAR, "sk-env");
     let _access_token_guard = remove_access_token_env_var();
     let inkstack_home = tempdir().unwrap();
 
@@ -2905,7 +3007,7 @@ async fn plan_type_maps_known_plan() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -2938,7 +3040,7 @@ async fn plan_type_maps_self_serve_business_usage_based_plan() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -2974,7 +3076,7 @@ async fn plan_type_maps_enterprise_cbp_usage_based_plan() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -3010,7 +3112,7 @@ async fn plan_type_maps_unknown_to_unknown() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -3043,7 +3145,7 @@ async fn missing_plan_type_maps_to_unknown() {
 
     let auth = super::load_auth(
         inkstack_home.path(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::File,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,

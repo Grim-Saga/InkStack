@@ -413,7 +413,7 @@ async fn auth_manager_at(inkstack_home: &std::path::Path) -> Arc<AuthManager> {
     Arc::new(
         AuthManager::new(
             inkstack_home.to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,

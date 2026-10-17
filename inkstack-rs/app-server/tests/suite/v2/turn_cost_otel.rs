@@ -156,7 +156,7 @@ metrics_exporter = {{ otlp-http = {{ endpoint = "{}/metrics", protocol = "json" 
         environment_manager: Arc::new(environment_manager),
         config_warnings: Vec::new(),
         session_source: SessionSource::Cli,
-        enable_inkstack_api_key_env: false,
+        enable_openai_api_key_env: false,
         initialize: InitializeParams {
             client_info: ClientInfo {
                 name: "inkstack-app-server-tests".to_string(),

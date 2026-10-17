@@ -450,7 +450,7 @@ async fn pairing_auth_recovery_respects_concurrent_handshake_overload() {
         .expect("stale auth should save");
         let auth_manager = AuthManager::shared(
             inkstack_home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             /*chatgpt_base_url*/ None,

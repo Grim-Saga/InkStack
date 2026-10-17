@@ -142,7 +142,7 @@ stream_max_retries = 0
         ])
         .current_dir(inkstack_home.path())
         .env("INKSTACK_HOME", inkstack_home.path())
-        .env("INKSTACK_API_KEY", REGISTRY_TOKEN)
+        .env("OPENAI_API_KEY", REGISTRY_TOKEN)
         .env(EXECUTOR_MARKER_ENV_VAR, EXPECTED_OUTPUT)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
@@ -184,7 +184,7 @@ stream_max_retries = 0
         .arg("app-server")
         .current_dir(inkstack_home.path())
         .env("INKSTACK_HOME", inkstack_home.path())
-        .env("INKSTACK_API_KEY", REGISTRY_TOKEN)
+        .env("OPENAI_API_KEY", REGISTRY_TOKEN)
         .env(
             "INKSTACK_APP_SERVER_MANAGED_CONFIG_PATH",
             inkstack_home.path().join("managed_config.toml"),

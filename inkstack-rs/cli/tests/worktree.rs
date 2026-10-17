@@ -261,7 +261,7 @@ trust_level = "trusted"
         "INKSTACK_EXEC_SERVER_URL",
         "INKSTACK_ACCESS_TOKEN",
         "OPENAI_API_KEY",
-        "INKSTACK_API_KEY",
+        "OPENAI_API_KEY",
         "TMUX",
         "TMUX_PANE",
         "ZELLIJ",

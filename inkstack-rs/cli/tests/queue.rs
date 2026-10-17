@@ -247,7 +247,7 @@ async fn remote_session_commands_with_workload_identity_use_server_auth() -> Res
         .with_args(&["app-server", "--listen", "unix://"])
         .with_env_overrides(&[
             ("OPENAI_API_KEY", None),
-            ("INKSTACK_API_KEY", None),
+            ("OPENAI_API_KEY", None),
             ("INKSTACK_ACCESS_TOKEN", None),
             (OPENAI_FEDERATION_RULE_ID_ENV_VAR, None),
             (OPENAI_IDENTITY_TOKEN_FILE_ENV_VAR, None),

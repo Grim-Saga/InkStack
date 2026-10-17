@@ -59,7 +59,7 @@ async fn bootstrap_discovery_survives_identity_installation_but_account_access_i
     let content_url = "https://chatgpt.com/backend-api/codex/responses".parse()?;
     let manager = AuthManager::new(
         home.path().to_path_buf(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
         AuthCredentialsStoreMode::Ephemeral,
         /*forced_chatgpt_workspace_id*/ None,
         Some(config.chatgpt_base_url.clone()),
@@ -188,7 +188,7 @@ async fn startup_reloads_the_callers_selected_project() -> anyhow::Result<()> {
     let _auth = configure(
         &manager,
         &mut config,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await?;
     assert_eq!(
@@ -201,7 +201,7 @@ async fn startup_reloads_the_callers_selected_project() -> anyhow::Result<()> {
     let error = configure(
         &manager,
         &mut config,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .err()

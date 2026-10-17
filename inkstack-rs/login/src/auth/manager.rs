@@ -450,7 +450,7 @@ impl InkStackAuth {
             agent_identity_authapi_base_url(chatgpt_base_url).ok();
         load_auth(
             inkstack_home,
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             auth_credentials_store_mode,
             /*allowed_login_methods*/ None,
             /*forced_chatgpt_workspace_id*/ None,
@@ -952,18 +952,15 @@ fn persist_agent_identity_record(
 }
 
 pub const OPENAI_API_KEY_ENV_VAR: &str = "OPENAI_API_KEY";
-pub const INKSTACK_API_KEY_ENV_VAR: &str = "INKSTACK_API_KEY";
 pub const INKSTACK_ACCESS_TOKEN_ENV_VAR: &str = "INKSTACK_ACCESS_TOKEN";
 
+/// InkStack does not issue its own API keys; `OPENAI_API_KEY` is the sole
+/// supported environment variable for OpenAI API-key authentication.
 pub fn read_openai_api_key_from_env() -> Option<String> {
     env::var(OPENAI_API_KEY_ENV_VAR)
         .ok()
         .map(|value| value.trim().to_string())
         .filter(|value| !value.is_empty())
-}
-
-pub fn read_inkstack_api_key_from_env() -> Option<String> {
-    read_non_empty_env_var(INKSTACK_API_KEY_ENV_VAR)
 }
 
 pub fn read_inkstack_access_token_from_env() -> Option<String> {
@@ -1228,7 +1225,7 @@ impl AuthConfig {
 
     pub async fn load_auth(
         &self,
-        enable_inkstack_api_key_env: bool,
+        enable_openai_api_key_env: bool,
     ) -> std::io::Result<Option<InkStackAuth>> {
         let allowed_login_methods = self.allowed_login_methods();
         let workspaces = self.effective_chatgpt_workspaces();
@@ -1236,7 +1233,7 @@ impl AuthConfig {
             agent_identity_authapi_base_url(self.chatgpt_base_url.as_deref()).ok();
         let auth = load_auth(
             &self.inkstack_home,
-            enable_inkstack_api_key_env,
+            enable_openai_api_key_env,
             self.auth_credentials_store_mode,
             Some(&allowed_login_methods),
             workspaces.as_deref(),
@@ -1335,7 +1332,7 @@ async fn enforce_login_restrictions_with_agent_identity_authapi_base_url(
 
     let Some(auth) = load_auth(
         &config.inkstack_home,
-        /*enable_inkstack_api_key_env*/ true,
+        /*enable_openai_api_key_env*/ true,
         config.auth_credentials_store_mode,
         /*allowed_login_methods*/ None,
         /*forced_chatgpt_workspace_id*/ None,
@@ -1489,7 +1486,7 @@ fn logout_all_stores(
 #[allow(clippy::too_many_arguments)]
 async fn load_auth(
     inkstack_home: &Path,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
     auth_credentials_store_mode: AuthCredentialsStoreMode,
     allowed_login_methods: Option<&[ForcedLoginMethod]>,
     forced_chatgpt_workspace_id: Option<&[String]>,
@@ -1499,9 +1496,11 @@ async fn load_auth(
     auth_route_config: &AuthRouteConfig,
 ) -> std::io::Result<Option<InkStackAuth>> {
     // API key via env var takes precedence over any other auth method.
-    if enable_inkstack_api_key_env
+    // InkStack does not issue its own API keys, so `OPENAI_API_KEY` is the
+    // only supported environment variable for API-key authentication.
+    if enable_openai_api_key_env
         && auth_mode_is_allowed(allowed_login_methods, AuthMode::ApiKey)
-        && let Some(api_key) = read_inkstack_api_key_from_env()
+        && let Some(api_key) = read_openai_api_key_from_env()
     {
         return Ok(Some(InkStackAuth::from_api_key(api_key.as_str())));
     }
@@ -2053,7 +2052,7 @@ pub struct AuthManager {
     auth_change_tx: watch::Sender<u64>,
     auth_change_state_tx: watch::Sender<AuthChangeState>,
     workspace_routing_resolver: OnceLock<Weak<dyn WorkspaceRoutingResolver>>,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
     auth_credentials_store_mode: AuthCredentialsStoreMode,
     keyring_backend_kind: AuthKeyringBackendKind,
     forced_login_method: Option<ForcedLoginMethod>,
@@ -2113,7 +2112,7 @@ impl Debug for AuthManager {
         f.debug_struct("AuthManager")
             .field("codex_home", &self.inkstack_home)
             .field("inner", &self.inner)
-            .field("enable_inkstack_api_key_env", &self.enable_inkstack_api_key_env)
+            .field("enable_openai_api_key_env", &self.enable_openai_api_key_env)
             .field(
                 "auth_credentials_store_mode",
                 &self.auth_credentials_store_mode,
@@ -2159,7 +2158,7 @@ impl AuthManager {
     /// unauthenticated state.
     pub async fn new(
         inkstack_home: PathBuf,
-        enable_inkstack_api_key_env: bool,
+        enable_openai_api_key_env: bool,
         auth_credentials_store_mode: AuthCredentialsStoreMode,
         forced_chatgpt_workspace_id: Option<Vec<String>>,
         chatgpt_base_url: Option<String>,
@@ -2177,14 +2176,14 @@ impl AuthManager {
                 managed_auth_policy: ManagedAuthPolicy::default(),
                 auth_route_config,
             },
-            enable_inkstack_api_key_env,
+            enable_openai_api_key_env,
         )
         .await
     }
 
-    async fn new_from_auth_config(auth_config: AuthConfig, enable_inkstack_api_key_env: bool) -> Self {
+    async fn new_from_auth_config(auth_config: AuthConfig, enable_openai_api_key_env: bool) -> Self {
         let managed_auth = auth_config
-            .load_auth(enable_inkstack_api_key_env)
+            .load_auth(enable_openai_api_key_env)
             .await
             .ok()
             .flatten();
@@ -2210,7 +2209,7 @@ impl AuthManager {
             auth_change_tx,
             auth_change_state_tx: watch::channel(AuthChangeState::default()).0,
             workspace_routing_resolver: OnceLock::new(),
-            enable_inkstack_api_key_env,
+            enable_openai_api_key_env,
             auth_credentials_store_mode,
             keyring_backend_kind,
             forced_login_method,
@@ -2246,7 +2245,7 @@ impl AuthManager {
             auth_change_tx,
             auth_change_state_tx: watch::channel(AuthChangeState::default()).0,
             workspace_routing_resolver: OnceLock::new(),
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             auth_credentials_store_mode: AuthCredentialsStoreMode::File,
             keyring_backend_kind: AuthKeyringBackendKind::default(),
             forced_login_method: None,
@@ -2276,7 +2275,7 @@ impl AuthManager {
             auth_change_tx,
             auth_change_state_tx: watch::channel(AuthChangeState::default()).0,
             workspace_routing_resolver: OnceLock::new(),
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             auth_credentials_store_mode: AuthCredentialsStoreMode::File,
             keyring_backend_kind: AuthKeyringBackendKind::default(),
             forced_login_method: None,
@@ -2310,7 +2309,7 @@ impl AuthManager {
             auth_change_tx,
             auth_change_state_tx: watch::channel(AuthChangeState::default()).0,
             workspace_routing_resolver: OnceLock::new(),
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             auth_credentials_store_mode: AuthCredentialsStoreMode::File,
             keyring_backend_kind: AuthKeyringBackendKind::default(),
             forced_login_method: None,
@@ -2342,7 +2341,7 @@ impl AuthManager {
             auth_change_tx,
             auth_change_state_tx: watch::channel(AuthChangeState::default()).0,
             workspace_routing_resolver: OnceLock::new(),
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             auth_credentials_store_mode: AuthCredentialsStoreMode::File,
             keyring_backend_kind: AuthKeyringBackendKind::default(),
             forced_login_method: None,
@@ -2609,7 +2608,7 @@ impl AuthManager {
         let effective_chatgpt_workspaces = self.effective_chatgpt_workspaces();
         load_auth(
             &self.inkstack_home,
-            self.enable_inkstack_api_key_env,
+            self.enable_openai_api_key_env,
             self.auth_credentials_store_mode,
             Some(&allowed_login_methods),
             effective_chatgpt_workspaces.as_deref(),
@@ -2753,8 +2752,8 @@ impl AuthManager {
             .is_some_and(InkStackAuth::is_external_chatgpt_tokens)
     }
 
-    pub fn inkstack_api_key_env_enabled(&self) -> bool {
-        self.enable_inkstack_api_key_env
+    pub fn openai_api_key_env_enabled(&self) -> bool {
+        self.enable_openai_api_key_env
     }
 
     /// Returns policy only; independent credential managers own their own state and lifecycle.
@@ -2768,7 +2767,7 @@ impl AuthManager {
     /// Convenience constructor returning an `Arc` wrapper.
     pub async fn shared(
         inkstack_home: PathBuf,
-        enable_inkstack_api_key_env: bool,
+        enable_openai_api_key_env: bool,
         auth_credentials_store_mode: AuthCredentialsStoreMode,
         forced_chatgpt_workspace_id: Option<Vec<String>>,
         chatgpt_base_url: Option<String>,
@@ -2778,7 +2777,7 @@ impl AuthManager {
         Arc::new(
             Self::new(
                 inkstack_home,
-                enable_inkstack_api_key_env,
+                enable_openai_api_key_env,
                 auth_credentials_store_mode,
                 forced_chatgpt_workspace_id,
                 chatgpt_base_url,
@@ -2792,18 +2791,18 @@ impl AuthManager {
     /// Builds a shared manager and activates process-configured workload identity when selected.
     pub async fn shared_from_config(
         config: &impl AuthManagerConfig,
-        enable_inkstack_api_key_env: bool,
+        enable_openai_api_key_env: bool,
     ) -> Result<Arc<Self>, AuthManagerInitializationError> {
-        Self::shared_from_auth_config(auth_config_from(config), enable_inkstack_api_key_env).await
+        Self::shared_from_auth_config(auth_config_from(config), enable_openai_api_key_env).await
     }
 
     /// Activates workload identity against an auth config resolved before full runtime config.
     pub async fn shared_from_auth_config(
         auth_config: AuthConfig,
-        enable_inkstack_api_key_env: bool,
+        enable_openai_api_key_env: bool,
     ) -> Result<Arc<Self>, AuthManagerInitializationError> {
         let external_auth = WorkloadIdentityExternalAuth::from_process_config(&auth_config)?;
-        let mut manager = Self::new_from_auth_config(auth_config, enable_inkstack_api_key_env).await;
+        let mut manager = Self::new_from_auth_config(auth_config, enable_openai_api_key_env).await;
         manager.workload_identity_selected = external_auth.is_some();
         let manager = Arc::new(manager);
         if let Some(external_auth) = external_auth {

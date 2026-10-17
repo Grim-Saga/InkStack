@@ -20,9 +20,9 @@ cargo build --release --manifest-path inkstack-rs/Cargo.toml --bin inkstack
 
 The binary is `inkstack`. Run it to get started.
 
-### Model access (unchanged from upstream)
+### Model access
 
-Run `inkstack` and select **Sign in with ChatGPT** to use your ChatGPT Plus, Pro, Business, Edu, or Enterprise plan. You can also use an API key: set `INKSTACK_API_KEY` (`OPENAI_API_KEY` is still honored as a fallback). See [docs/authentication.md](./docs/authentication.md).
+Run `inkstack` and select **Sign in with ChatGPT** to use your ChatGPT Plus, Pro, Business, Edu, or Enterprise plan. To use OpenAI API-key authentication instead, set `OPENAI_API_KEY`. InkStack does not issue its own API keys. Users of other model providers should configure their provider's own credentials. See [docs/authentication.md](./docs/authentication.md).
 
 ### Config
 

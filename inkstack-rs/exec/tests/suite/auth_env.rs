@@ -12,7 +12,7 @@ use wiremock::matchers::method;
 use wiremock::matchers::path;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn exec_uses_inkstack_api_key_env_var() -> anyhow::Result<()> {
+async fn exec_uses_openai_api_key_env_var() -> anyhow::Result<()> {
     let test = test_inkstack_exec();
     let server = start_mock_server().await;
     let repo_root = inkstack_utils_cargo_bin::repo_root()?;
@@ -28,7 +28,7 @@ async fn exec_uses_inkstack_api_key_env_var() -> anyhow::Result<()> {
         .arg("--skip-git-repo-check")
         .arg("-C")
         .arg(&repo_root)
-        .arg("echo testing inkstack api key")
+        .arg("echo testing openai api key")
         .assert()
         .success();
 

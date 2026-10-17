@@ -170,7 +170,7 @@ async fn configured_gateway_http_initialization_fails_closed() -> Result<()> {
         .build()
         .await?;
     let primary =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await?;
     create_model_provider(config.model_provider, Some(primary))
         .api_auth()
         .await?;
@@ -195,7 +195,7 @@ delivery = { kind = "header", name = "x-gateway-auth" }
         .build()
         .await?;
     let primary =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await?;
     let provider = create_model_provider(config.model_provider.clone(), Some(primary));
     let error = provider.api_auth().await.err().unwrap();
     assert_eq!(

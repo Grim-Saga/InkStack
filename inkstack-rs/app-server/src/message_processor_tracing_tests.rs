@@ -123,7 +123,7 @@ impl TracingHarness {
         let config = Arc::new(build_test_config(inkstack_home.path(), &server.uri()).await?);
         let auth_manager = AuthManager::shared_from_config(
             config.as_ref(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
         )
         .await?;
         let (processor, outgoing_rx) = build_test_processor(config, auth_manager).await;

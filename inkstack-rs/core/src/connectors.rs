@@ -119,7 +119,7 @@ pub async fn list_cached_accessible_connectors_from_mcp_tools(
     config: &Config,
 ) -> Option<Vec<AppInfo>> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false)
             .await
             .ok()?;
     let auth = auth_manager.auth().await;
@@ -189,7 +189,7 @@ pub async fn list_accessible_connectors_from_mcp_tools_with_environment_manager(
     environment_manager: Arc<EnvironmentManager>,
 ) -> anyhow::Result<AccessibleConnectorsStatus> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let plugins_manager = Arc::new(plugins_manager_for_config(
         config,
         Arc::clone(&auth_manager),
@@ -211,7 +211,7 @@ pub async fn list_accessible_connectors_from_mcp_tools_with_mcp_manager(
     mcp_manager: Arc<McpManager>,
 ) -> anyhow::Result<AccessibleConnectorsStatus> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager.auth().await;
     if !config
         .features
@@ -432,7 +432,7 @@ async fn cached_directory_connectors_for_tool_suggest_with_auth(
         Some(auth)
     } else {
         let Ok(auth_manager) =
-            AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false).await
+            AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await
         else {
             return Vec::new();
         };

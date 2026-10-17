@@ -80,7 +80,7 @@ async fn inkstack_home_symlink_opt_out_uses_loaded_user_config() -> anyhow::Resu
         .await;
         let mut command = test.cmd_with_server(&server);
         command
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove("OPENAI_API_KEY")
             .env_remove("INKSTACK_ACCESS_TOKEN")
             .env("INKSTACK_HOME", home_env)

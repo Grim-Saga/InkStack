@@ -37,7 +37,7 @@ async fn background_routing_call_sites_skip_config(api_key: Option<&str>) -> any
     let auth_manager = Arc::new(
         AuthManager::new(
             home.path().to_path_buf(),
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
             AuthCredentialsStoreMode::File,
             /*forced_chatgpt_workspace_id*/ None,
             Some(config.chatgpt_base_url.clone()),

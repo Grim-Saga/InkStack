@@ -94,7 +94,7 @@ pub(crate) fn prefetch(
                 .ok()?;
             let auth = config
                 .auth_config()
-                .load_auth(/*enable_inkstack_api_key_env*/ false)
+                .load_auth(/*enable_openai_api_key_env*/ false)
                 .await
                 .ok()
                 .flatten()?;
@@ -135,7 +135,7 @@ pub(crate) fn prefetch(
             }
             let current = config
                 .auth_config()
-                .load_auth(/*enable_inkstack_api_key_env*/ false)
+                .load_auth(/*enable_openai_api_key_env*/ false)
                 .await
                 .ok()
                 .flatten()?;

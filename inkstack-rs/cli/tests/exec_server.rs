@@ -264,7 +264,7 @@ metrics_exporter = {{ otlp-http = {{ endpoint = "{collector_url}/v1/metrics", pr
     let mut command = tokio::process::Command::new(executable);
     command
         .env("INKSTACK_HOME", inkstack_home.path())
-        .env("INKSTACK_API_KEY", "test-api-key")
+        .env("OPENAI_API_KEY", "test-api-key")
         .env(
             inkstack_exec_server::INKSTACK_EXEC_SERVER_EXIT_ON_STDIN_CLOSE_ENV_VAR,
             "true",

@@ -549,7 +549,7 @@ pub async fn run_main_with_transport_options(
         .await?
         .config;
     let bootstrap_auth =
-        AuthManager::shared_from_config(&bootstrap_config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(&bootstrap_config, /*enable_openai_api_key_env*/ false)
             .await
             .map_err(std::io::Error::other)?;
     config_manager.replace_cloud_config_bundle_loader(
@@ -583,7 +583,7 @@ pub async fn run_main_with_transport_options(
     config.validate_windows_mxc_requirement()?;
     config.auth_config().validate()?;
     let auth_manager =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false)
             .await
             .map_err(std::io::Error::other)?;
     config_manager.replace_cloud_config_bundle_loader(

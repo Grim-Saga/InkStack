@@ -484,7 +484,7 @@ pub(super) async fn run_main_inner(
                 embedded_network_policy.bind_bootstrap_auth(
                     app_server_target.auth_config_for_cloud_loader(config.auth_config()),
                 ),
-                /*enable_inkstack_api_key_env*/ false,
+                /*enable_openai_api_key_env*/ false,
             ))
             .await??
     };
@@ -533,7 +533,7 @@ pub(super) async fn run_main_inner(
             .run_until(
                 config
                     .auth_config()
-                    .load_auth(/*enable_inkstack_api_key_env*/ false),
+                    .load_auth(/*enable_openai_api_key_env*/ false),
             )
             .await?
             .ok()

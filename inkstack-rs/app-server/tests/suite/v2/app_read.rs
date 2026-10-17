@@ -111,7 +111,7 @@ async fn connector_requests_preserve_account_policy() -> Result<()> {
     controller.publish(policy.revision(), DestinationPolicy::Unrestricted);
     config.application_network_policy = policy.clone();
     let manager =
-        AuthManager::shared_from_config(&config, /*enable_inkstack_api_key_env*/ false).await?;
+        AuthManager::shared_from_config(&config, /*enable_openai_api_key_env*/ false).await?;
     let (auth, factory) = manager.auth_with_http_client_factory().await.unwrap();
     config.application_network_policy = factory.network_policy().clone();
     let app_ids = vec!["alpha".to_string()];

@@ -725,7 +725,7 @@ where
         config_warnings,
         session_source: serde_json::from_value(serde_json::json!("cli"))
             .unwrap_or_else(|err| panic!("cli session source should deserialize: {err}")),
-        enable_inkstack_api_key_env: false,
+        enable_openai_api_key_env: false,
         client_name: "inkstack-tui".to_string(),
         client_version: env!("CARGO_PKG_VERSION").to_string(),
         experimental_api: true,
@@ -1066,7 +1066,7 @@ async fn cloud_config_bundle_for_app_server_target(
             .bind_bootstrap_auth(app_server_target.auth_config_for_cloud_loader(
                 bootstrap_auth_config(inkstack_home, bootstrap_config)?,
             )),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
 }
@@ -1377,7 +1377,7 @@ async fn run_ratatui_app(
                 if show_login_screen && !uses_remote_workspace && !workload_identity_selected {
                     cloud_config_bundle = cloud_config_bundle_loader_for_storage(
                         embedded_network_policy.bind_bootstrap_auth(initial_config.auth_config()),
-                        /*enable_inkstack_api_key_env*/ false,
+                        /*enable_openai_api_key_env*/ false,
                     )
                     .await?;
                 }

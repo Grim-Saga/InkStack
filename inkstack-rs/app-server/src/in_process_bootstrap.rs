@@ -101,7 +101,7 @@ impl EmbeddedNetworkPolicy {
 pub(super) async fn configure(
     config_manager: &ConfigManager,
     config: &mut Arc<Config>,
-    enable_inkstack_api_key_env: bool,
+    enable_openai_api_key_env: bool,
 ) -> IoResult<Arc<AuthManager>> {
     let bootstrap_config = config_manager
         .load_startup_config(Some(config.cwd.to_path_buf()))
@@ -122,7 +122,7 @@ pub(super) async fn configure(
     bootstrap_auth.validate()?;
     let bootstrap_auth_manager = AuthManager::shared_from_auth_config(
         bootstrap_auth,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .map_err(IoError::other)?;
@@ -150,12 +150,12 @@ pub(super) async fn configure(
     auth_config.validate()?;
     let policy_auth_manager = AuthManager::shared_from_auth_config(
         auth_config.clone(),
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     .map_err(IoError::other)?;
-    let auth_manager = if enable_inkstack_api_key_env {
-        AuthManager::shared_from_auth_config(auth_config, /*enable_inkstack_api_key_env*/ true)
+    let auth_manager = if enable_openai_api_key_env {
+        AuthManager::shared_from_auth_config(auth_config, /*enable_openai_api_key_env*/ true)
             .await
             .map_err(IoError::other)?
     } else {

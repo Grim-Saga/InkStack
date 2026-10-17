@@ -1298,7 +1298,7 @@ impl RemoteMarketplaceFixture {
             .env("INKSTACK_HOME", self.home.path())
             .env("HOME", self.home.path())
             .env_remove("OPENAI_API_KEY")
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove("INKSTACK_ACCESS_TOKEN")
             .env("INKSTACK_TEST_ALLOW_HTTP_REMOTE_PLUGIN_BUNDLE_DOWNLOADS", "1")
             .args(args)

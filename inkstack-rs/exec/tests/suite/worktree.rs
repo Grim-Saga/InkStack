@@ -329,7 +329,7 @@ async fn worktree_start_and_fork_use_host_pool_and_preserve_legacy_resume() -> a
             } else {
                 &source
             })
-            .env_remove("INKSTACK_API_KEY")
+            .env_remove("OPENAI_API_KEY")
             .env_remove("OPENAI_API_KEY")
             .env_remove("INKSTACK_ACCESS_TOKEN")
             .args(["--json", "--worktree", "--strict-config"])

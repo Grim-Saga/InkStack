@@ -95,7 +95,7 @@ pub async fn load_auth_manager(
     auth_config.chatgpt_base_url = chatgpt_base_url.or(Some(config.chatgpt_base_url.clone()));
     let auth_manager = match AuthManager::shared_from_auth_config(
         auth_config,
-        /*enable_inkstack_api_key_env*/ false,
+        /*enable_openai_api_key_env*/ false,
     )
     .await
     {

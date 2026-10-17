@@ -79,8 +79,7 @@ fn emit_feedback_request_tags_records_sentry_feedback_fields() {
 
     let auth_env = AuthEnvTelemetry {
         openai_api_key_env_present: true,
-        inkstack_api_key_env_present: false,
-        inkstack_api_key_env_enabled: true,
+        openai_api_key_env_enabled: true,
         provider_env_key_name: Some("configured".to_string()),
         provider_env_key_present: Some(true),
         refresh_token_url_override_present: true,
@@ -125,12 +124,7 @@ fn emit_feedback_request_tags_records_sentry_feedback_fields() {
         Some("true")
     );
     assert_eq!(
-        tags.get("auth_env_inkstack_api_key_present")
-            .map(String::as_str),
-        Some("false")
-    );
-    assert_eq!(
-        tags.get("auth_env_inkstack_api_key_enabled")
+        tags.get("auth_env_openai_api_key_enabled")
             .map(String::as_str),
         Some("true")
     );
@@ -323,8 +317,7 @@ fn emit_feedback_request_tags_preserves_auth_env_fields_for_legacy_emitters() {
 
     let auth_env = AuthEnvTelemetry {
         openai_api_key_env_present: true,
-        inkstack_api_key_env_present: true,
-        inkstack_api_key_env_enabled: true,
+        openai_api_key_env_enabled: true,
         provider_env_key_name: Some("configured".to_string()),
         provider_env_key_present: Some(true),
         refresh_token_url_override_present: true,
@@ -388,12 +381,7 @@ fn emit_feedback_request_tags_preserves_auth_env_fields_for_legacy_emitters() {
         Some("true")
     );
     assert_eq!(
-        tags.get("auth_env_inkstack_api_key_present")
-            .map(String::as_str),
-        Some("true")
-    );
-    assert_eq!(
-        tags.get("auth_env_inkstack_api_key_enabled")
+        tags.get("auth_env_openai_api_key_enabled")
             .map(String::as_str),
         Some("true")
     );

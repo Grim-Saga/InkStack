@@ -71,7 +71,7 @@ MCP_TEST_PID_FILE = {}
             .await?,
     );
     let auth =
-        AuthManager::shared_from_config(config.as_ref(), /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(config.as_ref(), /*enable_openai_api_key_env*/ false)
             .await?;
     let (processor, mut outgoing) = build_test_processor(config, auth).await;
     let owner_id = ConnectionId(1);
@@ -309,7 +309,7 @@ async fn disconnected_v2_child_lifecycle(unload_delay_secs: u64, ephemeral: bool
             .await?,
     );
     let auth =
-        AuthManager::shared_from_config(config.as_ref(), /*enable_inkstack_api_key_env*/ false)
+        AuthManager::shared_from_config(config.as_ref(), /*enable_openai_api_key_env*/ false)
             .await?;
     let (processor, mut outgoing) = build_test_processor(config, auth).await;
     let mut created = processor.thread_created_receiver();

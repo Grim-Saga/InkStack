@@ -371,7 +371,7 @@ async fn load_exec_server_remote_auth_provider(
         read_inkstack_access_token_from_env().ok_or_else(|| {
             anyhow::anyhow!("INKSTACK_ACCESS_TOKEN is required when --use-agent-identity-auth is set")
         })?;
-        let auth = AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ false)
+        let auth = AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false)
             .await?
             .auth()
             .await
@@ -386,7 +386,7 @@ async fn load_exec_server_remote_auth_provider(
 
     let (auth_manager, auth) = load_exec_server_remote_auth(
         config,
-        "remote exec-server registration requires ChatGPT authentication or API key authentication; run `inkstack login` or set INKSTACK_API_KEY",
+        "remote exec-server registration requires ChatGPT authentication or API key authentication; run `inkstack login` or set OPENAI_API_KEY",
     )
     .await?;
 
@@ -477,7 +477,7 @@ async fn load_exec_server_config(
         let bootstrap_auth_config = bootstrap_auth_config(&inkstack_home, &bootstrap_config)?;
         let cloud_config_bundle = cloud_config_bundle_loader_for_storage(
             bootstrap_auth_config,
-            /*enable_inkstack_api_key_env*/ false,
+            /*enable_openai_api_key_env*/ false,
         )
         .await?;
         builder = builder.cloud_config_bundle(cloud_config_bundle);
@@ -490,7 +490,7 @@ async fn load_exec_server_remote_auth(
     missing_auth_error: &'static str,
 ) -> anyhow::Result<(Arc<AuthManager>, inkstack_login::InkStackAuth)> {
     let auth_manager =
-        AuthManager::shared_from_config(config, /*enable_inkstack_api_key_env*/ true).await?;
+        AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ true).await?;
 
     let auth = match auth_manager.auth().await {
         Some(auth) => auth,

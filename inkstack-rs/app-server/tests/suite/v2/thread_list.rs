@@ -1212,7 +1212,7 @@ async fn thread_list_db_only_errors_distinguish_unavailable_database_from_empty_
             environment_manager: Arc::new(EnvironmentManager::default_for_tests()),
             config_warnings: Vec::new(),
             session_source: CoreSessionSource::Cli,
-            enable_inkstack_api_key_env: false,
+            enable_openai_api_key_env: false,
             initialize: InitializeParams {
                 client_info: ClientInfo {
                     name: "inkstack-app-server-tests".into(),

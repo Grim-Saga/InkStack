@@ -99,7 +99,7 @@ requires_openai_auth = true
     )?;
     let mut mcp = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())
-        .with_env_overrides(&[("OPENAI_API_KEY", None), ("INKSTACK_API_KEY", None)])
+        .with_env_overrides(&[("OPENAI_API_KEY", None), ("OPENAI_API_KEY", None)])
         .build_initialized()
         .await?;
     // Exercise runtime toggles after login has replaced the startup catalog manager.
@@ -418,7 +418,7 @@ model_catalog_url = "{server_uri}/v1/models"
     let mut mcp = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())
         .without_auto_env()
-        .with_env_overrides(&[("OPENAI_API_KEY", None), ("INKSTACK_API_KEY", None)])
+        .with_env_overrides(&[("OPENAI_API_KEY", None), ("OPENAI_API_KEY", None)])
         .build_initialized()
         .await?;
     let request_id = mcp
