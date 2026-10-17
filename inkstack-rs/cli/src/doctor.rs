@@ -28,6 +28,9 @@ use std::time::Instant;
 
 use anyhow::Context;
 use clap::Parser;
+use http::HeaderMap;
+use http::HeaderValue;
+use http::Method;
 use inkstack_api::ApiError;
 use inkstack_api::ResponsesWebsocketClient;
 use inkstack_api::is_azure_responses_provider;
@@ -56,6 +59,7 @@ use inkstack_login::OPENAI_API_KEY_ENV_VAR;
 use inkstack_login::default_client::create_client_without_request_logging;
 use inkstack_login::default_client::default_headers;
 use inkstack_login::load_auth_dot_json;
+use inkstack_model_provider::CHATGPT_INKSTACK_BASE_URL;
 use inkstack_model_provider::create_model_provider;
 use inkstack_protocol::auth::AuthMode;
 use inkstack_protocol::protocol::AskForApproval;
@@ -65,9 +69,6 @@ use inkstack_terminal_detection::TerminalName;
 use inkstack_terminal_detection::terminal_info;
 use inkstack_tui::Cli as TuiCli;
 use inkstack_utils_cli::CliConfigOverrides;
-use http::HeaderMap;
-use http::HeaderValue;
-use http::Method;
 use serde::Serialize;
 use supports_color::Stream;
 
@@ -1215,13 +1216,10 @@ fn auth_check(config: &Config) -> DoctorCheck {
     ));
     details.push(format!("auth file: {}", auth_path.display()));
 
-    let env_auth_vars = [
-        OPENAI_API_KEY_ENV_VAR,
-        INKSTACK_ACCESS_TOKEN_ENV_VAR,
-    ]
-    .into_iter()
-    .filter(|name| env_var_present(name))
-    .collect::<Vec<_>>();
+    let env_auth_vars = [OPENAI_API_KEY_ENV_VAR, INKSTACK_ACCESS_TOKEN_ENV_VAR]
+        .into_iter()
+        .filter(|name| env_var_present(name))
+        .collect::<Vec<_>>();
     if !env_auth_vars.is_empty() {
         details.push(format!(
             "auth env vars present: {}",
@@ -1404,8 +1402,7 @@ fn stored_auth_issues(
                 .openai_api_key
                 .as_deref()
                 .is_some_and(|key| !key.trim().is_empty());
-            let env_key_present =
-                env_var_present(OPENAI_API_KEY_ENV_VAR);
+            let env_key_present = env_var_present(OPENAI_API_KEY_ENV_VAR);
             if !stored_key_present && !env_key_present {
                 issues.push("API key auth is missing an API key");
             }
@@ -2574,7 +2571,6 @@ fn provider_reachability_plan(config: &Config) -> ReachabilityPlan {
         config.model_provider.base_url.as_deref(),
         query_params.as_ref(),
         config.model_provider.is_amazon_bedrock(),
-        &config.chatgpt_base_url,
     );
     plan.http_client_factory = config.http_client_factory();
     plan
@@ -2588,7 +2584,6 @@ fn default_reachability_plan() -> ReachabilityPlan {
         /*provider_base_url*/ None,
         /*provider_query_params*/ None,
         /*is_amazon_bedrock*/ false,
-        "https://chatgpt.com/backend-api/",
     )
 }
 
@@ -2634,7 +2629,6 @@ fn provider_reachability_plan_from_parts(
     provider_base_url: Option<&str>,
     provider_query_params: Option<&HashMap<String, String>>,
     is_amazon_bedrock: bool,
-    chatgpt_base_url: &str,
 ) -> ReachabilityPlan {
     let provider_route_probe_url = provider_base_url
         .or_else(|| {
@@ -2657,7 +2651,7 @@ fn provider_reachability_plan_from_parts(
         }],
         (ProviderAuthReachabilityMode::Chatgpt, None) => vec![ReachabilityEndpoint {
             label: "ChatGPT".to_string(),
-            url: provider_url_for_path(chatgpt_base_url, "inkstack/responses", provider_query_params),
+            url: format!("{CHATGPT_INKSTACK_BASE_URL}/responses"),
             required: true,
             route_probe_url: None,
         }],
@@ -3655,7 +3649,6 @@ mod tests {
                 Some("https://example.openai.azure.com/openai/v1"),
                 /*provider_query_params*/ None,
                 /*is_amazon_bedrock*/ false,
-                "https://chatgpt.com/backend-api/",
             ),
             ReachabilityPlan {
                 description: "provider auth".to_string(),
@@ -3686,7 +3679,6 @@ mod tests {
                     Some("https://example.com/openai/v1/"),
                     Some(&query_params),
                     /*is_amazon_bedrock*/ false,
-                    "https://chatgpt.com/backend-api/",
                 ),
                 ReachabilityPlan {
                     description: description.to_string(),
@@ -3717,7 +3709,6 @@ mod tests {
             Some("https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1"),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ true,
-            "https://chatgpt.com/backend-api/",
         );
 
         assert_eq!(plan.endpoints[0].route_probe_url, None);
@@ -3732,7 +3723,6 @@ mod tests {
             /*provider_base_url*/ None,
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
         );
 
         assert_eq!(
@@ -3798,7 +3788,6 @@ mod tests {
             Some(&format!("http://{addr}/xxxx")),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
         );
 
         let check = provider_reachability_check(plan).await;
@@ -3839,7 +3828,6 @@ mod tests {
             Some(&format!("http://{addr}/v1")),
             /*provider_query_params*/ None,
             /*is_amazon_bedrock*/ false,
-            "https://chatgpt.com/backend-api/",
         );
 
         let check = provider_reachability_check(plan).await;

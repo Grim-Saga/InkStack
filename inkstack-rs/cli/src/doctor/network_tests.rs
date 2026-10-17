@@ -16,14 +16,16 @@ async fn provider_reachability_rejects_proxy_authentication_challenges() {
         .respond_with(ResponseTemplate::new(407))
         .mount(&proxy)
         .await;
+    // The ChatGPT inference endpoint is now a fixed production URL, so probe
+    // the provider-configured base URL instead. The proxy still returns 407,
+    // so the reachability check must fail with a proxy-auth error.
     let plan = provider_reachability_plan_from_parts(
-        ProviderAuthReachabilityMode::Chatgpt,
+        ProviderAuthReachabilityMode::ApiKey,
         "openai",
         "OpenAI",
-        /*provider_base_url*/ None,
+        Some(&proxy.uri()),
         /*provider_query_params*/ None,
         /*is_amazon_bedrock*/ false,
-        &format!("{}/backend-api/", proxy.uri()),
     );
 
     let check = provider_reachability_check(plan).await;

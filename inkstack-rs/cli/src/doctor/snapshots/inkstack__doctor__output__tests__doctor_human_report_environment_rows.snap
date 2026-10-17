@@ -26,7 +26,7 @@ Environment
   ⚠ security     Microsoft Defender can interfere with InkStack. Verify InkStack exclusions.
       endpoint products        Microsoft Defender
       exclusion targets        verified InkStack app and required helpers
-    ▸ InkStack exclusions         not verified (expected InkStack application and helper exclusions)
+    ▸ InkStack exclusions      not verified (expected InkStack application and helper exclusions)
     → Microsoft Defender: Add a certificate or executable-path exclusion for InkStack and its helpers. If Attack Surface Reduction blocks InkStack, add a rule exclusion. If Controlled Folder Access blocks InkStack, allow the app.
   ✓ runtime      running local build on darwin-arm64
   ✓ install      consistent
