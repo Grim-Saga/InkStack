@@ -2,11 +2,11 @@
 
 **InkStack** is a terminal coding agent, a community fork of [OpenAI's Codex CLI](https://github.com/openai/codex), rebranded for independent experimentation and extension.
 
-> **Attribution:** InkStack is derived from [openai/codex](https://github.com/openai/codex), which is &copy; OpenAI and licensed under the [Apache License 2.0](LICENSE). The original `NOTICE` file is preserved unmodified, and no claim is made over OpenAI's technology. InkStack is an independent, non-commercial open-source project and is not affiliated with or endorsed by OpenAI.
+> **Attribution:** InkStack is derived from [openai/codex](https://github.com/openai/codex), which is &copy; OpenAI and licensed under the [Apache License 2.0](LICENSE). The `NOTICE` file retains the original OpenAI and Ratatui notices and adds InkStack's own attribution; no claim is made over OpenAI's technology. InkStack is an independent, non-commercial open-source project and is not affiliated with or endorsed by OpenAI.
 
 ## What this is
 
-Everything Codex CLI does, under a new name: the full agentic coding loop, the terminal UI, sandboxing, MCP support, skills, the app server, and the SDKs. The rebrand covers the product surface (binary name, config directory, environment variables, user-facing strings, docs). The model and auth layer is intentionally untouched.
+Everything Codex CLI does, under a new name: the full agentic coding loop, the terminal UI, sandboxing, MCP support, skills, the app server, and the SDKs. The rebrand covers the product surface (binary name, config directory, environment variables, user-facing strings, docs). InkStack is provider-agnostic: OpenAI authentication uses `OPENAI_API_KEY` for API-key sign-in or **Sign in with ChatGPT** for ChatGPT accounts, and other providers use their own credentials. InkStack does not issue its own API keys.
 
 ## Quickstart
 
