@@ -4,6 +4,13 @@
 // user-visible output must go through the appropriate abstraction (e.g.,
 // the TUI or the tracing stack).
 #![deny(clippy::print_stdout, clippy::print_stderr)]
+// Release-mode type layout of the `request_plugin_install` handler's async
+// state machine exceeds the default query recursion limit by a small margin
+// (release builds unify more type information than debug). The handler has
+// not changed since the initial import; this is inherited compiler
+// complexity, not a logic issue. Raising the limit for this crate only is
+// narrower and lower-risk than restructuring a behavior-critical handler.
+#![recursion_limit = "256"]
 
 mod apply_patch;
 mod apps;
