@@ -617,13 +617,14 @@ other non-default provider fields are not supported"
         self.name == OPENAI_PROVIDER_NAME
     }
 
+    /// Returns true when this OpenAI provider targets the ChatGPT codex backend
+    /// (production or staging), so InkStack-specific backend routes and headers
+    /// apply. An explicit base URL that points elsewhere — for example a user
+    /// configured reverse proxy — is treated as a regular OpenAI-compatible API
+    /// and does not receive InkStack backend routing.
     pub fn supports_inkstack_backend_routes(&self) -> bool {
         self.is_openai()
-            && self.base_url.as_deref().is_none_or(|base_url| {
-                base_url
-                    .trim_end_matches('/')
-                    .ends_with("/backend-api/inkstack")
-            })
+            && self.base_url.as_deref().is_none_or(is_chatgpt_codex_endpoint)
     }
 
     pub fn uses_openai_actor_authorization(&self) -> bool {
@@ -648,6 +649,19 @@ other non-default provider fields are not supported"
     pub fn has_command_auth(&self) -> bool {
         self.auth.is_some()
     }
+}
+
+/// Returns true when `base_url` targets the ChatGPT codex backend, identified
+/// by its `/backend-api/codex` path (production or staging, any host), allowing
+/// an optional trailing slash and ignoring query strings. Unrelated API
+/// endpoints and superficially similar or malicious path suffixes are rejected.
+/// A locally configured mock or proxy that happens to use the codex path is
+/// treated as the codex backend, since the caller explicitly selected it.
+fn is_chatgpt_codex_endpoint(base_url: &str) -> bool {
+    let Ok(url) = url::Url::parse(base_url) else {
+        return false;
+    };
+    url.path().trim_end_matches('/') == "/backend-api/codex"
 }
 
 pub const DEFAULT_LMSTUDIO_PORT: u16 = 1234;

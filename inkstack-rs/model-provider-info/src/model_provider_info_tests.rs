@@ -41,6 +41,12 @@ fn test_api_provider_applies_current_managed_residency() {
     assert_eq!(
         managed.expect("managed provider should resolve").headers,
         HeaderMap::from_iter([
+            // User-configured header is passed through unchanged.
+            (
+                HeaderName::from_static("x-openai-internal-inkstack-residency"),
+                HeaderValue::from_static("eu")
+            ),
+            // Managed residency requirement is applied on top.
             (
                 HeaderName::from_static(RESIDENCY_HEADER_NAME),
                 HeaderValue::from_static("us")
@@ -56,8 +62,10 @@ fn test_api_provider_applies_current_managed_residency() {
             .expect("unmanaged provider should resolve")
             .headers,
         HeaderMap::from_iter([
+            // No managed residency requirement was set when `unmanaged` was
+            // created, so only the user-configured header remains.
             (
-                HeaderName::from_static(RESIDENCY_HEADER_NAME),
+                HeaderName::from_static("x-openai-internal-inkstack-residency"),
                 HeaderValue::from_static("eu")
             ),
             (
@@ -233,10 +241,22 @@ fn test_header_auth_uses_chatgpt_codex_base_url() {
 #[test]
 fn inkstack_backend_routes_require_inkstack_base_url() {
     for (base_url, expected) in [
+        // No explicit base URL: the built-in default is the ChatGPT codex backend.
         (None, true),
+        // Production ChatGPT codex backend.
         (Some(CHATGPT_INKSTACK_BASE_URL), true),
+        // Staging ChatGPT codex backend, with and without a trailing slash.
+        (Some("https://chatgpt-staging.com/backend-api/codex"), true),
         (Some("https://chatgpt-staging.com/backend-api/codex/"), true),
+        // Query strings are not part of the backend path.
+        (Some("https://chatgpt.com/backend-api/codex?client_version=1"), true),
+        // Unrelated API endpoints are not the ChatGPT backend.
         (Some("https://proxy.example.com/v1"), false),
+        (Some("https://api.openai.com/v1"), false),
+        // Superficially similar or malicious path suffixes are rejected.
+        (Some("https://chatgpt.com/backend-api/codex-evil"), false),
+        (Some("https://chatgpt.com/backend-api/codex/extra"), false),
+        (Some("https://chatgpt.com/backend-api/inkstack"), false),
     ] {
         let provider = ModelProviderInfo::create_openai_provider(base_url.map(str::to_owned));
         assert_eq!(provider.supports_inkstack_backend_routes(), expected);
