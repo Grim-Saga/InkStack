@@ -204,33 +204,50 @@ Core release still depends on tag validation, all platform artifacts, npm
 archive staging, and the existing provisioned-macOS gate; DotSlash depends on
 release, and canary tracking depends only on release and DotSlash.
 
-## Outstanding blockers and final Git state
+## Resolution record (Task 11 state preserved above; Task 12 repairs below)
 
-Do not update main yet. The remaining doctor failures are:
+The three doctor/TUI blockers listed above were resolved on branch
+`task-12/integration-validation-repairs` (commits `33b0f32`, `4c6f096`,
+`3b448c9`, `65139e2`, pushed to origin). What failed before and how:
 
-1. `doctor::tests::provider_reachability_chatgpt_uses_inference_endpoint`:
-   test expects `/codex/responses`, implementation emits `/inkstack/responses`.
-   This is a pre-existing provider-contract concern, not a reason to blindly
-   update the assertion. Owner-directed investigation is required.
-2. `doctor::output::tests::render_human_report_snapshot_covers_environment_rows`:
-   unrelated fixed-width snapshot spacing differs.
+1. ChatGPT doctor endpoint — **fixed.** `provider_reachability_plan_from_parts`
+   probed `config.chatgpt_base_url + "inkstack/responses"`; the runtime
+   resolves ChatGPT-family auth to `CHATGPT_INKSTACK_BASE_URL`
+   (`https://chatgpt.com/backend-api/codex`, model-provider-info/src/lib.rs:80)
+   and posts inference to `{base}/responses`. The doctor now probes exactly
+   that endpoint (`.../codex/responses`, matching the previously "outdated"
+   test expectation); the proxy-auth test now probes the provider-configured
+   URL. Doctor binary: 130 passed, 1 ignored (pre-existing).
+2. Doctor rendering snapshot — **fixed.** `DETAIL_LABEL_WIDTH` has been 24
+   since the initial import; the committed snapshot was baked at width 27.
+   Restored the committed snapshot to the renderer's actual (correct) output;
+   no logic changed.
+3. Release-mode compiler query-depth — **fixed at root cause.** Release type
+   layout of `request_plugin_install::handle_call`'s async state machine
+   exceeded the default query recursion limit (+130 over 128). Added
+   `#![recursion_limit = "256"]` to inkstack-core only, with justification;
+   `cargo check -p inkstack-cli -p inkstack-tui --release --locked`: exit 0.
+4. TUI stack overflows — **isolated.** All three overflow in test SETUP:
+   `test_config()` → `Config::load_default...` → `deserialize_config_toml_with_base`
+   serde-recurses the large `ConfigToml` and exhausts the default 2 MiB test
+   thread stack (deep-but-finite, confirmed via gdb backtrace and 16–32 MiB
+   stack runs). No logic failure; all five named TUI tests pass with adequate
+   stack. Per the task constraints, no global stack bump is committed; the
+   required accommodation (`RUST_MIN_STACK>=16 MiB` for these tests) is
+   documented here for a follow-up task.
+5. Browser-link snapshot drift — **fixed.** Wrap-width-only diff (3–5 columns)
+   at width 80; regenerated from current correct output (`daemon_unmanaged`,
+   `continue_in_browser_narrow_long_url`).
+6. README — **fixed.** NOTICE attribution and OpenAI auth-layer descriptions
+   now match the integrated state.
 
-Also unresolved: release-mode compiler query-depth failure, broad TUI filter
-stack overflows, pre-existing browser-link snapshot drift, missing SDK test
-tooling, and unexecuted Windows/macOS runtime verification. The broad
-`update_action` filter also matches
-`unavailable_daemon_menu_offers_guidance_without_update_actions`, which aborts
-with stack overflow; the exact update_action module's two tests pass.
+`cargo check --workspace --locked`: exit 0 (with the verified V8 archive/binding
+overrides; V8 was not rebuilt). GitHub scripts 127/127, installer 24/24,
+packaging 32/32, login 204/204, model-provider 102/102, CLI lib 15/15,
+daemon updater 40/40, verified installer 3/3.
 
-Only the integration worktree's two generated .snap.new files were removed;
-the original checkout's generated file was left untouched. Integration retains
-an unstaged Cargo.lock serialization-only change; normalized TOML is equal to
-the committed lock. Task 11 commits do not modify Cargo.lock, and the committed
-file is byte-identical to Task 10, including the daemon SHA-256 dependency edge.
-Original user lock SHA-256 remains the value recorded above. V8 release workflow,
-fetch script and package consumer are unchanged from Task 10; no V8 rebuild ran.
-
-No branch deletion, reset, force push, release tag, publication, Actions launch,
-or full cross-platform build occurred. No Task 11 branch push was performed.
-Both local and remote main are left unchanged; the implementation commits remain
-on local `task-11/integration-github-only` for review and follow-up.
+Remaining scope for a follow-up task: default test-thread stack accommodation
+for ConfigToml deserialization in TUI setup, missing SDK test tooling
+(`pnpm` unavailable), and Windows/macOS runtime verification. `main` remains
+`f31d1c2`; both local and remote `main` are unchanged; no merge, force push,
+tag, release, or publication occurred.
