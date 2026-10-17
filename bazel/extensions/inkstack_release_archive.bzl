@@ -11,7 +11,7 @@ filegroup(
 filegroup(
     name = "package",
     srcs = glob([
-        "inkstack-package.json",
+        "codex-package.json",
         {binaries},
         {resources},
         {path},
@@ -20,7 +20,11 @@ filegroup(
 """
 
 def _inkstack_release_repository_impl(repository_ctx):
-    asset = "inkstack-package-x86_64-unknown-linux-musl.tar.gz"
+    # Historical Codex application packages are published under their
+    # original upstream names; only the Bazel-side labels carry InkStack
+    # names. Keep the real asset and manifest names so the pinned sha256
+    # values verify against the actual published artifacts.
+    asset = "codex-package-x86_64-unknown-linux-musl.tar.gz"
     version = repository_ctx.attr.version
     repository_ctx.download_and_extract(
         url = [
@@ -29,7 +33,7 @@ def _inkstack_release_repository_impl(repository_ctx):
         ],
         sha256 = repository_ctx.attr.sha256,
     )
-    manifest = json.decode(repository_ctx.read("inkstack-package.json"))
+    manifest = json.decode(repository_ctx.read("codex-package.json"))
     entrypoint = manifest["entrypoint"]
     binaries = entrypoint.rpartition("/")[0] + "/**"
     repository_ctx.file(
