@@ -49,10 +49,4 @@ entity under this CLA terminate.
 If any provision is held unenforceable, the remaining provisions remain in
 force.
 
----
 
-_Note to the maintainer: this is a starting draft, not legal advice. If you
-want the grant to name you as a legal person rather than a GitHub handle,
-replace "GitHub: Grim-Saga" with your full legal name. The California
-governing-law clause from the upstream text was intentionally dropped; add
-your own jurisdiction here if you want one._
