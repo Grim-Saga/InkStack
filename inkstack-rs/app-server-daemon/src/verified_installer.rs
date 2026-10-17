@@ -18,6 +18,44 @@ mod version_discovery_tests {
     use super::*;
     use serde_json::json;
 
+    #[tokio::test]
+    async fn installer_http_identifies_itself_to_github() {
+        use std::io::Read;
+        use std::io::Write;
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                .unwrap();
+            let mut request = Vec::new();
+            let mut buffer = [0; 1024];
+            while !request.windows(4).any(|part| part == b"\r\n\r\n") {
+                let count = stream.read(&mut buffer).unwrap();
+                assert_ne!(count, 0);
+                request.extend_from_slice(&buffer[..count]);
+            }
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n[]")
+                .unwrap();
+            String::from_utf8(request).unwrap()
+        });
+        let pool = installer_http_pool(inkstack_http_client::HttpClientFactory::new(
+            inkstack_http_client::OutboundProxyPolicy::ReqwestDefault,
+        ));
+        InstallerHttp::get(&pool, &format!("http://{address}/releases"))
+            .await
+            .unwrap();
+        assert!(
+            server
+                .join()
+                .unwrap()
+                .to_ascii_lowercase()
+                .contains("user-agent: inkstack/")
+        );
+    }
+
     struct History(serde_json::Value);
 
     impl InstallerHttp for History {
@@ -105,6 +143,10 @@ pub(crate) trait InstallerHttp: Send + Sync {
 impl InstallerHttp for RouteAwareClientPool {
     async fn get(&self, url: &str) -> Result<InstallerResponse> {
         let response = RouteAwareClientPool::get(self, url)
+            .header(
+                "User-Agent",
+                concat!("InkStack/", env!("CARGO_PKG_VERSION")),
+            )
             .send()
             .await
             .context("failed to fetch standalone InkStack updater")?;
@@ -136,7 +178,15 @@ pub async fn latest_application_version(http: &RouteAwareClientPool) -> Result<S
     struct MetadataHttp<'a>(&'a RouteAwareClientPool);
     impl InstallerHttp for MetadataHttp<'_> {
         async fn get(&self, url: &str) -> Result<InstallerResponse> {
-            let mut response = self.0.get(url).send().await?;
+            let mut response = self
+                .0
+                .get(url)
+                .header(
+                    "User-Agent",
+                    concat!("InkStack/", env!("CARGO_PKG_VERSION")),
+                )
+                .send()
+                .await?;
             if !response.status().is_success() {
                 return Ok(InstallerResponse::Unsuccessful {
                     status: response.status().as_u16(),
