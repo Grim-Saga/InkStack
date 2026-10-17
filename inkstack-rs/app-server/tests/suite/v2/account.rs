@@ -693,9 +693,13 @@ async fn mount_disabled_attribution_settings(mock_server: &MockServer) {
 }
 
 #[test_case("/v1"; "responses")]
-#[test_case("/backend-api/inkstack"; "discovery")]
+#[test_case("/backend-api/codex"; "discovery")]
 #[tokio::test]
 // 401 response triggers account/chatgptAuthTokens/refresh and retries with new tokens.
+// The discovery case targets the ChatGPT codex path (`/backend-api/codex`), the
+// same path the real ChatGPT backend and `supports_inkstack_backend_routes`
+// recognize. A local mock server is used, so the host is 127.0.0.1; only the
+// path matters for route detection.
 async fn external_auth_refreshes_on_unauthorized(model_path: &str) -> Result<()> {
     let inkstack_home = TempDir::new()?;
     let mock_server = MockServer::start().await;

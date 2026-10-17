@@ -251,3 +251,100 @@ for ConfigToml deserialization in TUI setup, missing SDK test tooling
 (`pnpm` unavailable), and Windows/macOS runtime verification. `main` remains
 `f31d1c2`; both local and remote `main` are unchanged; no merge, force push,
 tag, release, or publication occurred.
+
+## Task 13 resolution record (branch `task-13/backend-route-test-hardening`,
+pushed to origin)
+
+### Phase 1 — ChatGPT backend-route detection (fixed)
+
+Root cause: `ModelProviderInfo::supports_inkstack_backend_routes()` accepted
+base URLs ending in `/backend-api/inkstack`, but the runtime resolves
+ChatGPT-family authentication to `CHATGPT_INKSTACK_BASE_URL`
+(`https://chatgpt.com/backend-api/codex`, model-provider-info/src/lib.rs:80)
+and posts inference to `{base}/responses`. The retired `/inkstack` path never
+matched the real service, so the doctor and every consumer that gates on
+`supports_inkstack_backend_routes()` (provider.rs workspace routing,
+client.rs responses headers / Guardian metadata, token_budget.rs context
+features, guardian-v2 connection_pool request classification) misclassified
+the production ChatGPT endpoint.
+
+Fix: `supports_inkstack_backend_routes()` now returns true only for the
+`/backend-api/codex` path (trailing slash allowed, query strings ignored,
+https implied) on any host, and false for unrelated API endpoints and
+superficially similar or malicious path suffixes (`codex-evil`,
+`codex/extra`, `inkstack`, `/v1`). `None` (the built-in default) remains
+true. NVIDIA NIM and Amazon Bedrock are unaffected (`is_openai()` guards).
+
+All callers inspected and consistent:
+- `inkstack-rs/model-provider/src/provider.rs:224` — workspace routing
+- `inkstack-rs/core/src/client.rs:1196,1238` — responses headers / Guardian metadata
+- `inkstack-rs/core/src/session/token_budget.rs:29` — context features
+- `inkstack-rs/ext/guardian-v2/src/async_scorer/sampler/connection_pool.rs:442` — request classification
+
+Tests: `inkstack_backend_routes_require_inkstack_base_url` now passes
+(33/33 in inkstack-model-provider-info). Added positive coverage
+(production, staging, trailing slash, query string) and negative coverage
+(proxy, api.openai.com, codex-evil, codex/extra, inkstack path).
+
+### Phase 2 — TUI test stack (configured, no code change)
+
+The three reported TUI stack overflows occur in test SETUP only:
+`test_config()` → `ConfigToml` serde deserialization exhausts the default
+2 MiB test-thread stack (deep-but-finite recursion, confirmed via gdb
+backtrace). They do not affect normal application startup (main thread has
+an adequate stack). All five named tests pass at 8 MiB:
+daemon_menu_is_read_only_and_confirmation_can_cancel_or_handoff,
+unavailable_daemon_menu_offers_guidance_without_update_actions,
+daemon_version_notice_preserves_manual_update_guidance,
+model_picker_refresh_updates_app_catalog_from_app_server,
+continue_in_browser_preserves_long_link_and_footer_at_narrow_width.
+
+The test stack is already configured consistently at 8 MiB
+(`rust_min_stack := "8388608"` in justfile, `common --test_env=RUST_MIN_STACK=8388608`
+in .bazelrc, `RUST_MIN_STACK: "8388608"` in rust-ci.yml, rust-ci-full.yml and
+rust-ci-full-nextest-platform.yml). Verified: all pass at 8 MiB. No production
+thread stack was changed.
+
+### Phase 3 — TypeScript SDK (47/49)
+
+pnpm@10.34.5 (the required packageManager) installed via npm to
+`~/.npm-global` (corepack not installed; npm global install blocked by
+permissions; user prefix used). SDK dependencies installed with
+`pnpm install --frozen-lockfile`. The `inkstack` and
+`inkstack-code-mode-host` debug binaries were built (the latter required
+creating `target/debug/gn_out/obj/` before the v8 build script's
+`copy_archive` could write to it).
+
+SDK test result: 47 passed, 2 failed. The 2 failures
+(`MCP client conformance › ...`) are not code regressions: they fail because
+the test expects `run_inkstack_compliance.py`, but the repo still carries
+`run_codex_compliance.py` in `scripts/mcp_conformance/` (the codex→inkstack
+rebranding of that fixture is in flight). This is pre-existing and unrelated
+to Tasks 11–13.
+
+### Phase 4 — regression checks (all green)
+
+- `cargo test -p inkstack-cli --bin inkstack doctor`: 130 passed, 1 ignored
+- `cargo test -p inkstack-model-provider-info --lib`: 33 passed
+- `cargo test -p inkstack-model-provider --lib`: 102 passed
+- `cargo test -p inkstack-app-server --test all external_auth_refreshes_on_unauthorized`: both cases pass
+- TUI tests at `RUST_MIN_STACK=8388608`: daemon menu ×3, model picker,
+  browser link, update_action/update_versions/update_prompt/startup_preflight — all pass
+- `cargo test -p inkstack-cli --lib`: 15 passed
+- `cargo test -p inkstack-cli --test login`: 8 passed
+- `cargo test -p inkstack-app-server-daemon --lib update`: 40 passed
+- `cargo test -p inkstack-app-server-daemon --lib verified_installer`: 3 passed
+- GitHub scripts: 127 passed; installer: 24 passed; packaging: 32 passed
+- `cargo check --workspace --locked`: exit 0
+- `cargo check -p inkstack-cli -p inkstack-tui --release --locked`: exit 0
+
+Cargo.lock preservation: the integration lock remains byte-identical to
+Task 10 (including the daemon `sha2 0.10.9` edge); Task 13 commits do not
+modify Cargo.lock. Normalized TOML comparison (package/dependency order)
+is equal to the committed lock. V8 release workflow, fetch script and
+package consumer unchanged; no V8 rebuild.
+
+`main` remains `f31d1c2`; both local and remote `main` are unchanged; no
+merge, force push, tag, release, or publication occurred. The implementation
+commits are on local `task-13/backend-route-test-hardening`, pushed to origin
+for review.
