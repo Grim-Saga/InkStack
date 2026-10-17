@@ -176,7 +176,7 @@ fn storage_metrics_distinguish_explicit_file_from_secure_failure_fallback() -> a
                 AuthCredentialsStoreMode::Ephemeral => "ephemeral",
             };
             let tags: BTreeMap<String, String> = BTreeMap::from([
-                ("credential_kind".into(), "inkstack".into()),
+                ("credential_kind".into(), "ink_stack".into()),
                 ("store_mode".into(), store_mode.into()),
                 (
                     "selected_store".into(),
