@@ -898,7 +898,7 @@ fn run_update_command() -> anyhow::Result<()> {
     {
         let Some(action) = inkstack_tui::get_update_action() else {
             anyhow::bail!(
-                "Could not detect the InkStack installation method. Please update manually: https://github.com/Grim-Saga/InkStack/releases"
+                "Automatic updates are unavailable for this installation. InkStack does not currently publish package-registry updates. Download a standalone package from https://github.com/Grim-Saga/InkStack/releases; package-manager installations are not migrated automatically."
             );
         };
         run_update_action(action, /*cli_executable*/ None)

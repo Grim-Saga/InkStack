@@ -10,16 +10,6 @@ use inkstack_install_context::StandalonePlatform;
 pub enum UpdateAction {
     /// Replace the local daemon after restoring the terminal.
     Daemon(DaemonUpdateSource),
-    /// Update via `npm install -g inkstack@latest`.
-    NpmGlobalLatest,
-    /// Update via `bun install -g inkstack@latest`.
-    BunGlobalLatest,
-    /// Update via `vp install -g inkstack@latest`.
-    VitePlusGlobalLatest,
-    /// Update via `pnpm add -g inkstack@latest`.
-    PnpmGlobalLatest,
-    /// Update via `brew upgrade inkstack`.
-    BrewUpgrade,
     /// Update via `inkstack update`, which fetches the installer from a verified
     /// InkStack application release and runs it from a staged file.
     StandaloneUnix,
@@ -32,11 +22,13 @@ impl UpdateAction {
     #[cfg(any(not(debug_assertions), test))]
     pub(crate) fn from_install_context(context: &InstallContext) -> Option<Self> {
         match &context.method {
-            InstallMethod::Npm => Some(UpdateAction::NpmGlobalLatest),
-            InstallMethod::Bun => Some(UpdateAction::BunGlobalLatest),
-            InstallMethod::VitePlus => Some(UpdateAction::VitePlusGlobalLatest),
-            InstallMethod::Pnpm => Some(UpdateAction::PnpmGlobalLatest),
-            InstallMethod::Brew => Some(UpdateAction::BrewUpgrade),
+            // Recognize legacy package-manager installations without advertising
+            // registry packages we do not publish or overwriting their files.
+            InstallMethod::Npm
+            | InstallMethod::Bun
+            | InstallMethod::VitePlus
+            | InstallMethod::Pnpm
+            | InstallMethod::Brew => None,
             InstallMethod::Standalone { platform, .. } => Some(match platform {
                 StandalonePlatform::Unix => UpdateAction::StandaloneUnix,
                 StandalonePlatform::Windows => UpdateAction::StandaloneWindows,
@@ -49,11 +41,6 @@ impl UpdateAction {
     pub fn command_args(self) -> (&'static str, &'static [&'static str]) {
         match self {
             UpdateAction::Daemon(source) => ("inkstack", source.command_args()),
-            UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "inkstack"]),
-            UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "inkstack"]),
-            UpdateAction::VitePlusGlobalLatest => ("vp", &["install", "-g", "inkstack"]),
-            UpdateAction::PnpmGlobalLatest => ("pnpm", &["add", "-g", "inkstack"]),
-            UpdateAction::BrewUpgrade => ("brew", &["upgrade", "--cask", "inkstack"]),
             UpdateAction::StandaloneUnix => ("inkstack", &["update"]),
             UpdateAction::StandaloneWindows => ("inkstack", &["update"]),
         }
@@ -96,28 +83,35 @@ mod tests {
                 method: InstallMethod::Npm,
                 package_layout: None,
             }),
-            Some(UpdateAction::NpmGlobalLatest)
+            None
         );
         assert_eq!(
             UpdateAction::from_install_context(&InstallContext {
                 method: InstallMethod::Bun,
                 package_layout: None,
             }),
-            Some(UpdateAction::BunGlobalLatest)
+            None
         );
         assert_eq!(
             UpdateAction::from_install_context(&InstallContext {
                 method: InstallMethod::Pnpm,
                 package_layout: None,
             }),
-            Some(UpdateAction::PnpmGlobalLatest)
+            None
         );
         assert_eq!(
             UpdateAction::from_install_context(&InstallContext {
                 method: InstallMethod::Brew,
                 package_layout: None,
             }),
-            Some(UpdateAction::BrewUpgrade)
+            None
+        );
+        assert_eq!(
+            UpdateAction::from_install_context(&InstallContext {
+                method: InstallMethod::VitePlus,
+                package_layout: None,
+            }),
+            None
         );
         assert_eq!(
             UpdateAction::from_install_context(&InstallContext {

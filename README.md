@@ -20,6 +20,16 @@ cargo build --release --manifest-path inkstack-rs/Cargo.toml --bin inkstack
 
 The binary is `inkstack`. Run it to get started.
 
+### Distribution and updates
+
+Application downloads are published only on
+[GitHub Releases](https://github.com/Grim-Saga/InkStack/releases).
+Standalone release installations support `inkstack update` with verified
+installer downloads. InkStack does not currently publish to npm, PyPI,
+Homebrew, or WinGet. Existing package-manager installations are detected but
+are not automatically updated or migrated; use the GitHub standalone packages
+when migrating, and manage removal of an old installation separately.
+
 ### Model access
 
 Run `inkstack` and select **Sign in with ChatGPT** to use your ChatGPT Plus, Pro, Business, Edu, or Enterprise plan. To use OpenAI API-key authentication instead, set `OPENAI_API_KEY`. InkStack does not issue its own API keys. Users of other model providers should configure their provider's own credentials. See [docs/authentication.md](./docs/authentication.md).

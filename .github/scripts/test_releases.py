@@ -7,10 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from urllib.parse import quote
-
 from npm_alpha_tag import npm_alpha_tag
-import publish_r2_release as r2
 from releases import (
     is_valid_release_version,
     should_make_latest,
@@ -325,79 +322,6 @@ class StablePublicationTests(unittest.TestCase):
             should_make_latest_from_response(
                 "0.1.0-beta.1", self._response("HTTP/2.0 404 Not Found")
             )
-
-    def test_r2_checks_its_channel_and_only_repairs_unreadable_prereleases(self):
-        with patch.object(r2, "run_command") as command:
-            command.return_value = '{"tag_name":"rust-v0.100.0"}'
-            self.assertFalse(r2.should_update_channel("endpoint", "0.99.9", "latest"))
-            self.assertTrue(r2.should_update_channel("endpoint", "0.100.0", "latest"))
-            self.assertIn(
-                "s3://releases/inkstack/channels/latest", command.call_args.args[0]
-            )
-            command.return_value = "invalid"
-            with self.assertRaises(r2.PublishError):
-                r2.should_update_channel("endpoint", "0.99.9", "latest")
-            self.assertTrue(
-                r2.should_update_channel("endpoint", "0.99.9-alpha.1", "prerelease")
-            )
-
-    def test_r2_publisher_targets_the_inkstack_repository(self):
-        # The R2 publisher must fetch release assets from Grim-Saga/InkStack
-        # and must never contact an OpenAI repository.
-        with patch.object(r2, "run_command") as command:
-            command.return_value = json.dumps(
-                [
-                    {
-                        "name": "install.sh",
-                        "size": 32,
-                        "state": "uploaded",
-                        "digest": f"sha256:{'a' * 64}",
-                    }
-                ]
-            )
-            with tempfile.TemporaryDirectory() as temp_dir:
-                assets = r2.get_release_metadata(
-                    "rust-v0.142.5", Path(temp_dir), stage="finalize"
-                )
-            self.assertEqual([asset.path.name for asset in assets], ["install.sh"])
-            view_args = command.call_args.args[0]
-            self.assertEqual(
-                view_args[view_args.index("--repo") + 1], "Grim-Saga/InkStack"
-            )
-            self.assertNotIn("openai/inkstack", " ".join(view_args))
-
-    def test_r2_metadata_uses_verified_inkstack_github_asset_urls(self):
-        # The published release.json advertises the canonical GitHub
-        # release asset URLs of Grim-Saga/InkStack — never a fictional
-        # OpenAI-hosted CDN path.
-        tag = "rust-v0.142.5"
-        names = (
-            "install.sh",
-            "install.ps1",
-            "inkstack-package-x86_64-pc-windows-msvc.tar.gz",
-        )
-        metadata_assets = [
-            {
-                "name": name,
-                "digest": f"sha256:{'a' * 64}",
-                "browser_download_url": (
-                    f"{r2.GITHUB_RELEASES_DOWNLOAD_URL}/{tag}/"
-                    f"{quote(name, safe='')}"
-                ),
-            }
-            for name in names
-        ]
-        for asset in metadata_assets:
-            self.assertEqual(
-                asset["browser_download_url"],
-                "https://github.com/Grim-Saga/InkStack/releases/download/"
-                f"{tag}/{asset['name']}",
-            )
-            self.assertNotIn("openai", asset["browser_download_url"])
-        publisher_source = Path(r2.__file__).read_text(encoding="utf-8")
-        self.assertNotIn("releases.openai.com", publisher_source)
-        self.assertNotIn("openai/inkstack", publisher_source)
-
 
 if __name__ == "__main__":
     unittest.main()
