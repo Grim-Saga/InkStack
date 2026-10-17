@@ -274,7 +274,7 @@ from unittest.mock import patch
 
 helper = pathlib.Path(sys.argv.pop(1))
 sys.path.insert(0, str(helper.parents[2] / 'scripts'))
-with patch('codex_package.v8.fetch_inkstack_v8_artifacts',
+with patch('inkstack_package.v8.fetch_inkstack_v8_artifacts',
            side_effect=subprocess.TimeoutExpired(['gh', 'release', 'download'], 120)):
     runpy.run_path(str(helper), run_name='__main__')
 """
