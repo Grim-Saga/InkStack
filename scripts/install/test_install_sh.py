@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""Regression tests for the InkStack standalone installer release contract.
+
+All network access is intercepted by a fake curl executable: every request
+URL is recorded and every response is served from local fixtures. The
+installer must only ever contact Grim-Saga/InkStack release infrastructure,
+must never select a non-application release (such as the V8 dependency
+release) for a "latest" request, and must verify every download against a
+published SHA-256 digest.
+"""
+
 import hashlib
 import json
 import os
@@ -12,105 +22,295 @@ import unittest
 
 
 INSTALL_SCRIPT = Path(__file__).with_name("install.sh")
+PS_INSTALL_SCRIPT = Path(__file__).with_name("install.ps1")
 VERSION = "0.142.5"
 MISMATCH_VERSION = "0.145.0"
+V8_RELEASE_TAG = "rusty-v8-v150.4.0"
+API_BASE = "https://api.github.com/repos/Grim-Saga/InkStack"
+DOWNLOAD_BASE = "https://github.com/Grim-Saga/InkStack/releases/download"
+
+FORBIDDEN_DISTRIBUTION_REFERENCES = (
+    "releases.openai.com",
+    "openai/codex",
+    "api.github.com/repos/openai",
+)
 
 
 class InstallShTest(unittest.TestCase):
-    def test_metadata_fetch_failure_is_not_reported_as_missing_assets(self) -> None:
-        result, requests = run_installer(VERSION, metadata_failure=True)
+    def test_explicit_release_resolves_from_inkstack_metadata(self) -> None:
+        result, requests = run_installer(VERSION)
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(
             requests,
             [
-                "https://api.github.com/repos/openai/codex/releases/tags/"
-                f"rust-v{VERSION}"
+                f"{API_BASE}/releases/tags/rust-v{VERSION}",
+                f"{DOWNLOAD_BASE}/rust-v{VERSION}/inkstack-package_SHA256SUMS",
             ],
         )
+        self.assertIn(f"Resolved version: {VERSION}", result.stdout)
+        assert_only_inkstack_urls(requests)
+
+    def test_metadata_fetch_failure_is_not_reported_as_missing_assets(self) -> None:
+        result, requests = run_installer(VERSION, api_failure=True)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(requests, [f"{API_BASE}/releases/tags/rust-v{VERSION}"])
         self.assertIn(
             f"Could not fetch GitHub release metadata for InkStack {VERSION}",
             result.stderr,
         )
-        self.assertNotIn("Could not find InkStack package", result.stderr)
-
-    def test_exact_release_opt_out_uses_github_metadata_once(self) -> None:
-        result, requests = run_installer(VERSION, use_mirror=False)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertEqual(
-            requests,
-            [
-                "https://api.github.com/repos/openai/codex/releases/tags/"
-                f"rust-v{VERSION}",
-                "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-            ],
-        )
-        self.assertIn(f"Resolved version: {VERSION}", result.stdout)
+        self.assertNotIn("does not provide the required release assets", result.stderr)
 
     def test_alpha_hotfix_release_is_valid(self) -> None:
         version = "0.145.0-alpha.23.1"
-        result, requests = run_installer(version)
+        result, requests = run_installer(
+            version, metadata_json=release_metadata(version=version)
+        )
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(
             requests,
             [
-                "https://api.github.com/repos/openai/codex/releases/tags/"
-                f"rust-v{version}",
-                "https://github.com/openai/codex/releases/download/"
-                f"rust-v{version}/inkstack-package_SHA256SUMS",
+                f"{API_BASE}/releases/tags/rust-v{version}",
+                f"{DOWNLOAD_BASE}/rust-v{version}/inkstack-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {version}", result.stdout)
 
-    def test_latest_release_reuses_version_metadata(self) -> None:
-        result, requests = run_installer("latest")
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertEqual(
-            requests,
-            [
-                "https://api.github.com/repos/openai/codex/releases/latest",
-                "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-            ],
-        )
-        self.assertIn(f"Resolved version: {VERSION}", result.stdout)
-
-    def test_compact_metadata_is_independent_of_field_order(self) -> None:
+    def test_latest_scans_release_list_and_skips_v8_dependency_release(self) -> None:
         result, requests = run_installer(
-            "latest", metadata_json=release_metadata(compact=True, reorder=True)
+            "latest",
+            list_metadata_json=releases_list_json(
+                v8_dependency_release(),
+                application_release(),
+            ),
         )
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(
             requests,
             [
-                "https://api.github.com/repos/openai/codex/releases/latest",
-                "https://github.com/openai/codex/releases/download/"
-                f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
+                f"{API_BASE}/releases?per_page=100&page=1",
+                f"{API_BASE}/releases/tags/rust-v{VERSION}",
+                f"{DOWNLOAD_BASE}/rust-v{VERSION}/inkstack-package_SHA256SUMS",
             ],
         )
         self.assertIn(f"Resolved version: {VERSION}", result.stdout)
+        assert_only_inkstack_urls(requests)
+        self.assertNotIn(V8_RELEASE_TAG, " ".join(requests))
+
+    def test_latest_fails_cleanly_without_application_releases(self) -> None:
+        result, requests = run_installer(
+            "latest",
+            list_metadata_json=releases_list_json(v8_dependency_release()),
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(requests, [f"{API_BASE}/releases?per_page=100&page=1"])
+        self.assertIn(
+            "No compatible InkStack application release is available",
+            result.stderr,
+        )
+        self.assertNotIn("Downloading InkStack CLI", result.stdout)
+
+    def test_latest_paginates_past_unrelated_releases(self) -> None:
+        result, requests = run_installer(
+            "latest",
+            list_metadata_json=releases_list_json(
+                *[v8_dependency_release() for _ in range(100)]
+            ),
+            list_metadata_json_page2=releases_list_json(application_release()),
+        )
+
+        self.assertIn(f"Resolved version: {VERSION}", result.stdout)
+        self.assertEqual(
+            requests[:2],
+            [
+                f"{API_BASE}/releases?per_page=100&page=1",
+                f"{API_BASE}/releases?per_page=100&page=2",
+            ],
+        )
+        assert_only_inkstack_urls(requests)
+
+    def test_latest_with_empty_release_list_fails_cleanly(self) -> None:
+        result, requests = run_installer("latest", list_metadata_json="[]")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(requests, [f"{API_BASE}/releases?per_page=100&page=1"])
+        self.assertIn(
+            "No compatible InkStack application release is available",
+            result.stderr,
+        )
+
+    def test_application_release_missing_package_asset_is_rejected(self) -> None:
+        metadata = json.loads(release_metadata())
+        metadata["assets"] = [
+            asset for asset in metadata["assets"] if ".tar.gz" not in asset["name"]
+        ]
+        result, requests = run_installer(
+            VERSION, metadata_json=json.dumps(metadata)
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(requests, [f"{API_BASE}/releases/tags/rust-v{VERSION}"])
+        self.assertIn("does not provide the required release assets", result.stderr)
+
+    def test_metadata_tag_mismatch_is_rejected(self) -> None:
+        result, requests = run_installer(
+            VERSION, metadata_json=release_metadata(version=MISMATCH_VERSION)
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(requests, [f"{API_BASE}/releases/tags/rust-v{VERSION}"])
+        self.assertIn(
+            f"did not match requested InkStack version {VERSION}", result.stderr
+        )
 
     def test_json_like_strings_and_nested_fields_do_not_define_assets(self) -> None:
         result, requests = run_installer(
-            VERSION, metadata_json=legacy_release_metadata_with_decoys()
+            VERSION, metadata_json=release_metadata_with_decoys()
         )
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertEqual(len(requests), 2)
-        self.assertIn("/inkstack-npm-", requests[1])
-        self.assertNotIn("inkstack-package_SHA256SUMS", requests[1])
+        self.assertEqual(requests, [f"{API_BASE}/releases/tags/rust-v{VERSION}"])
+        self.assertIn("does not provide the required release assets", result.stderr)
+
+    def test_compact_metadata_is_independent_of_field_order(self) -> None:
+        result, requests = run_installer(
+            VERSION, metadata_json=release_metadata(compact=True, reorder=True)
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(
+            requests,
+            [
+                f"{API_BASE}/releases/tags/rust-v{VERSION}",
+                f"{DOWNLOAD_BASE}/rust-v{VERSION}/inkstack-package_SHA256SUMS",
+            ],
+        )
+        self.assertIn(f"Resolved version: {VERSION}", result.stdout)
+
+    def test_corrupt_archive_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path, checksum_path, metadata_json = create_package_release(root)
+
+            result, requests = run_installer_in(
+                root,
+                VERSION,
+                metadata_json=metadata_json,
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+                corrupt_archive=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("checksum did not match expected digest", result.stderr)
+        self.assertNotIn("installed successfully", result.stdout)
+        assert_only_inkstack_urls(requests)
+
+    def test_wrong_checksum_manifest_digest_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path, checksum_path, metadata_json = create_package_release(root)
+
+            result, requests = run_installer_in(
+                root,
+                VERSION,
+                metadata_json=release_metadata(),
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("checksum did not match expected digest", result.stderr)
+        self.assertNotIn("installed successfully", result.stdout)
+
+    def test_incomplete_checksum_manifest_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path, checksum_path, metadata_json = create_package_release(
+                root, manifest_lists_archive=False
+            )
+
+            result, requests = run_installer_in(
+                root,
+                VERSION,
+                metadata_json=metadata_json,
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "Could not find SHA-256 digest for", result.stderr
+        )
+        self.assertIn("inkstack-package_SHA256SUMS", result.stderr)
+        self.assertNotIn("installed successfully", result.stdout)
+
+    def test_release_without_checksum_asset_is_rejected(self) -> None:
+        metadata = json.loads(release_metadata())
+        metadata["assets"] = [
+            asset for asset in metadata["assets"] if "SHA256SUMS" not in asset["name"]
+        ]
+        result, _requests = run_installer(VERSION, metadata_json=json.dumps(metadata))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("does not provide the required release assets", result.stderr)
+
+    def test_asset_download_failure_reports_missing_download(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path, checksum_path, metadata_json = create_package_release(root)
+
+            result, requests = run_installer_in(
+                root,
+                VERSION,
+                metadata_json=metadata_json,
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+                asset_failure=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Could not download", result.stderr)
+        assert_only_inkstack_urls(requests)
+
+    def test_release_binary_reporting_wrong_version_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            # The release metadata advertises the requested version, but the
+            # archive contains a binary reporting a different version.
+            archive_path, checksum_path, metadata_json = create_package_release(
+                root, metadata_version=MISMATCH_VERSION, binary_version=VERSION
+            )
+
+            result, requests = run_installer_in(
+                root,
+                MISMATCH_VERSION,
+                metadata_json=metadata_json,
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            f"did not report expected version {MISMATCH_VERSION}", result.stderr
+        )
+        self.assertNotIn("installed successfully", result.stdout)
 
     def test_macos_install_exposes_code_mode_host_beside_inkstack(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             archive_path, checksum_path, metadata_json = create_package_release(root)
 
-            result, _requests = run_installer_in(
+            result, requests = run_installer_in(
                 root,
                 VERSION,
                 metadata_json=metadata_json,
@@ -120,6 +320,7 @@ class InstallShTest(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
+            assert_only_inkstack_urls(requests)
             install_bin = root / "install-bin"
             current = root / "inkstack-home" / "packages" / "standalone" / "current"
             inkstack_path = install_bin / "inkstack"
@@ -131,7 +332,31 @@ class InstallShTest(unittest.TestCase):
             )
             self.assertTrue(os.access(host_path, os.X_OK))
 
-    def test_releases_latest_installs_verified_package_by_default(self) -> None:
+    def test_reinstall_reuses_complete_offline_install(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            archive_path, checksum_path, metadata_json = create_package_release(root)
+            options = dict(
+                metadata_json=metadata_json,
+                archive_path=archive_path,
+                checksum_path=checksum_path,
+                force_macos=True,
+            )
+
+            first, _first_requests = run_installer_in(root, VERSION, **options)
+            self.assertEqual(first.returncode, 0, first.stderr)
+
+            (root / "requests.log").unlink()
+            second, second_requests = run_installer_in(root, VERSION, **options)
+
+            self.assertEqual(second.returncode, 0, second.stderr)
+            self.assertEqual(
+                second_requests,
+                [f"{API_BASE}/releases/tags/rust-v{VERSION}"],
+            )
+            self.assertNotIn("Downloading InkStack CLI", second.stdout)
+
+    def test_latest_installs_verified_package(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             archive_path, checksum_path, metadata_json = create_package_release(root)
@@ -143,16 +368,17 @@ class InstallShTest(unittest.TestCase):
                 archive_path=archive_path,
                 checksum_path=checksum_path,
                 force_macos=True,
-                use_mirror=None,
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(
                 requests,
                 [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
+                    f"{API_BASE}/releases?per_page=100&page=1",
+                    f"{API_BASE}/releases/tags/rust-v{VERSION}",
+                    f"{DOWNLOAD_BASE}/rust-v{VERSION}/inkstack-package_SHA256SUMS",
+                    f"{DOWNLOAD_BASE}/rust-v{VERSION}/"
+                    f"inkstack-package-aarch64-apple-darwin.tar.gz",
                 ],
             )
 
@@ -351,369 +577,42 @@ class InstallShTest(unittest.TestCase):
                 (root / "inkstack-home/packages/standalone/auto-update-version").exists()
             )
 
-    def test_releases_unusable_metadata_falls_back_to_github(self) -> None:
-        unusable_metadata = {
-            "html": "<html>proxy error</html>",
-            "empty": "",
-            "malformed_json": '{"tag_name":',
-            "missing_tag": json.dumps({"assets": []}),
-            "missing_assets": json.dumps(
-                {"tag_name": f"rust-v{VERSION}", "assets": []}
-            ),
-            "invalid_checksum_digest": json.dumps(
-                {
-                    "tag_name": f"rust-v{VERSION}",
-                    "assets": [
-                        {
-                            "name": "inkstack-package-aarch64-apple-darwin.tar.gz",
-                            "digest": "sha256:" + "a" * 64,
-                        },
-                        {
-                            "name": "inkstack-package_SHA256SUMS",
-                            "digest": "sha256:" + "z" * 64,
-                        },
-                    ],
-                }
-            ),
-            "invalid_version": json.dumps({"tag_name": "rust-vinvalid"}),
-        }
-
-        for name, releases_metadata_json in unusable_metadata.items():
-            with self.subTest(metadata=name):
-                with tempfile.TemporaryDirectory() as temp_dir:
-                    root = Path(temp_dir)
-                    archive_path, checksum_path, metadata_json = create_package_release(
-                        root
+    def test_installer_scripts_never_reference_openai_distribution(self) -> None:
+        for script in (INSTALL_SCRIPT, PS_INSTALL_SCRIPT):
+            with self.subTest(script=script.name):
+                text = script.read_text(encoding="utf-8")
+                for reference in FORBIDDEN_DISTRIBUTION_REFERENCES:
+                    self.assertNotIn(
+                        reference,
+                        text,
+                        f"{script.name} must not reference {reference}",
                     )
 
-                    result, requests = run_installer_in(
-                        root,
-                        "latest",
-                        metadata_json=metadata_json,
-                        releases_metadata_json=releases_metadata_json,
-                        archive_path=archive_path,
-                        checksum_path=checksum_path,
-                        force_macos=True,
-                        use_mirror=None,
-                    )
 
-                    self.assertEqual(result.returncode, 0, result.stderr)
-                    self.assertEqual(
-                        requests,
-                        [
-                            "https://releases.openai.com/codex/channels/latest",
-                            "https://api.github.com/repos/openai/codex/releases/latest",
-                            "https://github.com/openai/codex/releases/download/"
-                            f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                            "https://github.com/openai/codex/releases/download/"
-                            f"rust-v{VERSION}/inkstack-package-aarch64-apple-darwin.tar.gz",
-                        ],
-                    )
-                    self.assertIn("falling back to GitHub Releases", result.stderr)
-
-    def test_releases_exact_metadata_version_mismatch_falls_back_to_github(
-        self,
-    ) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-            releases_metadata = json.loads(metadata_json)
-            releases_metadata["tag_name"] = f"rust-v{MISMATCH_VERSION}"
-
-            result, requests = run_installer_in(
-                root,
-                VERSION,
-                metadata_json=metadata_json,
-                releases_metadata_json=json.dumps(releases_metadata),
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=None,
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                requests,
-                [
-                    f"https://releases.openai.com/codex/releases/{VERSION}/release.json",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn("falling back to GitHub Releases", result.stderr)
-
-    def test_releases_asset_download_falls_back_to_github(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-
-            result, requests = run_installer_in(
-                root,
-                "latest",
-                metadata_json=metadata_json,
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=None,
-                releases_mode="asset_fallback",
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                requests,
-                [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn("retrying from GitHub Releases", result.stderr)
-
-    def test_releases_corrupt_assets_fall_back_to_github(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-
-            result, requests = run_installer_in(
-                root,
-                "latest",
-                metadata_json=metadata_json,
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=None,
-                releases_mode="corrupt_assets",
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                requests,
-                [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn("checksum did not match expected digest", result.stderr)
-            self.assertIn("retrying from GitHub Releases", result.stderr)
-
-    def test_releases_wrong_checksum_digest_uses_github_metadata(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-            mirror_metadata = json.loads(metadata_json)
-            for release_asset in mirror_metadata["assets"]:
-                if release_asset["name"] == "inkstack-package_SHA256SUMS":
-                    release_asset["digest"] = "sha256:" + "0" * 64
-
-            result, requests = run_installer_in(
-                root,
-                "latest",
-                metadata_json=metadata_json,
-                releases_metadata_json=json.dumps(mirror_metadata),
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=None,
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                requests,
-                [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn("checksum did not match expected digest", result.stderr)
-
-    def test_releases_incomplete_checksum_manifest_falls_back_to_github(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-            mirror_checksum_path = root / "mirror-SHA256SUMS"
-            mirror_checksum_path.write_text(
-                f"{'a' * 64}  inkstack-package-other-platform.tar.gz\n",
-                encoding="utf-8",
-            )
-            mirror_metadata = json.loads(metadata_json)
-            for release_asset in mirror_metadata["assets"]:
-                if release_asset["name"] == "inkstack-package_SHA256SUMS":
-                    release_asset["digest"] = (
-                        "sha256:"
-                        + hashlib.sha256(mirror_checksum_path.read_bytes()).hexdigest()
-                    )
-
-            result, requests = run_installer_in(
-                root,
-                "latest",
-                metadata_json=metadata_json,
-                releases_metadata_json=json.dumps(mirror_metadata),
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                releases_checksum_path=mirror_checksum_path,
-                force_macos=True,
-                use_mirror=None,
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                requests,
-                [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn("retrying from GitHub Releases", result.stderr)
-
-    def test_releases_corrupt_github_fallback_still_fails(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(root)
-
-            result, requests = run_installer_in(
-                root,
-                "latest",
-                metadata_json=metadata_json,
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=None,
-                releases_mode="corrupt_checksum_and_github",
-            )
-
-            self.assertNotEqual(result.returncode, 0)
-            self.assertEqual(
-                requests,
-                [
-                    "https://releases.openai.com/codex/channels/latest",
-                    f"https://releases.openai.com/codex/releases/{VERSION}/codex-package_SHA256SUMS",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-package_SHA256SUMS",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                ],
-            )
-            self.assertIn("checksum did not match expected digest", result.stderr)
-
-    def test_releases_exact_rejects_wrong_binary_version(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, checksum_path, metadata_json = create_package_release(
-                root,
-                metadata_version=MISMATCH_VERSION,
-            )
-
-            result, requests = run_installer_in(
-                root,
-                MISMATCH_VERSION,
-                metadata_json=metadata_json,
-                archive_path=archive_path,
-                checksum_path=checksum_path,
-                force_macos=True,
-                use_mirror=True,
-            )
-
-            self.assertNotEqual(result.returncode, 0)
-            self.assertEqual(
-                requests,
-                [
-                    f"https://releases.openai.com/codex/releases/{MISMATCH_VERSION}/release.json",
-                    f"https://releases.openai.com/codex/releases/{MISMATCH_VERSION}/codex-package_SHA256SUMS",
-                    f"https://releases.openai.com/codex/releases/{MISMATCH_VERSION}/codex-package-aarch64-apple-darwin.tar.gz",
-                ],
-            )
-            self.assertIn(
-                f"did not report expected version {MISMATCH_VERSION}",
-                result.stderr,
-            )
-            self.assertNotIn("installed successfully", result.stdout)
-
-    def test_releases_exact_legacy_fallback_reuses_offline_install(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            archive_path, metadata_json = create_legacy_release(root)
-
-            first_result, first_requests = run_installer_in(
-                root,
-                VERSION,
-                metadata_json=metadata_json,
-                legacy_archive_path=archive_path,
-                force_macos=True,
-                use_mirror=True,
-                releases_mode="channel_failure",
-            )
-
-            self.assertEqual(first_result.returncode, 0, first_result.stderr)
-            self.assertEqual(
-                first_requests,
-                [
-                    f"https://releases.openai.com/codex/releases/{VERSION}/release.json",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                    "https://github.com/openai/codex/releases/download/"
-                    f"rust-v{VERSION}/inkstack-npm-darwin-arm64-{VERSION}.tgz",
-                ],
-            )
-
-            (root / "requests.log").unlink()
-            second_result, second_requests = run_installer_in(
-                root,
-                VERSION,
-                metadata_json=metadata_json,
-                force_macos=True,
-                use_mirror=True,
-                releases_mode="channel_failure",
-            )
-
-            self.assertEqual(second_result.returncode, 0, second_result.stderr)
-            self.assertEqual(
-                second_requests,
-                [
-                    f"https://releases.openai.com/codex/releases/{VERSION}/release.json",
-                    "https://api.github.com/repos/openai/codex/releases/tags/"
-                    f"rust-v{VERSION}",
-                ],
-            )
-            self.assertNotIn("Downloading InkStack CLI", second_result.stdout)
+def assert_only_inkstack_urls(requests: list[str]) -> None:
+    for url in requests:
+        if not url.startswith(f"{API_BASE}/") and not url.startswith(
+            f"{DOWNLOAD_BASE}/"
+        ):
+            raise AssertionError(f"installer contacted a non-InkStack URL: {url}")
 
 
 def run_installer(
     release: str,
     *,
-    metadata_failure: bool = False,
+    api_failure: bool = False,
     metadata_json: str | None = None,
-    use_mirror: bool | None = False,
+    list_metadata_json: str | None = None,
+    list_metadata_json_page2: str | None = None,
 ) -> tuple[subprocess.CompletedProcess[str], list[str]]:
     with tempfile.TemporaryDirectory() as temp_dir:
         return run_installer_in(
             Path(temp_dir),
             release,
-            metadata_failure=metadata_failure,
+            api_failure=api_failure,
             metadata_json=metadata_json,
-            use_mirror=use_mirror,
+            list_metadata_json=list_metadata_json,
+            list_metadata_json_page2=list_metadata_json_page2,
         )
 
 
@@ -721,16 +620,15 @@ def run_installer_in(
     root: Path,
     release: str,
     *,
-    metadata_failure: bool = False,
+    api_failure: bool = False,
+    asset_failure: bool = False,
+    corrupt_archive: bool = False,
     metadata_json: str | None = None,
-    releases_metadata_json: str | None = None,
+    list_metadata_json: str | None = None,
+    list_metadata_json_page2: str | None = None,
     archive_path: Path | None = None,
     checksum_path: Path | None = None,
-    releases_checksum_path: Path | None = None,
-    legacy_archive_path: Path | None = None,
     force_macos: bool = False,
-    use_mirror: bool | None = False,
-    releases_mode: str = "",
     update_guard_from_release: str | None = None,
     old_updater_parent_pid: int | None = None,
     fail_ps: bool = False,
@@ -757,55 +655,40 @@ def run_installer_in(
               fi
               previous="$arg"
             done
-            printf '%s\n' "$url" >>"$INKSTACK_TEST_REQUEST_LOG"
+            printf '%s\\n' "$url" >>"$INKSTACK_TEST_REQUEST_LOG"
 
             case "$url" in
-              https://api.github.com/*)
-                if [ "$INKSTACK_TEST_METADATA_FAILURE" = "1" ]; then
+              "$INKSTACK_TEST_API_BASE"/releases?per_page=100\&page=1)
+                if [ "$INKSTACK_TEST_API_FAILURE" = "1" ]; then
                   echo "curl: (22) The requested URL returned error: 403" >&2
                   exit 22
                 fi
-                printf '%s\n' "$INKSTACK_TEST_METADATA_JSON"
+                printf '%s\\n' "$INKSTACK_TEST_LIST_METADATA_JSON"
                 ;;
-              https://releases.openai.com/codex/channels/latest|https://releases.openai.com/codex/releases/*/release.json)
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "channel_failure" ]; then
+              "$INKSTACK_TEST_API_BASE"/releases?per_page=100\&page=2)
+                if [ "$INKSTACK_TEST_API_FAILURE" = "1" ]; then
+                  echo "curl: (22) The requested URL returned error: 403" >&2
                   exit 22
                 fi
-                printf '%s\n' "$INKSTACK_TEST_RELEASES_METADATA_JSON"
+                printf '%s\\n' "$INKSTACK_TEST_LIST_METADATA_JSON_PAGE2"
                 ;;
-              https://releases.openai.com/codex/releases/*/codex-package_SHA256SUMS)
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "asset_fallback" ]; then
+              "$INKSTACK_TEST_API_BASE"/releases?per_page=100\&page=*)
+                if [ "$INKSTACK_TEST_API_FAILURE" = "1" ]; then
+                  echo "curl: (22) The requested URL returned error: 403" >&2
                   exit 22
                 fi
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "corrupt_assets" ] ||
-                  [ "$INKSTACK_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
-                  printf '<html>proxy error</html>\n' >"$output"
-                  exit 0
-                fi
-                if [ -n "$INKSTACK_TEST_RELEASES_CHECKSUM_PATH" ]; then
-                  cp "$INKSTACK_TEST_RELEASES_CHECKSUM_PATH" "$output"
-                else
-                  exit 22
-                fi
+                printf '[]\\n'
                 ;;
-              https://releases.openai.com/codex/releases/*/codex-package-*.tar.gz)
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "asset_fallback" ]; then
+              "$INKSTACK_TEST_API_BASE"/releases/tags/*)
+                if [ "$INKSTACK_TEST_API_FAILURE" = "1" ]; then
+                  echo "curl: (22) The requested URL returned error: 403" >&2
                   exit 22
                 fi
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "corrupt_assets" ]; then
-                  printf '<html>proxy error</html>\n' >"$output"
-                  exit 0
-                fi
-                if [ -n "$INKSTACK_TEST_ARCHIVE_PATH" ]; then
-                  cp "$INKSTACK_TEST_ARCHIVE_PATH" "$output"
-                else
-                  exit 22
-                fi
+                printf '%s\\n' "$INKSTACK_TEST_METADATA_JSON"
                 ;;
-              https://github.com/openai/codex/releases/download/*/codex-package_SHA256SUMS)
-                if [ "$INKSTACK_TEST_RELEASES_MODE" = "corrupt_checksum_and_github" ]; then
-                  printf '<html>proxy error</html>\n' >"$output"
-                  exit 0
+              "$INKSTACK_TEST_DOWNLOAD_BASE"/*/inkstack-package_SHA256SUMS)
+                if [ "$INKSTACK_TEST_ASSET_FAILURE" = "1" ]; then
+                  exit 22
                 fi
                 if [ -n "$INKSTACK_TEST_CHECKSUM_PATH" ]; then
                   cp "$INKSTACK_TEST_CHECKSUM_PATH" "$output"
@@ -813,21 +696,22 @@ def run_installer_in(
                   exit 22
                 fi
                 ;;
-              https://github.com/openai/codex/releases/download/*/codex-package-*.tar.gz)
+              "$INKSTACK_TEST_DOWNLOAD_BASE"/*/inkstack-package-*.tar.gz)
+                if [ "$INKSTACK_TEST_ASSET_FAILURE" = "1" ]; then
+                  exit 22
+                fi
+                if [ "$INKSTACK_TEST_CORRUPT_ARCHIVE" = "1" ]; then
+                  printf '<html>proxy error</html>\\n' >"$output"
+                  exit 0
+                fi
                 if [ -n "$INKSTACK_TEST_ARCHIVE_PATH" ]; then
                   cp "$INKSTACK_TEST_ARCHIVE_PATH" "$output"
                 else
                   exit 22
                 fi
                 ;;
-              https://github.com/openai/codex/releases/download/*/codex-npm-*.tgz)
-                if [ -n "$INKSTACK_TEST_LEGACY_ARCHIVE_PATH" ]; then
-                  cp "$INKSTACK_TEST_LEGACY_ARCHIVE_PATH" "$output"
-                else
-                  exit 22
-                fi
-                ;;
               *)
+                echo "curl: refusing non-InkStack URL: $url" >&2
                 exit 22
                 ;;
             esac
@@ -871,24 +755,26 @@ def run_installer_in(
             "INKSTACK_NON_INTERACTIVE": "1",
             "INKSTACK_RELEASE": release,
             "INKSTACK_INSTALL_DAEMON_ONLY": "1" if daemon_only else "0",
+            "INKSTACK_TEST_API_BASE": API_BASE,
+            "INKSTACK_TEST_DOWNLOAD_BASE": DOWNLOAD_BASE,
             "INKSTACK_TEST_ARCHIVE_PATH": str(archive_path or ""),
             "INKSTACK_TEST_CHECKSUM_PATH": str(checksum_path or ""),
-            "INKSTACK_TEST_RELEASES_CHECKSUM_PATH": str(
-                releases_checksum_path or checksum_path or ""
-            ),
-            "INKSTACK_TEST_LEGACY_ARCHIVE_PATH": str(legacy_archive_path or ""),
-            "INKSTACK_TEST_METADATA_FAILURE": "1" if metadata_failure else "0",
+            "INKSTACK_TEST_API_FAILURE": "1" if api_failure else "0",
+            "INKSTACK_TEST_ASSET_FAILURE": "1" if asset_failure else "0",
+            "INKSTACK_TEST_CORRUPT_ARCHIVE": "1" if corrupt_archive else "0",
             "INKSTACK_TEST_METADATA_JSON": (
                 metadata_json if metadata_json is not None else release_metadata()
             ),
-            "INKSTACK_TEST_RELEASES_METADATA_JSON": (
-                releases_metadata_json
-                if releases_metadata_json is not None
-                else metadata_json
-                if metadata_json is not None
-                else release_metadata()
+            "INKSTACK_TEST_LIST_METADATA_JSON": (
+                list_metadata_json
+                if list_metadata_json is not None
+                else releases_list_json(application_release())
             ),
-            "INKSTACK_TEST_RELEASES_MODE": releases_mode,
+            "INKSTACK_TEST_LIST_METADATA_JSON_PAGE2": (
+                list_metadata_json_page2
+                if list_metadata_json_page2 is not None
+                else "[]"
+            ),
             "INKSTACK_TEST_REQUEST_LOG": str(request_log),
             "HOME": str(home),
             "PATH": f"{bin_dir}:/usr/bin:/bin",
@@ -905,12 +791,6 @@ def run_installer_in(
     if old_updater_parent_pid is not None:
         env["INKSTACK_TEST_PARENT_PID"] = str(old_updater_parent_pid)
         env["INKSTACK_TEST_PARENT_START"] = process_start_time()
-    if use_mirror is None:
-        env.pop("INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM", None)
-    else:
-        env["INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM"] = (
-            "TRUE" if use_mirror else "false"
-        )
     result = subprocess.run(
         ["/bin/sh", str(INSTALL_SCRIPT)],
         capture_output=True,
@@ -937,14 +817,17 @@ def create_package_release(
     root: Path,
     *,
     metadata_version: str = VERSION,
+    binary_version: str | None = None,
+    manifest_lists_archive: bool = True,
 ) -> tuple[Path, Path, str]:
+    reported_version = binary_version if binary_version is not None else metadata_version
     package_dir = root / "package"
     (package_dir / "bin").mkdir(parents=True)
     (package_dir / "inkstack-path").mkdir()
     (package_dir / "inkstack-package.json").write_text("{}\n", encoding="utf-8")
     write_executable(
         package_dir / "bin" / "inkstack",
-        f"#!/bin/sh\nprintf 'inkstack-cli {VERSION}\\n'\n",
+        f"#!/bin/sh\nprintf 'inkstack-cli {reported_version}\\n'\n",
     )
     write_executable(
         package_dir / "bin" / "inkstack-code-mode-host",
@@ -960,7 +843,8 @@ def create_package_release(
 
     archive_digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
     checksum_path = root / "inkstack-package_SHA256SUMS"
-    checksum_path.write_text(f"{archive_digest}  {asset}\n", encoding="utf-8")
+    manifest_line = f"{archive_digest}  {asset}\n" if manifest_lists_archive else ""
+    checksum_path.write_text(manifest_line, encoding="utf-8")
     checksum_digest = hashlib.sha256(checksum_path.read_bytes()).hexdigest()
     metadata_json = json.dumps(
         {
@@ -978,45 +862,12 @@ def create_package_release(
     return archive_path, checksum_path, metadata_json
 
 
-def create_legacy_release(root: Path) -> tuple[Path, str]:
-    package_dir = root / "legacy-package"
-    vendor_dir = package_dir / "package" / "vendor" / "aarch64-apple-darwin"
-    (vendor_dir / "inkstack").mkdir(parents=True)
-    (vendor_dir / "path").mkdir()
-    write_executable(
-        vendor_dir / "inkstack" / "inkstack",
-        f"#!/bin/sh\nprintf 'inkstack-cli {VERSION}\\n'\n",
-    )
-    write_executable(vendor_dir / "path" / "rg", "#!/bin/sh\nexit 0\n")
-
-    asset = f"inkstack-npm-darwin-arm64-{VERSION}.tgz"
-    archive_path = root / asset
-    with tarfile.open(archive_path, "w:gz") as archive:
-        archive.add(package_dir / "package", arcname="package")
-
-    archive_digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
-    metadata_json = json.dumps(
-        {
-            "assets": [{"name": asset, "digest": f"sha256:{archive_digest}"}],
-            "tag_name": f"rust-v{VERSION}",
-        },
-        indent=2,
-    )
-    return archive_path, metadata_json
-
-
-def write_executable(path: Path, contents: str) -> None:
-    path.write_text(contents, encoding="utf-8")
-    path.chmod(0o755)
-
-
-def release_metadata(*, compact: bool = False, reorder: bool = False) -> str:
+def application_release() -> dict:
     assets = [
-        asset_metadata(
-            f"inkstack-package-{target}.tar.gz",
-            f"sha256:{'a' * 64}",
-            reorder=reorder,
-        )
+        {
+            "name": f"inkstack-package-{target}.tar.gz",
+            "digest": f"sha256:{'a' * 64}",
+        }
         for target in (
             "aarch64-apple-darwin",
             "x86_64-apple-darwin",
@@ -1025,15 +876,44 @@ def release_metadata(*, compact: bool = False, reorder: bool = False) -> str:
         )
     ]
     assets.append(
-        asset_metadata(
-            "inkstack-package_SHA256SUMS",
-            f"sha256:{'b' * 64}",
-            reorder=reorder,
-        )
+        {"name": "inkstack-package_SHA256SUMS", "digest": f"sha256:{'b' * 64}"}
     )
+    return {"tag_name": f"rust-v{VERSION}", "assets": assets}
+
+
+def v8_dependency_release() -> dict:
+    """The published V8 dependency release: never a valid application release."""
+    return {
+        "tag_name": V8_RELEASE_TAG,
+        "assets": [
+            {
+                "name": "librusty_v8_release_x86_64-unknown-linux-gnu.a.gz",
+                "digest": f"sha256:{'c' * 64}",
+            },
+        ],
+    }
+
+
+def releases_list_json(*entries: dict) -> str:
+    return json.dumps(list(entries), indent=2)
+
+
+def release_metadata(
+    *,
+    compact: bool = False,
+    reorder: bool = False,
+    version: str = VERSION,
+) -> str:
+    release = application_release()
+    if version != VERSION:
+        release["tag_name"] = f"rust-v{version}"
+    assets = [
+        asset_metadata(asset["name"], asset["digest"], reorder=reorder)
+        for asset in release["assets"]
+    ]
     separators = (",", ":") if compact else None
     return json.dumps(
-        {"assets": assets, "body": "braces: { } [ ]", "tag_name": f"rust-v{VERSION}"},
+        {"assets": assets, "body": "braces: { } [ ]", "tag_name": release["tag_name"]},
         indent=None if compact else 2,
         separators=separators,
     )
@@ -1045,7 +925,7 @@ def asset_metadata(name: str, digest: str, *, reorder: bool) -> dict[str, str]:
     return {"name": name, "digest": digest}
 
 
-def legacy_release_metadata_with_decoys() -> str:
+def release_metadata_with_decoys() -> str:
     fake_digest = f"sha256:{'0' * 64}"
     assets = [
         {
@@ -1054,9 +934,8 @@ def legacy_release_metadata_with_decoys() -> str:
                 "digest": fake_digest,
             },
             "digest": f"sha256:{'c' * 64}",
-            "name": f"inkstack-npm-{target}-{VERSION}.tgz",
+            "name": "librusty_v8_release_x86_64-unknown-linux-gnu.a.gz",
         }
-        for target in ("darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64")
     ]
     return json.dumps(
         {
@@ -1068,6 +947,11 @@ def legacy_release_metadata_with_decoys() -> str:
         },
         separators=(",", ":"),
     )
+
+
+def write_executable(path: Path, contents: str) -> None:
+    path.write_text(contents, encoding="utf-8")
+    path.chmod(0o755)
 
 
 if __name__ == "__main__":

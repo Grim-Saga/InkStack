@@ -40,12 +40,22 @@ exec_server_compat_test(
     current_binary = "//inkstack-rs/cli:inkstack",
 )
 
-exec_server_compat_test(
-    name = "exec-server-stable-release-test",
-    release = "@inkstack_release_0.162.1_linux_x86_64",
-)
-
-exec_server_compat_test(
-    name = "exec-server-minimum-release-test",
-    release = "@inkstack_release_0.145.0_linux_x86_64",
-)
+# Cross-version compatibility coverage is intentionally absent for now.
+#
+# The current-version test above is a same-binary smoke test: it exercises
+# both exec-server protocol directions against the locally built CLI, which
+# verifies the relay contract but NOT compatibility with any other release.
+# It is not a substitute for cross-version coverage.
+#
+# The former exec-server-stable-release-test and
+# exec-server-minimum-release-test targets compared local builds against
+# pinned historical Codex application packages fetched from OpenAI's
+# release infrastructure. InkStack no longer depends on those downloads.
+#
+# To restore cross-version coverage: once InkStack publishes its own
+# application releases, add exec_server_compat_test targets with
+# `release =` pointing at a pinned, sha256-verified repository of an actual
+# previous InkStack release archive (never a fabricated URL or a checksum
+# from another project's artifacts). The exec_server_compat_test rule and
+# its runner binary under //bazel/rules/testing/compat are kept for that
+# purpose.

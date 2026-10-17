@@ -12,15 +12,13 @@ if ([string]::IsNullOrWhiteSpace($Release)) {
 }
 
 $NonInteractive = $env:INKSTACK_NON_INTERACTIVE -match "^(?i:1|true|yes)$"
-$DefaultPreferReleasesOpenAICom = $true
-$PreferReleasesOpenAICom = if ([string]::IsNullOrWhiteSpace($env:INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM)) {
-    $DefaultPreferReleasesOpenAICom
-} else {
-    $env:INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM -match "^(?i:1|true|yes)$"
-}
-$ReleasesBaseUri = "https://releases.openai.com/codex"
+$GithubRepository = "Grim-Saga/InkStack"
+$GithubReleasesApi = "https://api.github.com/repos/$GithubRepository"
+$GithubReleasesBaseUrl = "https://github.com/$GithubRepository/releases/download"
 $ReleasesMetadataTimeoutSec = 30
 $ReleasesAssetTimeoutSec = 300
+$LatestReleasesPerPage = 100
+$LatestReleaseScanMaxPages = 10
 
 function Write-Step {
     param(
@@ -89,8 +87,7 @@ function Find-ReleaseAssetMetadata {
     param(
         [string]$AssetName,
         [object]$ReleaseMetadata,
-        [string]$Url = $null,
-        [string]$FallbackUrl = $null
+        [string]$Version
     )
 
     $asset = $ReleaseMetadata.assets | Where-Object { $_.name -eq $AssetName } | Select-Object -First 1
@@ -104,107 +101,50 @@ function Find-ReleaseAssetMetadata {
     }
 
     return [PSCustomObject]@{
-        Url = if ([string]::IsNullOrWhiteSpace($Url)) { $asset.browser_download_url } else { $Url }
-        FallbackUrl = $FallbackUrl
+        # The download URL is always derived from the InkStack repository so
+        # no alternate source can ever be selected.
+        Url = "$GithubReleasesBaseUrl/rust-v$Version/$AssetName"
         Sha256 = $digestMatch.Groups[1].Value.ToLowerInvariant()
     }
 }
 
-function Invoke-WebRequestWithFallback {
+function Invoke-VerifiedWebRequest {
     param(
         [object]$Metadata,
         [string]$OutFile,
         [string]$ExpectedDigest,
-        [string]$AssetName,
-        [string]$ReleaseVersion,
         [string]$RequiredManifestAsset
     )
 
-    try {
-        if ($Metadata.Url.StartsWith("$ReleasesBaseUri/", [System.StringComparison]::OrdinalIgnoreCase)) {
-            Invoke-WebRequest -UseBasicParsing -Uri $Metadata.Url -OutFile $OutFile -TimeoutSec $ReleasesAssetTimeoutSec
-        } else {
-            Invoke-WebRequest -UseBasicParsing -Uri $Metadata.Url -OutFile $OutFile
-        }
-        Test-ArchiveDigest -ArchivePath $OutFile -ExpectedDigest $ExpectedDigest
-        if (-not [string]::IsNullOrWhiteSpace($RequiredManifestAsset)) {
-            $null = Get-PackageArchiveDigest -ManifestPath $OutFile -AssetName $RequiredManifestAsset
-        }
-    } catch {
-        if ([string]::IsNullOrWhiteSpace($Metadata.FallbackUrl)) {
-            throw
-        }
-        Write-WarningStep "Could not download or verify $($Metadata.Url); retrying from GitHub Releases."
-        Invoke-WebRequest -UseBasicParsing -Uri $Metadata.FallbackUrl -OutFile $OutFile
-        try {
-            Test-ArchiveDigest -ArchivePath $OutFile -ExpectedDigest $ExpectedDigest
-            if (-not [string]::IsNullOrWhiteSpace($RequiredManifestAsset)) {
-                $null = Get-PackageArchiveDigest -ManifestPath $OutFile -AssetName $RequiredManifestAsset
-            }
-        } catch {
-            $githubRelease = Resolve-ReleaseFromGitHub -NormalizedVersion $ReleaseVersion
-            $githubAssetMetadata = Find-ReleaseAssetMetadata -AssetName $AssetName -ReleaseMetadata $githubRelease.Metadata
-            if ($null -eq $githubAssetMetadata) {
-                throw "Could not find GitHub release metadata for asset $AssetName."
-            }
-            Test-ArchiveDigest -ArchivePath $OutFile -ExpectedDigest $githubAssetMetadata.Sha256
-            if (-not [string]::IsNullOrWhiteSpace($RequiredManifestAsset)) {
-                $null = Get-PackageArchiveDigest -ManifestPath $OutFile -AssetName $RequiredManifestAsset
-            }
-        }
+    Invoke-WebRequest -UseBasicParsing -Uri $Metadata.Url -OutFile $OutFile -TimeoutSec $ReleasesAssetTimeoutSec
+    Test-ArchiveDigest -ArchivePath $OutFile -ExpectedDigest $ExpectedDigest
+    if (-not [string]::IsNullOrWhiteSpace($RequiredManifestAsset)) {
+        $null = Get-PackageArchiveDigest -ManifestPath $OutFile -AssetName $RequiredManifestAsset
     }
 }
 
 function Resolve-ReleaseAssetSelection {
     param(
         [object]$ResolvedRelease,
-        [string]$Target,
-        [string]$NpmTag
+        [string]$Target
     )
 
     $version = $ResolvedRelease.Version
     $releaseMetadata = $ResolvedRelease.Metadata
     $packageAsset = "inkstack-package-$Target.tar.gz"
     $checksumAsset = "inkstack-package_SHA256SUMS"
-    $packageUrl = $null
-    $packageFallbackUrl = $null
-    $checksumUrl = $null
-    $checksumFallbackUrl = $null
-    if ($ResolvedRelease.Source -eq "ReleasesOpenAICom") {
-        $packageUrl = "$ReleasesBaseUri/releases/$version/$packageAsset"
-        $packageFallbackUrl = "https://github.com/openai/codex/releases/download/rust-v$version/$packageAsset"
-        $checksumUrl = "$ReleasesBaseUri/releases/$version/$checksumAsset"
-        $checksumFallbackUrl = "https://github.com/openai/codex/releases/download/rust-v$version/$checksumAsset"
-    }
 
-    $packageMetadata = Find-ReleaseAssetMetadata -AssetName $packageAsset -ReleaseMetadata $releaseMetadata -Url $packageUrl -FallbackUrl $packageFallbackUrl
-    $checksumMetadata = Find-ReleaseAssetMetadata -AssetName $checksumAsset -ReleaseMetadata $releaseMetadata -Url $checksumUrl -FallbackUrl $checksumFallbackUrl
-    if ($null -ne $packageMetadata -and $null -ne $checksumMetadata) {
-        return [PSCustomObject]@{
-            PackageAsset = $packageAsset
-            PackageMetadata = $packageMetadata
-            ChecksumMetadata = $checksumMetadata
-            InstallLayout = "Package"
-        }
-    }
-
-    $packageAsset = "inkstack-npm-$NpmTag-$version.tgz"
-    $packageUrl = $null
-    $packageFallbackUrl = $null
-    if ($ResolvedRelease.Source -eq "ReleasesOpenAICom") {
-        $packageUrl = "$ReleasesBaseUri/releases/$version/$packageAsset"
-        $packageFallbackUrl = "https://github.com/openai/codex/releases/download/rust-v$version/$packageAsset"
-    }
-    $packageMetadata = Find-ReleaseAssetMetadata -AssetName $packageAsset -ReleaseMetadata $releaseMetadata -Url $packageUrl -FallbackUrl $packageFallbackUrl
-    if ($null -eq $packageMetadata) {
-        throw "Could not find InkStack package or platform npm release assets for InkStack $version."
+    $packageMetadata = Find-ReleaseAssetMetadata -AssetName $packageAsset -ReleaseMetadata $releaseMetadata -Version $version
+    $checksumMetadata = Find-ReleaseAssetMetadata -AssetName $checksumAsset -ReleaseMetadata $releaseMetadata -Version $version
+    if ($null -eq $packageMetadata -or $null -eq $checksumMetadata) {
+        throw "InkStack $version does not provide the required release assets ($packageAsset and $checksumAsset)."
     }
 
     return [PSCustomObject]@{
         PackageAsset = $packageAsset
         PackageMetadata = $packageMetadata
-        ChecksumMetadata = $null
-        InstallLayout = "LegacyPlatformNpm"
+        ChecksumMetadata = $checksumMetadata
+        InstallLayout = "Package"
     }
 }
 
@@ -325,93 +265,105 @@ function Remove-StaleInstallArtifacts {
     }
 }
 
-function Resolve-VersionFromReleaseMetadata {
+function Find-ApplicationReleaseFromList {
     param(
-        [object]$ReleaseMetadata
+        [string]$NormalizedVersion,
+        [string]$Target
     )
 
-    if (-not $ReleaseMetadata.tag_name) {
-        throw "Failed to resolve the latest InkStack release version."
+    if ($NormalizedVersion -ne "latest") {
+        throw "Find-ApplicationReleaseFromList only supports the latest channel."
     }
 
-    $resolvedVersion = Normalize-Version -RawVersion $ReleaseMetadata.tag_name
-    Assert-ValidReleaseVersion -Version $resolvedVersion
-    return $resolvedVersion
+    # Scans the repository's published releases for a genuine InkStack
+    # application release: a rust-v<version> tag exposing both this
+    # platform's package archive and the checksum manifest with SHA-256
+    # digests. V8 dependency releases (rusty-v8-v*) and any other release
+    # type can never match, so "latest" can never select them. Releases are
+    # scanned in publication order, so the first match is the most recently
+    # published application release; prereleases are eligible.
+    $packageAsset = "inkstack-package-$Target.tar.gz"
+    $checksumAsset = "inkstack-package_SHA256SUMS"
+    for ($page = 1; $page -le $LatestReleaseScanMaxPages; $page++) {
+        $listUri = "$GithubReleasesApi/releases?per_page=$LatestReleasesPerPage&page=$page"
+        try {
+            $releases = @(Invoke-RestMethod -Uri $listUri -TimeoutSec $ReleasesMetadataTimeoutSec)
+        } catch {
+            throw "Could not list InkStack releases from GitHub. GitHub API may be unavailable or rate limited. $($_.Exception.Message)"
+        }
+
+        foreach ($release in $releases) {
+            $tag = [string]$release.tag_name
+            $versionMatch = [regex]::Match($tag, "^rust-v([0-9]+\.[0-9]+\.[0-9]+(?:-alpha(?:\.[0-9]+){0,2}|-beta(?:\.[0-9]+)?)?)$")
+            if (-not $versionMatch.Success) {
+                continue
+            }
+            $version = $versionMatch.Groups[1].Value
+            $hasPackage = $false
+            $hasChecksum = $false
+            foreach ($asset in $release.assets) {
+                if ([string]$asset.digest -cnotmatch "^sha256:[0-9a-fA-F]{64}$") { continue }
+                if ([string]$asset.name -ceq $packageAsset) { $hasPackage = $true }
+                if ([string]$asset.name -ceq $checksumAsset) { $hasChecksum = $true }
+            }
+            if (-not ($hasPackage -and $hasChecksum)) {
+                continue
+            }
+            return [PSCustomObject]@{
+                Version = $version
+                Metadata = $release
+            }
+        }
+
+        if ($releases.Count -lt $LatestReleasesPerPage) {
+            break
+        }
+    }
+
+    throw "No compatible InkStack application release is available for this platform yet. Publish an InkStack application release (rust-v tag with inkstack-package assets) and retry."
 }
 
 function Resolve-ReleaseFromGitHub {
     param(
-        [string]$NormalizedVersion
+        [string]$NormalizedVersion,
+        [string]$Target
     )
 
     if ($NormalizedVersion -eq "latest") {
-        $requestedRelease = "latest"
-        $metadataUri = "https://api.github.com/repos/openai/codex/releases/latest"
-    } else {
-        $resolvedVersion = $NormalizedVersion
-        $requestedRelease = $resolvedVersion
-        $metadataUri = "https://api.github.com/repos/openai/codex/releases/tags/rust-v$resolvedVersion"
+        return Find-ApplicationReleaseFromList -NormalizedVersion $NormalizedVersion -Target $Target
     }
 
+    $resolvedVersion = $NormalizedVersion
+    $requestedRelease = $resolvedVersion
+    $metadataUri = "$GithubReleasesApi/releases/tags/rust-v$resolvedVersion"
+
     try {
-        $releaseMetadata = Invoke-RestMethod -Uri $metadataUri
+        $releaseMetadata = Invoke-RestMethod -Uri $metadataUri -TimeoutSec $ReleasesMetadataTimeoutSec
     } catch {
         throw "Could not fetch GitHub release metadata for InkStack $requestedRelease. GitHub API may be unavailable or rate limited. $($_.Exception.Message)"
     }
 
-    if ($NormalizedVersion -eq "latest") {
-        $resolvedVersion = Resolve-VersionFromReleaseMetadata -ReleaseMetadata $releaseMetadata
+    if ([string]$releaseMetadata.tag_name -cne "rust-v$resolvedVersion") {
+        throw "Release metadata tag $([string]$releaseMetadata.tag_name) did not match requested InkStack version $resolvedVersion."
     }
 
     return [PSCustomObject]@{
         Version = $resolvedVersion
         Metadata = $releaseMetadata
-        Source = "GitHub"
     }
-}
-
-function Resolve-ReleaseFromReleases {
-    param(
-        [string]$NormalizedVersion
-    )
-
-    $metadataUri = if ($NormalizedVersion -eq "latest") {
-        "$ReleasesBaseUri/channels/latest"
-    } else {
-        "$ReleasesBaseUri/releases/$NormalizedVersion/release.json"
-    }
-    try {
-        $metadataResponse = Invoke-WebRequest -UseBasicParsing -Uri $metadataUri -TimeoutSec $ReleasesMetadataTimeoutSec
-        $releaseMetadata = [string]$metadataResponse.Content | ConvertFrom-Json -ErrorAction Stop
-        $resolvedVersion = Resolve-VersionFromReleaseMetadata -ReleaseMetadata $releaseMetadata
-        if ($NormalizedVersion -ne "latest" -and $resolvedVersion -cne $NormalizedVersion) {
-            throw "Release metadata version did not match requested InkStack version $NormalizedVersion."
-        }
-        $resolvedRelease = [PSCustomObject]@{
-            Version = $resolvedVersion
-            Metadata = $releaseMetadata
-            Source = "ReleasesOpenAICom"
-        }
-        $null = Resolve-ReleaseAssetSelection -ResolvedRelease $resolvedRelease -Target $target -NpmTag $npmTag
-    } catch {
-        return $null
-    }
-    return $resolvedRelease
 }
 
 function Resolve-Release {
+    param(
+        [string]$Target
+    )
+
     $normalizedVersion = Normalize-Version -RawVersion $Release
     Assert-ValidReleaseVersion -Version $normalizedVersion
 
-    if ($PreferReleasesOpenAICom) {
-        $release = Resolve-ReleaseFromReleases -NormalizedVersion $normalizedVersion
-        if ($null -ne $release) {
-            return $release
-        }
-        Write-WarningStep "releases.openai.com is unavailable; falling back to GitHub Releases."
-    }
-
-    return Resolve-ReleaseFromGitHub -NormalizedVersion $normalizedVersion
+    # InkStack application releases resolve exclusively through the
+    # InkStack repository; there is no alternate distribution source.
+    return Resolve-ReleaseFromGitHub -NormalizedVersion $normalizedVersion -Target $Target
 }
 
 function Get-VersionFromBinary {
@@ -781,30 +733,6 @@ function Test-PackageContentsAreComplete {
     return $true
 }
 
-function Test-LegacyPlatformNpmContentsAreComplete {
-    param(
-        [string]$PackageDir
-    )
-
-    if (-not (Test-Path -LiteralPath $PackageDir -PathType Container)) {
-        return $false
-    }
-
-    $expectedFiles = @(
-        "inkstack.exe",
-        "inkstack-resources\inkstack-command-runner.exe",
-        "inkstack-resources\inkstack-windows-sandbox-setup.exe",
-        "inkstack-resources\rg.exe"
-    )
-    foreach ($name in $expectedFiles) {
-        if (-not (Test-Path -LiteralPath (Join-Path $PackageDir $name) -PathType Leaf)) {
-            return $false
-        }
-    }
-
-    return $true
-}
-
 function Test-ReleaseIsComplete {
     param(
         [string]$ReleaseDir,
@@ -819,12 +747,6 @@ function Test-ReleaseIsComplete {
                 return $false
             }
             $inkstackPath = Join-Path $ReleaseDir "bin\inkstack.exe"
-        }
-        "LegacyPlatformNpm" {
-            if (-not (Test-LegacyPlatformNpmContentsAreComplete -PackageDir $ReleaseDir)) {
-                return $false
-            }
-            $inkstackPath = Join-Path $ReleaseDir "inkstack.exe"
         }
         default {
             throw "Unknown InkStack installer layout: $Layout"
@@ -944,17 +866,14 @@ if (-not [Environment]::Is64BitOperatingSystem) {
 $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
 $target = $null
 $platformLabel = $null
-$npmTag = $null
 switch ($architecture) {
     "Arm64" {
         $target = "aarch64-pc-windows-msvc"
         $platformLabel = "Windows (ARM64)"
-        $npmTag = "win32-arm64"
     }
     "X64" {
         $target = "x86_64-pc-windows-msvc"
         $platformLabel = "Windows (x64)"
-        $npmTag = "win32-x64"
     }
     default {
         Write-Error "Unsupported architecture: $architecture"
@@ -979,15 +898,22 @@ if ($deferSelection) {
 $autoUpdateVersion = Join-Path $standaloneRoot "auto-update-version"
 $lockPath = Join-Path $standaloneRoot "install.lock"
 
-$defaultVisibleBinDir = Join-Path $env:LOCALAPPDATA "Programs\OpenAI\InkStack\bin"
+$defaultVisibleBinDir = Join-Path $env:LOCALAPPDATA "Programs\InkStack\bin"
 if ([string]::IsNullOrWhiteSpace($env:INKSTACK_INSTALL_DIR)) {
     $visibleBinDir = $defaultVisibleBinDir
+    # Preserve any installation at the historical OpenAI-path default:
+    # never modify, move, or delete it automatically. Surface it so the
+    # user can remove it deliberately once the new location is verified.
+    $legacyDefaultVisibleBinDir = Join-Path $env:LOCALAPPDATA "Programs\OpenAI\InkStack\bin"
+    if (Test-Path -LiteralPath (Join-Path $legacyDefaultVisibleBinDir "inkstack.exe")) {
+        Write-WarningStep "An existing InkStack installation was found at '$legacyDefaultVisibleBinDir'. It was left untouched; remove it manually after verifying the new install at '$visibleBinDir'."
+    }
 } else {
     $visibleBinDir = $env:INKSTACK_INSTALL_DIR
 }
 
 $currentVersion = Get-CurrentInstalledVersion -StandaloneCurrentDir $currentDir
-$resolvedRelease = Resolve-Release
+$resolvedRelease = Resolve-Release -Target $target
 $resolvedVersion = $resolvedRelease.Version
 $releaseMetadata = $resolvedRelease.Metadata
 $releaseName = "$resolvedVersion-$target"
@@ -1007,7 +933,7 @@ $conflictingInstall = if ($daemonOnly) { $null } else { Get-ConflictingInstall -
 $oldStandaloneBackup = $null
 
 $checksumAsset = "inkstack-package_SHA256SUMS"
-$assetSelection = Resolve-ReleaseAssetSelection -ResolvedRelease $resolvedRelease -Target $target -NpmTag $npmTag
+$assetSelection = Resolve-ReleaseAssetSelection -ResolvedRelease $resolvedRelease -Target $target
 $packageAsset = $assetSelection.PackageAsset
 $packageMetadata = $assetSelection.PackageMetadata
 $checksumMetadata = $assetSelection.ChecksumMetadata
@@ -1085,46 +1011,18 @@ try {
             $stagingDir = Join-Path $releasesDir ".staging.$releaseName.$PID"
 
             Write-Step "Downloading InkStack CLI"
-            if ($installLayout -eq "Package") {
-                Invoke-WebRequestWithFallback -Metadata $checksumMetadata -OutFile $checksumPath -ExpectedDigest $checksumMetadata.Sha256 -AssetName $checksumAsset -ReleaseVersion $resolvedVersion -RequiredManifestAsset $packageAsset
-                $expectedPackageDigest = Get-PackageArchiveDigest -ManifestPath $checksumPath -AssetName $packageAsset
-            } else {
-                $expectedPackageDigest = $packageMetadata.Sha256
-            }
-            Invoke-WebRequestWithFallback -Metadata $packageMetadata -OutFile $archivePath -ExpectedDigest $expectedPackageDigest -AssetName $packageAsset -ReleaseVersion $resolvedVersion
+            Invoke-VerifiedWebRequest -Metadata $checksumMetadata -OutFile $checksumPath -ExpectedDigest $checksumMetadata.Sha256 -RequiredManifestAsset $packageAsset
+            $expectedPackageDigest = Get-PackageArchiveDigest -ManifestPath $checksumPath -AssetName $packageAsset
+            Invoke-VerifiedWebRequest -Metadata $packageMetadata -OutFile $archivePath -ExpectedDigest $expectedPackageDigest
 
             New-Item -ItemType Directory -Force -Path $releasesDir | Out-Null
             if (Test-Path -LiteralPath $stagingDir) {
                 Remove-Item -LiteralPath $stagingDir -Recurse -Force
             }
             New-Item -ItemType Directory -Force -Path $stagingDir | Out-Null
-            if ($installLayout -eq "Package") {
-                tar -xzf $archivePath -C $stagingDir
-                if (-not (Test-PackageContentsAreComplete -PackageDir $stagingDir)) {
-                    throw "Downloaded InkStack package archive did not contain the expected package layout."
-                }
-            } else {
-                $extractDir = Join-Path $tempDir "extract"
-                New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
-                tar -xzf $archivePath -C $extractDir
-
-                $vendorRoot = Join-Path $extractDir "package/vendor/$target"
-                $resourcesDir = Join-Path $stagingDir "inkstack-resources"
-                New-Item -ItemType Directory -Force -Path $resourcesDir | Out-Null
-                $copyMap = @{
-                    "inkstack/inkstack.exe" = "inkstack.exe"
-                    "inkstack/inkstack-command-runner.exe" = "inkstack-resources\inkstack-command-runner.exe"
-                    "inkstack/inkstack-windows-sandbox-setup.exe" = "inkstack-resources\inkstack-windows-sandbox-setup.exe"
-                    "path/rg.exe" = "inkstack-resources\rg.exe"
-                }
-
-                foreach ($relativeSource in $copyMap.Keys) {
-                    Copy-Item -LiteralPath (Join-Path $vendorRoot $relativeSource) -Destination (Join-Path $stagingDir $copyMap[$relativeSource])
-                }
-
-                if (-not (Test-LegacyPlatformNpmContentsAreComplete -PackageDir $stagingDir)) {
-                    throw "Downloaded InkStack npm archive did not contain the expected legacy platform package layout."
-                }
+            tar -xzf $archivePath -C $stagingDir
+            if (-not (Test-PackageContentsAreComplete -PackageDir $stagingDir)) {
+                throw "Downloaded InkStack package archive did not contain the expected package layout."
             }
 
             if (Test-Path -LiteralPath $releaseDir) {

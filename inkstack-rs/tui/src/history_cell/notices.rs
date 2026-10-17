@@ -56,7 +56,7 @@ impl HistoryCell for UpdateAvailableHistoryCell {
             update_instruction,
             "",
             "See full release notes:",
-            "https://github.com/Grim-Saga/InkStack/releases/latest"
+            "https://github.com/Grim-Saga/InkStack/releases"
                 .fg(accent_color())
                 .underlined(),
         ];
@@ -81,7 +81,7 @@ impl HistoryCell for UpdateAvailableHistoryCell {
             Line::from(update_instruction),
             Line::from(""),
             Line::from("See full release notes:"),
-            Line::from("https://github.com/Grim-Saga/InkStack/releases/latest"),
+            Line::from("https://github.com/Grim-Saga/InkStack/releases"),
         ]
     }
 

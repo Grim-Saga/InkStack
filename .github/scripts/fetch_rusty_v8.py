@@ -66,8 +66,8 @@ def main() -> None:
     # entry point also works before the package CLI has configured its root.
     sys.path.insert(0, str(ROOT / "scripts"))
     os.environ.setdefault("INKSTACK_REPO_ROOT", str(ROOT))
-    from codex_package.targets import TARGET_SPECS
-    from codex_package.v8 import fetch_inkstack_v8_artifacts
+    from inkstack_package.targets import TARGET_SPECS
+    from inkstack_package.v8 import fetch_inkstack_v8_artifacts
 
     spec = TARGET_SPECS.get(target)
     if spec is None:

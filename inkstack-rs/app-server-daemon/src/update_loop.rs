@@ -11,10 +11,10 @@ use std::time::Duration;
 
 use anyhow::Context;
 use anyhow::Result;
+use futures::FutureExt;
 use inkstack_http_client::ClientRouteClass;
 use inkstack_http_client::HttpClientFactory;
 use inkstack_http_client::RouteAwareClientPool;
-use futures::FutureExt;
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
 use tokio::io::AsyncReadExt;
@@ -70,10 +70,9 @@ const RESTART_RETRY_INTERVAL: Duration = Duration::from_millis(50);
 // envelope, and the worst-case six-byte JSON escape for every captured byte.
 const INSTALLER_STDERR_TAIL_BYTES: usize = 2 * 1024;
 const INSTALLER_STDERR_DRAIN_TIMEOUT: Duration = Duration::from_secs(1);
-#[cfg(unix)]
-const INSTALL_URL: &str = "https://chatgpt.com/codex/install.sh";
-#[cfg(windows)]
-const INSTALL_URL: &str = "https://chatgpt.com/codex/install.ps1";
+
+use crate::verified_installer::InstallerHttp;
+use crate::verified_installer::fetch_verified_installer_script;
 
 pub(crate) async fn run(
     http_client_factory: HttpClientFactory,
@@ -269,7 +268,8 @@ async fn adopt_managed_updater(
     running_identity: &ExecutableIdentity,
     listener: &mut Option<inkstack_uds::UnixListener>,
 ) -> Result<UpdateLoopControl> {
-    let managed_bin = resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?;
+    let managed_bin =
+        resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?;
     if executable_identity(&managed_bin).await? == *running_identity {
         return Ok(UpdateLoopControl::Continue);
     }
@@ -478,7 +478,8 @@ async fn update_once(
             {
                 anyhow::ensure!(
                     daemon.is_stable_standalone_release()?
-                        && resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?
+                        && resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?)
+                            .await?
                             == managed_inkstack_bin,
                     "managed daemon changed during the update; retry"
                 );
@@ -744,49 +745,19 @@ async fn cancel_installer(child: &mut tokio::process::Child, package_root: &Path
 }
 
 async fn fetch_installer_script(http: &impl InstallerHttp) -> Result<Vec<u8>> {
-    match http.get(INSTALL_URL).await? {
-        InstallerResponse::Success(body) => Ok(body),
-        InstallerResponse::Unsuccessful { status } => {
-            anyhow::bail!("standalone InkStack updater request failed with status {status}")
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum InstallerResponse {
-    Success(Vec<u8>),
-    Unsuccessful { status: u16 },
-}
-
-/// HTTP boundary used to download the standalone installer.
-///
-/// Implementations must issue a GET for the supplied URL, return exact response bytes for a
-/// successful status, and report a non-success status without buffering its response body.
-trait InstallerHttp: Send + Sync {
-    fn get<'a>(
-        &'a self,
-        url: &'a str,
-    ) -> impl std::future::Future<Output = Result<InstallerResponse>> + Send + 'a;
-}
-
-impl InstallerHttp for RouteAwareClientPool {
-    async fn get(&self, url: &str) -> Result<InstallerResponse> {
-        let response = RouteAwareClientPool::get(self, url)
-            .send()
-            .await
-            .context("failed to fetch standalone InkStack updater")?;
-        if !response.status().is_success() {
-            return Ok(InstallerResponse::Unsuccessful {
-                status: response.status().as_u16(),
-            });
-        }
-        let body = response
-            .bytes()
-            .await
-            .context("failed to read standalone InkStack updater")?
-            .to_vec();
-        Ok(InstallerResponse::Success(body))
-    }
+    // The installer bootstrap is downloaded from a published InkStack
+    // application release, never from a mutable source URL and never from
+    // another project's infrastructure. The downloaded bytes are verified
+    // against the SHA-256 digest GitHub records for that exact release
+    // asset before anything is executed, which establishes consistency
+    // with the repository's release metadata at fetch time (GitHub lets
+    // release owners replace assets, so the comparison always runs on the
+    // bytes about to be executed). The installer script then verifies
+    // every downloaded application artifact against the release's
+    // published SHA-256 checksum manifest, and the guard validations in
+    // the update loop confirm the fetched script supports daemon-owned
+    // updates before it is ever executed.
+    fetch_verified_installer_script(http).await
 }
 
 #[cfg(test)]

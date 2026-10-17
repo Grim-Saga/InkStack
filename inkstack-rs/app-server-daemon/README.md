@@ -80,14 +80,14 @@ running.
 For a new Linux or macOS machine:
 
 ```sh
-curl -fsSL https://chatgpt.com/codex/install.sh | sh
+curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | sh
 $HOME/.inkstack/packages/standalone/current/inkstack app-server daemon bootstrap --remote-control
 ```
 
 On Windows, use a non-elevated PowerShell terminal whose host allows breakaway:
 
 ```powershell
-irm https://chatgpt.com/codex/install.ps1 | iex
+irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex
 $inkstackHome = if ($env:INKSTACK_HOME) { $env:INKSTACK_HOME } else { Join-Path $HOME '.inkstack' }
 & "$inkstackHome\packages\standalone\current\bin\inkstack.exe" app-server daemon bootstrap --remote-control
 ```
