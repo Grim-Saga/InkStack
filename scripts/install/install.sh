@@ -5,13 +5,14 @@ set -eu
 RELEASE="${INKSTACK_RELEASE:-latest}"
 NON_INTERACTIVE="${INKSTACK_NON_INTERACTIVE:-false}"
 DAEMON_ONLY="${INKSTACK_INSTALL_DAEMON_ONLY:-0}"
-DEFAULT_PREFER_RELEASES_OPENAI_COM="true"
-PREFER_RELEASES_OPENAI_COM="${INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM:-$DEFAULT_PREFER_RELEASES_OPENAI_COM}"
-RELEASES_BASE_URL="https://releases.openai.com/codex"
+GITHUB_REPOSITORY="Grim-Saga/InkStack"
+GITHUB_RELEASES_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
+GITHUB_RELEASES_BASE_URL="https://github.com/$GITHUB_REPOSITORY/releases/download"
 RELEASES_CONNECT_TIMEOUT=10
 RELEASES_METADATA_TIMEOUT=30
 RELEASES_ASSET_TIMEOUT=300
-release_source="github"
+LATEST_RELEASES_PER_PAGE=100
+LATEST_RELEASE_SCAN_MAX_PAGES=10
 
 BIN_DIR="${INKSTACK_INSTALL_DIR:-$HOME/.local/bin}"
 BIN_PATH="$BIN_DIR/inkstack"
@@ -98,8 +99,6 @@ Usage: install.sh [--release VERSION]
 Environment:
   INKSTACK_RELEASE          Version to install; overridden by --release.
   INKSTACK_NON_INTERACTIVE  Set to 1, true, or yes to skip prompts.
-  INKSTACK_INSTALLER_USE_RELEASES_OPENAI_COM
-                         Set to 0, false, or no to use GitHub Releases.
 EOF
         exit 0
         ;;
@@ -117,26 +116,12 @@ download_file() {
   output="$2"
 
   if command -v curl >/dev/null 2>&1; then
-    case "$url" in
-      "$RELEASES_BASE_URL"/*)
-        curl -fsSL --connect-timeout "$RELEASES_CONNECT_TIMEOUT" --max-time "$RELEASES_ASSET_TIMEOUT" "$url" -o "$output"
-        ;;
-      *)
-        curl -fsSL "$url" -o "$output"
-        ;;
-    esac
+    curl -fsSL --connect-timeout "$RELEASES_CONNECT_TIMEOUT" --max-time "$RELEASES_ASSET_TIMEOUT" "$url" -o "$output"
     return
   fi
 
   if command -v wget >/dev/null 2>&1; then
-    case "$url" in
-      "$RELEASES_BASE_URL"/*)
-        wget -q -t 1 -T "$RELEASES_ASSET_TIMEOUT" -O "$output" "$url"
-        ;;
-      *)
-        wget -q -O "$output" "$url"
-        ;;
-    esac
+    wget -q -t 1 -T "$RELEASES_ASSET_TIMEOUT" -O "$output" "$url"
     return
   fi
 
@@ -148,26 +133,12 @@ download_text() {
   url="$1"
 
   if command -v curl >/dev/null 2>&1; then
-    case "$url" in
-      "$RELEASES_BASE_URL"/*)
-        curl -fsSL --connect-timeout "$RELEASES_CONNECT_TIMEOUT" --max-time "$RELEASES_METADATA_TIMEOUT" "$url"
-        ;;
-      *)
-        curl -fsSL "$url"
-        ;;
-    esac
+    curl -fsSL --connect-timeout "$RELEASES_CONNECT_TIMEOUT" --max-time "$RELEASES_METADATA_TIMEOUT" "$url"
     return
   fi
 
   if command -v wget >/dev/null 2>&1; then
-    case "$url" in
-      "$RELEASES_BASE_URL"/*)
-        wget -q -t 1 -T "$RELEASES_METADATA_TIMEOUT" -O - "$url"
-        ;;
-      *)
-        wget -q -O - "$url"
-        ;;
-    esac
+    wget -q -t 1 -T "$RELEASES_METADATA_TIMEOUT" -O - "$url"
     return
   fi
 
@@ -175,36 +146,21 @@ download_text() {
   exit 1
 }
 
-download_file_with_fallback() {
-  primary_url="$1"
-  fallback_url="$2"
-  output="$3"
-  expected_digest="$4"
-  fallback_asset="$5"
-  required_manifest_asset="${6:-}"
+download_verified_file() {
+  url="$1"
+  output="$2"
+  expected_digest="$3"
+  required_manifest_asset="${4:-}"
 
-  if download_file "$primary_url" "$output" &&
-    verify_archive_digest "$output" "$expected_digest" &&
-    { [ -z "$required_manifest_asset" ] || package_archive_digest "$required_manifest_asset" "$output" >/dev/null; }; then
-    return
+  if ! download_file "$url" "$output"; then
+    echo "Could not download $url from the InkStack release repository." >&2
+    exit 1
   fi
-
-  if [ -z "$fallback_url" ]; then
-    return 1
+  if ! verify_archive_digest "$output" "$expected_digest"; then
+    exit 1
   fi
-
-  warn "Could not download or verify $primary_url; retrying from GitHub Releases."
-  download_file "$fallback_url" "$output"
-  if verify_archive_digest "$output" "$expected_digest" &&
-    { [ -z "$required_manifest_asset" ] || package_archive_digest "$required_manifest_asset" "$output" >/dev/null; }; then
-    return
-  fi
-
-  resolve_release_from_github "$resolved_version"
-  fallback_digest="$(release_asset_digest "$fallback_asset")"
-  verify_archive_digest "$output" "$fallback_digest"
   if [ -n "$required_manifest_asset" ]; then
-    package_archive_digest "$required_manifest_asset" "$output" >/dev/null
+    package_archive_digest "$required_manifest_asset" "$output" >/dev/null || exit 1
   fi
 }
 
@@ -262,6 +218,12 @@ parse_release_metadata() {
           expecting_value = 1
         } else if (char == "{") {
           object_depth++
+          if (object_depth == 1) {
+            # Marks the start of a top-level release object so list scans
+            # can attribute tag and asset records without depending on
+            # field order.
+            print "object\tstart"
+          }
           if (assets_array_depth != 0 &&
               array_depth == assets_array_depth &&
               asset_object_depth == 0) {
@@ -319,20 +281,19 @@ release_url_for_asset() {
   asset="$1"
   resolved_version="$2"
 
-  printf 'https://github.com/openai/codex/releases/download/rust-v%s/%s\n' "$resolved_version" "$asset"
-}
-
-releases_url_for_asset() {
-  asset="$1"
-  resolved_version="$2"
-
-  printf '%s/releases/%s/%s\n' "$RELEASES_BASE_URL" "$resolved_version" "$asset"
+  printf '%s/rust-v%s/%s\n' "$GITHUB_RELEASES_BASE_URL" "$resolved_version" "$asset"
 }
 
 release_metadata_url() {
   resolved_version="$1"
 
-  printf 'https://api.github.com/repos/openai/codex/releases/tags/rust-v%s\n' "$resolved_version"
+  printf '%s/releases/tags/rust-v%s\n' "$GITHUB_RELEASES_API" "$resolved_version"
+}
+
+release_list_url() {
+  page="$1"
+
+  printf '%s/releases?per_page=%s&page=%s\n' "$GITHUB_RELEASES_API" "$LATEST_RELEASES_PER_PAGE" "$page"
 }
 
 parse_downloaded_release_metadata() {
@@ -344,89 +305,108 @@ parse_downloaded_release_metadata() {
   fi
 }
 
-resolve_metadata_version() {
-  release_tag="$(printf '%s\n' "$release_metadata" | awk -F '\t' '$1 == "tag_name" { print $2; exit }')"
-  case "$release_tag" in
-    rust-v*) metadata_version="${release_tag#rust-v}" ;;
-    *) metadata_version="" ;;
-  esac
-  if [ -z "$metadata_version" ]; then
-    echo "Failed to resolve the latest InkStack release version." >&2
-    return 1
-  fi
-  validate_version "$metadata_version"
-}
+select_latest_application_release() {
+  # Scans the repository's published releases for a genuine InkStack
+  # application release: a rust-v<version> tag exposing both this
+  # platform's package archive and the checksum manifest with SHA-256
+  # digests. V8 dependency releases (rusty-v8-v*) and any other release
+  # type can never match, so "latest" can never select them. Releases are
+  # scanned in publication order, so the first match is the most recently
+  # published application release; prereleases are eligible.
+  package_asset="inkstack-package-$vendor_target.tar.gz"
+  checksum_asset="inkstack-package_SHA256SUMS"
+  page=1
 
-resolve_release_from_github() {
-  normalized_version="$1"
-  if [ "$normalized_version" = "latest" ]; then
-    requested_release="latest"
-    metadata_url="https://api.github.com/repos/openai/codex/releases/latest"
-  else
-    resolved_version="$normalized_version"
-    requested_release="$resolved_version"
-    metadata_url="$(release_metadata_url "$resolved_version")"
-  fi
+  while [ "$page" -le "$LATEST_RELEASE_SCAN_MAX_PAGES" ]; do
+    if ! release_json="$(download_text "$(release_list_url "$page")")"; then
+      echo "Could not list InkStack releases from GitHub. GitHub API may be unavailable or rate limited." >&2
+      return 1
+    fi
+    if ! release_metadata="$(printf '%s\n' "$release_json" | parse_release_metadata)"; then
+      echo "Could not parse the InkStack release list." >&2
+      return 1
+    fi
 
-  if ! release_json="$(download_text "$metadata_url")"; then
-    echo "Could not fetch GitHub release metadata for InkStack $requested_release. GitHub API may be unavailable or rate limited." >&2
-    exit 1
-  fi
+    selection="$(printf '%s\n' "$release_metadata" | awk -F '\t' \
+      -v package_asset="$package_asset" -v checksum_asset="$checksum_asset" '
+      function candidate_ready() {
+        return (tag != "" && has_package && has_checksum &&
+          tag ~ /^rust-v[0-9]+\.[0-9]+\.[0-9]+(-alpha(\.[0-9]+){0,2}|-beta(\.[0-9]+)?)?$/)
+      }
 
-  parse_downloaded_release_metadata "$requested_release" "GitHub"
+      $1 == "object" {
+        objects++
+        if (candidate_ready() && selected == "") {
+          selected = substr(tag, 7)
+        }
+        tag = ""
+        has_package = 0
+        has_checksum = 0
+      }
 
-  if [ "$normalized_version" = "latest" ]; then
-    resolve_metadata_version
-    resolved_version="$metadata_version"
-  fi
+      $1 == "tag_name" { tag = $2 }
 
-  release_source="github"
-}
+      $1 == "asset" {
+        if ($2 == package_asset && $3 != "") has_package = 1
+        if ($2 == checksum_asset && $3 != "") has_checksum = 1
+      }
 
-resolve_release_from_releases() {
-  normalized_version="$1"
+      END {
+        if (candidate_ready() && selected == "") {
+          selected = substr(tag, 7)
+        }
+        print "selected\t" selected
+        print "objects\t" objects + 0
+      }
+    ')"
 
-  if [ "$normalized_version" = "latest" ]; then
-    requested_release="latest"
-    metadata_url="$RELEASES_BASE_URL/channels/latest"
-  else
-    requested_release="$normalized_version"
-    metadata_url="$RELEASES_BASE_URL/releases/$normalized_version/release.json"
-  fi
+    selected_version="$(printf '%s\n' "$selection" | awk -F '\t' '$1 == "selected" { print $2 }')"
+    listed_objects="$(printf '%s\n' "$selection" | awk -F '\t' '$1 == "objects" { print $2 }')"
 
-  if ! release_json="$(download_text "$metadata_url")"; then
-    return 1
-  fi
+    if [ -n "$selected_version" ]; then
+      printf '%s\n' "$selected_version"
+      return 0
+    fi
 
-  if ! parse_downloaded_release_metadata "$requested_release" "releases.openai.com"; then
-    return 1
-  fi
-  if ! resolve_metadata_version; then
-    return 1
-  fi
-  if [ "$normalized_version" != "latest" ] && [ "$metadata_version" != "$normalized_version" ]; then
-    echo "Release metadata version did not match requested InkStack version $normalized_version." >&2
-    return 1
-  fi
-  resolved_version="$metadata_version"
-  release_source="releases.openai.com"
+    if [ "$listed_objects" -lt "$LATEST_RELEASES_PER_PAGE" ]; then
+      echo "No compatible InkStack application release is available for this platform yet. Publish an InkStack application release (rust-v tag with inkstack-package assets) and retry." >&2
+      return 1
+    fi
+
+    page=$((page + 1))
+  done
+
+  echo "No compatible InkStack application release is available in the first $LATEST_RELEASE_SCAN_MAX_PAGES pages of InkStack releases." >&2
+  return 1
 }
 
 resolve_release() {
   normalized_version="$(normalize_version "$RELEASE")"
   validate_version "$normalized_version"
 
-  case "$PREFER_RELEASES_OPENAI_COM" in
-    1 | [Tt][Rr][Uu][Ee] | [Yy][Ee][Ss])
-      if resolve_release_from_releases "$normalized_version" &&
-        select_release_assets; then
-        return
-      fi
-      warn "releases.openai.com is unavailable; falling back to GitHub Releases."
-      ;;
-  esac
+  if [ "$normalized_version" = "latest" ]; then
+    resolved_version="$(select_latest_application_release)" || exit 1
+  else
+    resolved_version="$normalized_version"
+  fi
 
-  resolve_release_from_github "$normalized_version"
+  # Fetch the exact release's metadata to pin the asset digests used for
+  # verification. There is intentionally no alternate download source: the
+  # installer only ever fetches from the InkStack repository.
+  metadata_url="$(release_metadata_url "$resolved_version")"
+  if ! release_json="$(download_text "$metadata_url")"; then
+    echo "Could not fetch GitHub release metadata for InkStack $resolved_version. GitHub API may be unavailable or rate limited." >&2
+    exit 1
+  fi
+
+  parse_downloaded_release_metadata "$resolved_version" "GitHub"
+
+  release_tag="$(printf '%s\n' "$release_metadata" | awk -F '\t' '$1 == "tag_name" { print $2; exit }')"
+  if [ "$release_tag" != "rust-v$resolved_version" ]; then
+    echo "Release metadata tag $release_tag did not match requested InkStack version $resolved_version." >&2
+    exit 1
+  fi
+
   select_release_assets
 }
 
@@ -475,34 +455,17 @@ release_asset_digest() {
 select_release_assets() {
   package_asset="inkstack-package-$vendor_target.tar.gz"
   checksum_asset="inkstack-package_SHA256SUMS"
-  download_fallback_url=""
-  checksum_fallback_url=""
 
-  if release_asset_exists "$package_asset" &&
-    release_asset_exists "$checksum_asset"; then
-    install_layout="package"
-    asset="$package_asset"
-  elif release_asset_exists "inkstack-npm-$npm_tag-$resolved_version.tgz"; then
-    install_layout="legacy-platform-npm"
-    asset="inkstack-npm-$npm_tag-$resolved_version.tgz"
-  else
-    echo "Could not find InkStack package or platform npm release assets for InkStack $resolved_version." >&2
-    return 1
+  if ! release_asset_exists "$package_asset" ||
+    ! release_asset_exists "$checksum_asset"; then
+    echo "InkStack $resolved_version does not provide the required release assets ($package_asset and $checksum_asset)." >&2
+    exit 1
   fi
 
-  if [ "$release_source" = "releases.openai.com" ]; then
-    download_url="$(releases_url_for_asset "$asset" "$resolved_version")"
-    download_fallback_url="$(release_url_for_asset "$asset" "$resolved_version")"
-    if [ "$install_layout" = "package" ]; then
-      checksum_url="$(releases_url_for_asset "$checksum_asset" "$resolved_version")"
-      checksum_fallback_url="$(release_url_for_asset "$checksum_asset" "$resolved_version")"
-    fi
-  else
-    download_url="$(release_url_for_asset "$asset" "$resolved_version")"
-    if [ "$install_layout" = "package" ]; then
-      checksum_url="$(release_url_for_asset "$checksum_asset" "$resolved_version")"
-    fi
-  fi
+  install_layout="package"
+  asset="$package_asset"
+  download_url="$(release_url_for_asset "$asset" "$resolved_version")"
+  checksum_url="$(release_url_for_asset "$checksum_asset" "$resolved_version")"
 }
 
 package_archive_digest() {
@@ -968,33 +931,6 @@ install_package_release() {
   mv "$stage_release" "$release_dir"
 }
 
-install_legacy_platform_npm_release() {
-  release_dir="$1"
-  archive_path="$2"
-  target="$3"
-  stage_release="$RELEASES_DIR/.staging.$(basename "$release_dir").$$"
-  extract_dir="$tmp_dir/extract"
-  vendor_root="$extract_dir/package/vendor/$target"
-
-  mkdir -p "$RELEASES_DIR"
-  rm -rf "$stage_release" "$extract_dir"
-  mkdir -p "$stage_release/inkstack-resources" "$extract_dir"
-  tar -xzf "$archive_path" -C "$extract_dir"
-
-  cp "$vendor_root/inkstack/inkstack" "$stage_release/inkstack"
-  cp "$vendor_root/path/rg" "$stage_release/inkstack-resources/rg"
-  chmod 0755 "$stage_release/inkstack" "$stage_release/inkstack-resources/rg"
-  if [ -f "$vendor_root/inkstack-resources/bwrap" ]; then
-    cp "$vendor_root/inkstack-resources/bwrap" "$stage_release/inkstack-resources/bwrap"
-    chmod 0755 "$stage_release/inkstack-resources/bwrap"
-  fi
-
-  if [ -e "$release_dir" ] || [ -L "$release_dir" ]; then
-    rm -rf "$release_dir"
-  fi
-  mv "$stage_release" "$release_dir"
-}
-
 release_dir_is_complete() {
   release_dir="$1"
   expected_version="$2"
@@ -1014,18 +950,13 @@ release_dir_is_complete() {
         [ -x "$release_dir/inkstack-path/rg" ] ||
         return 1
       ;;
-    legacy-platform-npm)
-      [ -x "$release_dir/inkstack" ] &&
-        [ -x "$release_dir/inkstack-resources/rg" ] ||
-        return 1
-      ;;
     *)
       return 1
       ;;
   esac
 
   case "$layout:$expected_target" in
-    package:*linux* | legacy-platform-npm:*linux*)
+    package:*linux*)
       [ -x "$release_dir/inkstack-resources/bwrap" ] || return 1
       ;;
   esac
@@ -1116,21 +1047,17 @@ fi
 
 if [ "$os" = "darwin" ]; then
   if [ "$arch" = "aarch64" ]; then
-    npm_tag="darwin-arm64"
     vendor_target="aarch64-apple-darwin"
     platform_label="macOS (Apple Silicon)"
   else
-    npm_tag="darwin-x64"
     vendor_target="x86_64-apple-darwin"
     platform_label="macOS (Intel)"
   fi
 else
   if [ "$arch" = "aarch64" ]; then
-    npm_tag="linux-arm64"
     vendor_target="aarch64-unknown-linux-musl"
     platform_label="Linux (ARM64)"
   else
-    npm_tag="linux-x64"
     vendor_target="x86_64-unknown-linux-musl"
     platform_label="Linux (x64)"
   fi
@@ -1238,21 +1165,13 @@ if ! release_dir_is_complete "$release_dir" "$resolved_version" "$vendor_target"
   checksum_path="$tmp_dir/$checksum_asset"
 
   step "Downloading InkStack CLI"
-  if [ "$install_layout" = "package" ]; then
-    checksum_digest="$(release_asset_digest "$checksum_asset")"
-    download_file_with_fallback "$checksum_url" "$checksum_fallback_url" "$checksum_path" "$checksum_digest" "$checksum_asset" "$asset"
-    expected_digest="$(package_archive_digest "$asset" "$checksum_path")"
-  else
-    expected_digest="$(release_asset_digest "$asset")"
-  fi
-  download_file_with_fallback "$download_url" "$download_fallback_url" "$archive_path" "$expected_digest" "$asset"
+  checksum_digest="$(release_asset_digest "$checksum_asset")"
+  download_verified_file "$checksum_url" "$checksum_path" "$checksum_digest" "$asset"
+  expected_digest="$(package_archive_digest "$asset" "$checksum_path")"
+  download_verified_file "$download_url" "$archive_path" "$expected_digest" ""
 
   step "Installing standalone package to $release_dir"
-  if [ "$install_layout" = "package" ]; then
-    install_package_release "$release_dir" "$archive_path"
-  else
-    install_legacy_platform_npm_release "$release_dir" "$archive_path" "$vendor_target"
-  fi
+  install_package_release "$release_dir" "$archive_path"
 fi
 if ! release_dir_is_complete "$release_dir" "$resolved_version" "$vendor_target" "$install_layout"; then
   echo "Installed InkStack command did not report expected version $resolved_version." >&2
