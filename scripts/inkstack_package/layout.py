@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .targets import PackageInputs
 from .targets import PackageVariant
+from .targets import REPO_ROOT
 from .targets import TargetSpec
 
 
@@ -43,6 +44,9 @@ def build_package_dir(
     bin_dir.mkdir()
     resources_dir.mkdir()
     path_dir.mkdir()
+
+    for name in ("LICENSE", "NOTICE"):
+        shutil.copyfile(REPO_ROOT / name, package_dir / name)
 
     entrypoint_name = variant.entrypoint_name(spec)
     copy_executable(
@@ -129,6 +133,7 @@ def validate_package_dir(
         Path("inkstack-path") / spec.rg_name,
     ]
     executable_files = list(required_files)
+    required_files.extend([Path("LICENSE"), Path("NOTICE")])
 
     if spec.is_linux:
         required_files.append(Path("inkstack-resources") / "bwrap")
