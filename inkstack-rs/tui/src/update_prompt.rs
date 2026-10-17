@@ -39,7 +39,11 @@ use ratatui::widgets::Wrap;
 #[cfg(not(debug_assertions))]
 use tokio_stream::StreamExt;
 
-const RELEASE_NOTES_URL: &str = "https://github.com/openai/codex/releases/latest";
+// The releases listing is used instead of /releases/latest because the
+// repository also publishes V8 dependency releases, and a "latest" pointer
+// cannot distinguish release types; the listing page always exists and
+// cannot misrepresent a dependency release as the application's notes.
+const RELEASE_NOTES_URL: &str = "https://github.com/Grim-Saga/InkStack/releases";
 
 #[cfg(not(debug_assertions))]
 pub(crate) enum UpdatePromptOutcome {

@@ -737,7 +737,7 @@ pub fn create_oss_provider(default_provider_port: u16, wire_api: WireApi) -> Mod
     // These INKSTACK_OSS_ environment variables are experimental: we may
     // switch to reading values from config.toml instead.
     let default_inkstack_oss_base_url = format!(
-        "http://localhost:{codex_oss_port}/v1",
+        "http://localhost:{inkstack_oss_port}/v1",
         inkstack_oss_port = std::env::var("INKSTACK_OSS_PORT")
             .ok()
             .filter(|value| !value.trim().is_empty())

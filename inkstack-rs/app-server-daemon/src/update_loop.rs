@@ -11,10 +11,10 @@ use std::time::Duration;
 
 use anyhow::Context;
 use anyhow::Result;
+use futures::FutureExt;
 use inkstack_http_client::ClientRouteClass;
 use inkstack_http_client::HttpClientFactory;
 use inkstack_http_client::RouteAwareClientPool;
-use futures::FutureExt;
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
 use tokio::io::AsyncReadExt;
@@ -70,10 +70,15 @@ const RESTART_RETRY_INTERVAL: Duration = Duration::from_millis(50);
 // envelope, and the worst-case six-byte JSON escape for every captured byte.
 const INSTALLER_STDERR_TAIL_BYTES: usize = 2 * 1024;
 const INSTALLER_STDERR_DRAIN_TIMEOUT: Duration = Duration::from_secs(1);
+const INKSTACK_RELEASES_API_URL: &str = "https://api.github.com/repos/Grim-Saga/InkStack";
+const INKSTACK_RELEASES_DOWNLOAD_URL: &str =
+    "https://github.com/Grim-Saga/InkStack/releases/download";
 #[cfg(unix)]
-const INSTALL_URL: &str = "https://chatgpt.com/codex/install.sh";
+const INSTALLER_ASSET_NAME: &str = "install.sh";
 #[cfg(windows)]
-const INSTALL_URL: &str = "https://chatgpt.com/codex/install.ps1";
+const INSTALLER_ASSET_NAME: &str = "install.ps1";
+const RELEASES_PER_PAGE: usize = 100;
+const RELEASE_SCAN_MAX_PAGES: usize = 10;
 
 pub(crate) async fn run(
     http_client_factory: HttpClientFactory,
@@ -269,7 +274,8 @@ async fn adopt_managed_updater(
     running_identity: &ExecutableIdentity,
     listener: &mut Option<inkstack_uds::UnixListener>,
 ) -> Result<UpdateLoopControl> {
-    let managed_bin = resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?;
+    let managed_bin =
+        resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?;
     if executable_identity(&managed_bin).await? == *running_identity {
         return Ok(UpdateLoopControl::Continue);
     }
@@ -478,7 +484,8 @@ async fn update_once(
             {
                 anyhow::ensure!(
                     daemon.is_stable_standalone_release()?
-                        && resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?).await?
+                        && resolved_managed_inkstack_bin(&daemon.current_managed_inkstack_bin()?)
+                            .await?
                             == managed_inkstack_bin,
                     "managed daemon changed during the update; retry"
                 );
@@ -744,11 +751,112 @@ async fn cancel_installer(child: &mut tokio::process::Child, package_root: &Path
 }
 
 async fn fetch_installer_script(http: &impl InstallerHttp) -> Result<Vec<u8>> {
-    match http.get(INSTALL_URL).await? {
+    // The installer bootstrap is downloaded from a published InkStack
+    // application release, never from a mutable source URL and never from
+    // another project's infrastructure. GitHub release assets are
+    // immutable once published, so the executed installer bytes are pinned
+    // to the release that shipped them over an authenticated TLS
+    // connection to the InkStack repository. The installer script then
+    // verifies every downloaded application artifact against the release's
+    // published SHA-256 checksum manifest, and the guard validations in
+    // the update loop confirm the fetched script supports daemon-owned
+    // updates before it is ever executed.
+    let release_tag = find_application_release(http).await?;
+    let installer_url =
+        format!("{INKSTACK_RELEASES_DOWNLOAD_URL}/{release_tag}/{INSTALLER_ASSET_NAME}");
+    match http.get(&installer_url).await? {
         InstallerResponse::Success(body) => Ok(body),
         InstallerResponse::Unsuccessful { status } => {
             anyhow::bail!("standalone InkStack updater request failed with status {status}")
         }
+    }
+}
+
+/// Finds the most recently published InkStack application release whose
+/// assets include this platform's installer script.
+///
+/// Mirrors the standalone installers' resolution contract: only a
+/// `rust-v<version>` tag counts as an application release. The V8
+/// dependency releases (`rusty-v8-v*`) and every other release type are
+/// skipped, so the daemon can never bootstrap a non-application release,
+/// and a repository without application releases yet fails cleanly
+/// without disturbing the managed installation.
+async fn find_application_release(http: &impl InstallerHttp) -> Result<String> {
+    for page in 1..=RELEASE_SCAN_MAX_PAGES {
+        let list_url = format!(
+            "{INKSTACK_RELEASES_API_URL}/releases?per_page={RELEASES_PER_PAGE}&page={page}"
+        );
+        let body = match http.get(&list_url).await? {
+            InstallerResponse::Success(body) => body,
+            InstallerResponse::Unsuccessful { status } => {
+                anyhow::bail!("standalone InkStack updater request failed with status {status}")
+            }
+        };
+        let releases: serde_json::Value =
+            serde_json::from_slice(&body).context("could not parse the InkStack release list")?;
+        let releases = releases
+            .as_array()
+            .context("InkStack release list was not an array")?;
+        for release in releases {
+            let Some(tag) = release["tag_name"].as_str() else {
+                continue;
+            };
+            if !is_application_release_tag(tag) {
+                continue;
+            }
+            let has_installer_asset = release["assets"].as_array().is_some_and(|assets| {
+                assets
+                    .iter()
+                    .any(|asset| asset["name"].as_str() == Some(INSTALLER_ASSET_NAME))
+            });
+            if has_installer_asset {
+                return Ok(tag.to_string());
+            }
+        }
+        if releases.len() < RELEASES_PER_PAGE {
+            break;
+        }
+    }
+    anyhow::bail!(
+        "no compatible InkStack application release is available yet; \
+         publish an InkStack application release (rust-v tag with installer \
+         assets) and retry the update"
+    )
+}
+
+/// Matches the application release tag contract shared with the standalone
+/// installers: `rust-vMAJOR.MINOR.PATCH` with an optional `-alpha[.N[.M]]`
+/// or `-beta[.N]` prerelease suffix. V8 dependency releases such as
+/// `rusty-v8-v150.4.0` never match.
+fn is_application_release_tag(tag: &str) -> bool {
+    fn numeric(part: &str) -> bool {
+        !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit())
+    }
+    let Some(version) = tag.strip_prefix("rust-v") else {
+        return false;
+    };
+    let (core, suffix) = match version.split_once('-') {
+        Some((core, suffix)) => (core, suffix),
+        None => (version, ""),
+    };
+    let numbers: Vec<&str> = core.split('.').collect();
+    if numbers.len() != 3 || numbers.iter().any(|part| !numeric(part)) {
+        return false;
+    }
+    if suffix.is_empty() {
+        return true;
+    }
+    let mut suffix_parts = suffix.split('.');
+    match suffix_parts.next() {
+        Some("alpha") => {
+            let rest: Vec<&str> = suffix_parts.collect();
+            rest.len() <= 2 && rest.iter().all(|part| numeric(part))
+        }
+        Some("beta") => {
+            let rest: Vec<&str> = suffix_parts.collect();
+            rest.len() <= 1 && rest.iter().all(|part| numeric(part))
+        }
+        _ => false,
     }
 }
 

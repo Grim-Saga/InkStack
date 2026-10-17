@@ -20,9 +20,9 @@ pub enum UpdateAction {
     PnpmGlobalLatest,
     /// Update via `brew upgrade inkstack`.
     BrewUpgrade,
-    /// Update via `curl -fsSL https://chatgpt.com/codex/install.sh | INKSTACK_NON_INTERACTIVE=1 sh`.
+    /// Update via `curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh`.
     StandaloneUnix,
-    /// Update via `$env:INKSTACK_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex`.
+    /// Update via `$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex`.
     StandaloneWindows,
 }
 
@@ -56,7 +56,7 @@ impl UpdateAction {
                 "sh",
                 &[
                     "-c",
-                    "curl -fsSL https://chatgpt.com/codex/install.sh | INKSTACK_NON_INTERACTIVE=1 sh",
+                    "curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh",
                 ],
             ),
             UpdateAction::StandaloneWindows => (
@@ -65,7 +65,7 @@ impl UpdateAction {
                     "-ExecutionPolicy",
                     "Bypass",
                     "-c",
-                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex",
+                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex",
                 ],
             ),
         }
@@ -157,13 +157,17 @@ mod tests {
 
     #[test]
     fn standalone_update_commands_rerun_latest_installer() {
+        // The bootstrap URL only ever resolves to a non-prerelease release
+        // that carries installer assets: the V8 dependency release is a
+        // prerelease and has no install.sh asset, so the URL fails cleanly
+        // instead of ever selecting it.
         assert_eq!(
             UpdateAction::StandaloneUnix.command_args(),
             (
                 "sh",
                 &[
                     "-c",
-                    "curl -fsSL https://chatgpt.com/codex/install.sh | INKSTACK_NON_INTERACTIVE=1 sh"
+                    "curl -fsSL https://github.com/Grim-Saga/InkStack/releases/latest/download/install.sh | INKSTACK_NON_INTERACTIVE=1 sh"
                 ][..],
             )
         );
@@ -175,7 +179,7 @@ mod tests {
                     "-ExecutionPolicy",
                     "Bypass",
                     "-c",
-                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://chatgpt.com/codex/install.ps1 | iex"
+                    "$env:INKSTACK_NON_INTERACTIVE=1; irm https://github.com/Grim-Saga/InkStack/releases/latest/download/install.ps1 | iex"
                 ][..],
             )
         );

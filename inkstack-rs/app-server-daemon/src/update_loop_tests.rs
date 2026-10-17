@@ -6,10 +6,15 @@ use pretty_assertions::assert_eq;
 #[cfg(unix)]
 use tempfile::TempDir;
 
-use super::INSTALL_URL;
+use super::INKSTACK_RELEASES_API_URL;
+use super::INKSTACK_RELEASES_DOWNLOAD_URL;
+use super::INSTALLER_ASSET_NAME;
 use super::InstallerHttp;
 use super::InstallerResponse;
+use super::RELEASES_PER_PAGE;
 use super::fetch_installer_script;
+use super::find_application_release;
+use super::is_application_release_tag;
 #[cfg(unix)]
 use super::manual_update::run as manual_update_once;
 #[cfg(unix)]
@@ -25,10 +30,41 @@ use crate::managed_install::executable_identity;
 #[cfg(unix)]
 use crate::managed_install::executable_identity_from_reader;
 
+const APPLICATION_RELEASE_TAG: &str = "rust-v0.142.5";
+const V8_DEPENDENCY_RELEASE_TAG: &str = "rusty-v8-v150.4.0";
+
+fn releases_list_url(page: usize) -> String {
+    format!("{INKSTACK_RELEASES_API_URL}/releases?per_page={RELEASES_PER_PAGE}&page={page}")
+}
+
+fn installer_asset_url(tag: &str) -> String {
+    format!("{INKSTACK_RELEASES_DOWNLOAD_URL}/{tag}/{INSTALLER_ASSET_NAME}")
+}
+
+fn releases_list_json(releases: &[serde_json::Value]) -> InstallerResponse {
+    InstallerResponse::Success(serde_json::json!(releases).to_string().into_bytes())
+}
+
+fn release_entry(tag: &str, asset_names: &[&str]) -> serde_json::Value {
+    serde_json::json!({
+        "tag_name": tag,
+        "assets": asset_names
+            .iter()
+            .map(|name| serde_json::json!({"name": name, "digest": format!("sha256:{}", "a".repeat(64))}))
+            .collect::<Vec<_>>(),
+    })
+}
+
 #[tokio::test]
-async fn installer_fetch_uses_exact_url_and_preserves_bytes() {
+async fn installer_fetch_uses_exact_urls_and_preserves_bytes() {
     let script = b"#!/bin/sh\nprintf 'update bytes'\n".to_vec();
-    let http = FakeInstallerHttp::new(InstallerResponse::Success(script.clone()));
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[release_entry(
+            APPLICATION_RELEASE_TAG,
+            &[INSTALLER_ASSET_NAME],
+        )]),
+        InstallerResponse::Success(script.clone()),
+    );
 
     assert_eq!(
         fetch_installer_script(&http)
@@ -36,19 +72,192 @@ async fn installer_fetch_uses_exact_url_and_preserves_bytes() {
             .expect("installer fetch should succeed"),
         script
     );
-    assert_eq!(http.requested_urls(), vec![INSTALL_URL.to_string()]);
+    assert_eq!(
+        http.requested_urls(),
+        vec![
+            releases_list_url(1),
+            installer_asset_url(APPLICATION_RELEASE_TAG),
+        ]
+    );
 }
 
 #[tokio::test]
 async fn installer_fetch_rejects_non_success_status() {
-    let http = FakeInstallerHttp::new(InstallerResponse::Unsuccessful { status: 503 });
+    let http = FakeInstallerHttp::with_list(
+        InstallerResponse::Unsuccessful { status: 503 },
+        InstallerResponse::Success(b"unused".to_vec()),
+    );
 
     let error = fetch_installer_script(&http)
         .await
         .expect_err("non-success response should fail");
 
     assert!(error.to_string().contains("503"));
-    assert_eq!(http.requested_urls(), vec![INSTALL_URL.to_string()]);
+    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+}
+
+#[tokio::test]
+async fn installer_fetch_skips_v8_dependency_releases() {
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[
+            release_entry(
+                V8_DEPENDENCY_RELEASE_TAG,
+                &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+            ),
+            release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME]),
+        ]),
+        InstallerResponse::Success(b"#!/bin/sh\nprintf 'installer'\n".to_vec()),
+    );
+
+    let script = fetch_installer_script(&http)
+        .await
+        .expect("application release should be selected");
+
+    assert_eq!(script, b"#!/bin/sh\nprintf 'installer'\n".to_vec());
+    assert_eq!(
+        http.requested_urls(),
+        vec![
+            releases_list_url(1),
+            installer_asset_url(APPLICATION_RELEASE_TAG),
+        ]
+    );
+    assert!(
+        !http
+            .requested_urls()
+            .iter()
+            .any(|url| url.contains(V8_DEPENDENCY_RELEASE_TAG))
+    );
+}
+
+#[tokio::test]
+async fn installer_fetch_skips_application_releases_without_installer_assets() {
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[
+            release_entry("rust-v0.142.4", &["inkstack-package_SHA256SUMS"]),
+            release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME]),
+        ]),
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    fetch_installer_script(&http)
+        .await
+        .expect("release with installer assets should be selected");
+
+    assert_eq!(
+        http.requested_urls(),
+        vec![
+            releases_list_url(1),
+            installer_asset_url(APPLICATION_RELEASE_TAG),
+        ]
+    );
+}
+
+#[tokio::test]
+async fn installer_fetch_fails_cleanly_without_application_releases() {
+    let http = FakeInstallerHttp::with_list(
+        releases_list_json(&[release_entry(
+            V8_DEPENDENCY_RELEASE_TAG,
+            &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+        )]),
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    let error = fetch_installer_script(&http)
+        .await
+        .expect_err("V8-only repositories must not yield an installer");
+
+    assert!(
+        error
+            .to_string()
+            .contains("no compatible InkStack application release"),
+        "unexpected error: {error}"
+    );
+    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+}
+
+#[tokio::test]
+async fn installer_fetch_paginates_large_release_lists() {
+    let mut page_one = vec![serde_json::json!({
+        "tag_name": V8_DEPENDENCY_RELEASE_TAG,
+        "assets": [{"name": "librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"}],
+    })];
+    while page_one.len() < RELEASES_PER_PAGE {
+        page_one.push(release_entry(
+            V8_DEPENDENCY_RELEASE_TAG,
+            &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
+        ));
+    }
+    let http = FakeInstallerHttp::with_pages(
+        vec![
+            releases_list_json(&page_one),
+            releases_list_json(&[release_entry(
+                APPLICATION_RELEASE_TAG,
+                &[INSTALLER_ASSET_NAME],
+            )]),
+        ],
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    fetch_installer_script(&http)
+        .await
+        .expect("paginated scan should find the application release");
+
+    assert_eq!(
+        http.requested_urls(),
+        vec![
+            releases_list_url(1),
+            releases_list_url(2),
+            installer_asset_url(APPLICATION_RELEASE_TAG),
+        ]
+    );
+}
+
+#[tokio::test]
+async fn installer_fetch_rejects_malformed_release_lists() {
+    let http = FakeInstallerHttp::with_list(
+        InstallerResponse::Success(b"not json".to_vec()),
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    let error = fetch_installer_script(&http)
+        .await
+        .expect_err("malformed metadata must fail");
+
+    assert!(error.to_string().contains("release list"));
+    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+}
+
+#[test]
+fn application_release_tags_match_the_installer_contract() {
+    assert!(is_application_release_tag("rust-v0.142.5"));
+    assert!(is_application_release_tag("rust-v1.2.3"));
+    assert!(is_application_release_tag("rust-v1.2.3-alpha"));
+    assert!(is_application_release_tag("rust-v1.2.3-alpha.1"));
+    assert!(is_application_release_tag("rust-v1.2.3-alpha.1.2"));
+    assert!(is_application_release_tag("rust-v1.2.3-beta"));
+    assert!(is_application_release_tag("rust-v1.2.3-beta.4"));
+    assert!(!is_application_release_tag("rusty-v8-v150.4.0"));
+    assert!(!is_application_release_tag("rust-v1.2"));
+    assert!(!is_application_release_tag("rust-v1.2.x"));
+    assert!(!is_application_release_tag("rust-v1.2.3-rc.1"));
+    assert!(!is_application_release_tag("rust-v1.2.3-alpha.1.2.3"));
+    assert!(!is_application_release_tag("rust-v1.2.3-beta.4.5"));
+    assert!(!is_application_release_tag("v1.2.3"));
+    assert!(!is_application_release_tag("rust-v"));
+}
+
+#[tokio::test]
+async fn find_application_release_rejects_foreign_status() {
+    let http = FakeInstallerHttp::with_list(
+        InstallerResponse::Unsuccessful { status: 404 },
+        InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
+    );
+
+    let error = find_application_release(&http)
+        .await
+        .expect_err("unavailable listing must fail");
+
+    assert!(error.to_string().contains("404"));
 }
 
 #[cfg(unix)]
@@ -190,6 +399,11 @@ fn updater_reexec_child() {
 }
 
 struct FakeInstallerHttp {
+    // One response per releases-list page request; the final response is
+    // reused for any further list requests so multi-cycle update tests
+    // keep resolving the same release.
+    list_responses: Vec<InstallerResponse>,
+    list_calls: Mutex<usize>,
     response: InstallerResponse,
     requested_urls: Mutex<Vec<String>>,
 }
@@ -233,7 +447,10 @@ async fn explicit_update_migrates_running_and_stopped_installations() {
             if local {
                 vec![]
             } else {
-                vec![INSTALL_URL.to_string()]
+                vec![
+                    releases_list_url(1),
+                    installer_asset_url(APPLICATION_RELEASE_TAG),
+                ]
             }
         );
         assert_eq!(
@@ -347,8 +564,26 @@ printf '{release}' > "$root/auto-update-version"
 }
 
 impl FakeInstallerHttp {
+    /// Serves `response` for installer asset requests and a default
+    /// one-entry application release list for list requests.
     fn new(response: InstallerResponse) -> Self {
+        Self::with_list(
+            releases_list_json(&[release_entry(
+                APPLICATION_RELEASE_TAG,
+                &[INSTALLER_ASSET_NAME],
+            )]),
+            response,
+        )
+    }
+
+    fn with_list(list_response: InstallerResponse, response: InstallerResponse) -> Self {
+        Self::with_pages(vec![list_response], response)
+    }
+
+    fn with_pages(list_responses: Vec<InstallerResponse>, response: InstallerResponse) -> Self {
         Self {
+            list_responses,
+            list_calls: Mutex::new(0),
             response,
             requested_urls: Mutex::new(Vec::new()),
         }
@@ -368,6 +603,15 @@ impl InstallerHttp for FakeInstallerHttp {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .push(url.to_string());
+        if url.starts_with(INKSTACK_RELEASES_API_URL) && url.contains("/releases?") {
+            let mut calls = self
+                .list_calls
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            let index = (*calls).min(self.list_responses.len().saturating_sub(1));
+            *calls += 1;
+            return Ok(self.list_responses[index].clone());
+        }
         Ok(self.response.clone())
     }
 }
@@ -631,7 +875,9 @@ async fn unsupported_request_preserves_updater_schedule() {
         .join("auto-update-version");
     let previous_marker = std::fs::read(&marker).unwrap();
     std::fs::remove_file(&marker).unwrap();
-    let mut pinned = inkstack_uds::UnixStream::connect(&socket_path).await.unwrap();
+    let mut pinned = inkstack_uds::UnixStream::connect(&socket_path)
+        .await
+        .unwrap();
     pinned.write_all(b"update\n").await.unwrap();
     let mut response = Vec::new();
     pinned.read_to_end(&mut response).await.unwrap();
@@ -1233,7 +1479,13 @@ async fn installer_failure_preserves_stderr_before_drain_timeout() {
 async fn update_rejects_a_package_root_change_during_download() {
     struct ChangingRoot<'a>(&'a std::path::Path);
     impl InstallerHttp for ChangingRoot<'_> {
-        async fn get(&self, _url: &str) -> anyhow::Result<InstallerResponse> {
+        async fn get(&self, url: &str) -> anyhow::Result<InstallerResponse> {
+            if url.starts_with(super::INKSTACK_RELEASES_API_URL) && url.contains("/releases?") {
+                return Ok(releases_list_json(&[release_entry(
+                    APPLICATION_RELEASE_TAG,
+                    &[INSTALLER_ASSET_NAME],
+                )]));
+            }
             std::os::unix::fs::symlink(
                 self.0.join("packages/standalone"),
                 self.0.join("packages/app-server-daemon"),
