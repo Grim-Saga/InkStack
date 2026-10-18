@@ -10,6 +10,7 @@ those guarantees cannot silently regress. Unrelated fixtures and protocol
 test data elsewhere in the workspace are intentionally out of scope.
 """
 
+import re
 import unittest
 from pathlib import Path
 
@@ -44,9 +45,52 @@ FORBIDDEN_EXECUTION_PATTERNS = (
     "| iex",
 )
 
-DOCUMENTATION_FILES = (
-    "inkstack-rs/app-server-daemon/README.md",
-)
+DOCUMENTATION_FILES = ("inkstack-rs/app-server-daemon/README.md",)
+
+
+def negative_probe_span(relative: str, text: str) -> tuple[int, int] | None:
+    """Recognize only the literal host fixture in its cfg(test) CLI test.
+
+    This deliberately accepts a small Rust syntax subset, failing closed on
+    changed names, types, expressions or hosts. No whole line is exempted.
+    """
+    if relative != "inkstack-rs/cli/src/main.rs":
+        return None
+    module = re.search(r"(?ms)^#\[cfg\(test\)\]\nmod tests \{\n(?P<body>.*?)^}", text)
+    if module is None:
+        return None
+    test = re.search(
+        r"(?ms)^    #\[tokio::test\]\n"
+        r"    async fn updater_http_client_factory_enforces_application_requirements\(\) \{\n"
+        r"(?P<body>.*?)^    }",
+        module.group("body"),
+    )
+    if test is None:
+        return None
+    declaration = re.search(
+        r"(?m)^        const[ \t]+DENIED_UPDATE_PROBE_HOSTS\s*:\s*"
+        r"\[\s*&str\s*;\s*3\s*\]\s*=\s*"
+        r'\[\s*"chatgpt\.com"\s*,\s*"releases\.openai\.com"\s*,\s*'
+        r'"unlisted\.example"\s*,?\s*\]\s*;',
+        test.group("body"),
+    )
+    if declaration is None:
+        return None
+    offset = module.start("body") + test.start("body")
+    return offset + declaration.start(), offset + declaration.end()
+
+
+def updater_destination_findings(relative: str, text: str) -> list[str]:
+    exempt = negative_probe_span(relative, text)
+    findings: list[str] = []
+    for destination in FORBIDDEN_DESTINATIONS:
+        for match in re.finditer(re.escape(destination), text):
+            if exempt is not None and exempt[0] <= match.start() < exempt[1]:
+                continue
+            number = text.count("\n", 0, match.start()) + 1
+            line = text.splitlines()[number - 1]
+            findings.append(f"{relative}:{number}: {destination}: {line.strip()}")
+    return findings
 
 
 class UpdaterDestinationTest(unittest.TestCase):
@@ -59,17 +103,7 @@ class UpdaterDestinationTest(unittest.TestCase):
                 f"expected updater path is missing: {relative}",
             )
             text = path.read_text(encoding="utf-8", errors="replace")
-            for number, line in enumerate(text.splitlines(), start=1):
-                for destination in FORBIDDEN_DESTINATIONS:
-                    if destination in line:
-                        # Explicitly-declared deny-list probes (used by tests
-                        # to prove OpenAI destinations stay network-blocked)
-                        # are assertions, not destinations we contact.
-                        if "DENIED_UPDATE_PROBE_HOSTS" in line:
-                            continue
-                        findings.append(
-                            f"{relative}:{number}: {destination}: {line.strip()}"
-                        )
+            findings.extend(updater_destination_findings(relative, text))
         self.assertEqual(
             findings,
             [],
@@ -79,7 +113,8 @@ class UpdaterDestinationTest(unittest.TestCase):
 
     def test_updater_code_never_pipes_remote_scripts_into_interpreters(self) -> None:
         code_files = [
-            relative for relative in UPDATER_PATH_FILES
+            relative
+            for relative in UPDATER_PATH_FILES
             if relative not in DOCUMENTATION_FILES
         ]
         findings: list[str] = []
@@ -99,20 +134,21 @@ class UpdaterDestinationTest(unittest.TestCase):
         )
 
     def test_installer_bootstrap_uses_inkstack_releases(self) -> None:
-        update_action = (
-            ROOT / "inkstack-rs/tui/src/update_action.rs"
-        ).read_text(encoding="utf-8")
+        update_action = (ROOT / "inkstack-rs/tui/src/update_action.rs").read_text(
+            encoding="utf-8"
+        )
         # Standalone updates must run the CLI's verified bootstrap rather
         # than a remote pipe-to-interpreter command.
-        self.assertIn('UpdateAction::StandaloneUnix => ("inkstack", &["update"])', update_action)
         self.assertIn(
-            'UpdateAction::StandaloneWindows => ("inkstack", &["update"])', update_action
+            'UpdateAction::StandaloneUnix => ("inkstack", &["update"])', update_action
+        )
+        self.assertIn(
+            'UpdateAction::StandaloneWindows => ("inkstack", &["update"])',
+            update_action,
         )
         cli_main = (ROOT / "inkstack-rs/cli/src/main.rs").read_text(encoding="utf-8")
         self.assertIn("fetch_verified_installer_script_blocking", cli_main)
-        self.assertIn(
-            "verified_installer::fetch_installer_script", cli_main
-        )
+        self.assertIn("verified_installer::fetch_installer_script", cli_main)
         update_loop = (
             ROOT / "inkstack-rs/app-server-daemon/src/update_loop.rs"
         ).read_text(encoding="utf-8")
@@ -120,7 +156,9 @@ class UpdaterDestinationTest(unittest.TestCase):
         verified_installer = (
             ROOT / "inkstack-rs/app-server-daemon/src/verified_installer.rs"
         ).read_text(encoding="utf-8")
-        self.assertIn("https://api.github.com/repos/Grim-Saga/InkStack", verified_installer)
+        self.assertIn(
+            "https://api.github.com/repos/Grim-Saga/InkStack", verified_installer
+        )
         self.assertIn(
             "https://github.com/Grim-Saga/InkStack/releases/download",
             verified_installer,
