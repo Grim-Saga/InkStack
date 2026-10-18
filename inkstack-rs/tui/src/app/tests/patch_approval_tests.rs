@@ -261,19 +261,21 @@ async fn active_patch_approval_preserves_deferred_startup_protection() -> Result
     assert!(app.startup_pending_protected_request);
 
     app.chat_widget.handle_server_notification(
-        ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: thread_id.to_string(),
-            turn_id: TURN_ID.to_string(),
-            completed_at_ms: 0,
-            item: ThreadItem::AgentMessage {
-                id: "agent-1".to_string(),
-                text: "streaming".to_string(),
-                phase: None,
-                memory_citation: None,
-                delivery: None,
-                questions: None,
+        ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: thread_id.to_string(),
+                turn_id: TURN_ID.to_string(),
+                completed_at_ms: 0,
+                item: ThreadItem::AgentMessage {
+                    id: "agent-1".to_string(),
+                    text: "streaming".to_string(),
+                    phase: None,
+                    memory_citation: None,
+                    delivery: None,
+                    questions: None,
+                },
             },
-        }),
+        ),
         /*replay_kind*/ None,
     );
     assert_eq!(open_patch(&mut app, &mut rx).changes, expected_changes());

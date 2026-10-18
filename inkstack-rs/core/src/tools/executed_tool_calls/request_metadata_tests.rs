@@ -585,7 +585,9 @@ fn executed_tool_call_recorder_bounds_pending_calls_and_preserves_overflow() {
     for index in 0..MAX_PENDING_EXECUTED_TOOL_CALLS + 2 {
         recorder.record_call(
             &ToolCall {
-                tool_name: inkstack_tools::ToolName::plain(crate::tools::code_mode::PUBLIC_TOOL_NAME),
+                tool_name: inkstack_tools::ToolName::plain(
+                    crate::tools::code_mode::PUBLIC_TOOL_NAME,
+                ),
                 call_id: format!("failed-wrapper-{index}"),
                 payload: ToolPayload::Custom {
                     input: "".to_string(),

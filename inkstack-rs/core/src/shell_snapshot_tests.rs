@@ -465,7 +465,10 @@ async fn inactive_profiles_keep_snapshots_but_active_brokers_require_sandbox() -
     .await?;
     config.shell_environment_policy.r#set.insert(
         "BASH_ENV".into(),
-        dir.path().join(".inkstack/startup.sh").display().to_string(),
+        dir.path()
+            .join(".inkstack/startup.sh")
+            .display()
+            .to_string(),
     );
     environments.set_snapshot_credential_broker(SnapshotCredentialBrokerState::Ready(
         started_proxy.proxy(),

@@ -313,9 +313,11 @@ impl GoalRuntimeHandle {
         }
 
         let (event_name, status, expected_goal_id) = match reason {
-            ActiveGoalStopReason::TurnError => {
-                ("turn-error", inkstack_state::ThreadGoalStatus::Blocked, None)
-            }
+            ActiveGoalStopReason::TurnError => (
+                "turn-error",
+                inkstack_state::ThreadGoalStatus::Blocked,
+                None,
+            ),
             ActiveGoalStopReason::UsageLimit => (
                 "usage-limit",
                 inkstack_state::ThreadGoalStatus::UsageLimited,

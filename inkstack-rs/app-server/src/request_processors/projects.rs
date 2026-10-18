@@ -369,10 +369,12 @@ fn api_project(project: StoredProject) -> Result<Project, JSONRPCErrorError> {
             .into_iter()
             .map(|root| {
                 Ok(ProjectRoot {
-                    path: inkstack_utils_absolute_path::AbsolutePathBuf::from_absolute_path(root.path)
-                        .map_err(|error| {
-                            internal_error(format!("stored project root is not absolute: {error}"))
-                        })?,
+                    path: inkstack_utils_absolute_path::AbsolutePathBuf::from_absolute_path(
+                        root.path,
+                    )
+                    .map_err(|error| {
+                        internal_error(format!("stored project root is not absolute: {error}"))
+                    })?,
                 })
             })
             .collect::<Result<_, JSONRPCErrorError>>()?,

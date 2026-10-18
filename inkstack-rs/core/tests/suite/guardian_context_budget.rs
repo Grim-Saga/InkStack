@@ -291,8 +291,9 @@ async fn review_respects_complete_context_budget(
             | ReviewerResponse::UncompactableContinuation
             | ReviewerResponse::CompactionError
     ) {
-        builder = builder
-            .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?);
+        builder = builder.with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-code-mode-host",
+        )?);
     }
     let image_store = Arc::new(RecordingFileAttachmentStore::default());
     if matches!(reviewer_response, ReviewerResponse::FileImageContinuation) {
@@ -739,7 +740,8 @@ async fn oversized_action_preserves_review_policy_and_next_review(
     let mut terminal_assessment = None;
     let event = wait_for_event(&test.inkstack, |event| {
         if let EventMsg::GuardianAssessment(assessment) = event
-            && assessment.status != inkstack_protocol::protocol::GuardianAssessmentStatus::InProgress
+            && assessment.status
+                != inkstack_protocol::protocol::GuardianAssessmentStatus::InProgress
         {
             terminal_assessment = Some((assessment.status, assessment.risk_level));
         }

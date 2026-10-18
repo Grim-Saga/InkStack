@@ -577,7 +577,10 @@ async fn resume_replays_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     core_test_support::submit_thread_settings(
         &initial.inkstack,
@@ -595,7 +598,10 @@ async fn resume_replays_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let resumed = builder.restart(&server, &initial).await?;
     resumed
@@ -605,7 +611,10 @@ async fn resume_replays_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&resumed.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&resumed.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let permissions = permissions_texts(&req3.single_request());
     assert_eq!(permissions.len(), 3);
@@ -658,7 +667,10 @@ async fn resume_and_fork_append_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     core_test_support::submit_thread_settings(
         &initial.inkstack,
@@ -676,7 +688,10 @@ async fn resume_and_fork_append_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let permissions_base = permissions_texts(&req2.single_request());
     assert_eq!(permissions_base.len(), 2);
@@ -692,7 +707,10 @@ async fn resume_and_fork_append_permissions_messages() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&resumed.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&resumed.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let permissions_resume = permissions_texts(&req3.single_request());
     assert_eq!(permissions_resume.len(), permissions_base.len() + 1);

@@ -329,7 +329,9 @@ async fn gpt_5_tools_without_apply_patch_append_apply_patch_instructions() -> an
     .await;
 
     let TestInkStack {
-        home: _home, inkstack, ..
+        home: _home,
+        inkstack,
+        ..
     } = test_inkstack()
         .with_pre_build_hook(write_global_instructions)
         .with_config(|config| {
@@ -760,7 +762,9 @@ async fn per_turn_overrides_keep_cached_prefix_and_key_constant() -> anyhow::Res
     .await;
 
     let TestInkStack {
-        home: _home, inkstack, ..
+        home: _home,
+        inkstack,
+        ..
     } = test_inkstack()
         .with_pre_build_hook(write_global_instructions)
         .with_config(|config| {

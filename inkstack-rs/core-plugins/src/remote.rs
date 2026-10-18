@@ -990,7 +990,12 @@ pub(crate) async fn fetch_and_cache_remote_plugin_catalog(
     let auth = ensure_chatgpt_auth(auth)?;
     let plugins = fetch_directory_plugins_for_scope(config, auth, scope).await?;
     catalog_cache::write_cached_directory_plugins(
-        inkstack_home, config, auth, scope, /*collection*/ None, &plugins,
+        inkstack_home,
+        config,
+        auth,
+        scope,
+        /*collection*/ None,
+        &plugins,
     );
     Ok(())
 }
@@ -1000,7 +1005,8 @@ pub async fn fetch_and_cache_global_remote_plugin_catalog(
     config: &RemotePluginServiceConfig,
     auth: Option<&InkStackAuth>,
 ) -> Result<(), RemotePluginCatalogError> {
-    fetch_and_cache_remote_plugin_catalog(inkstack_home, config, auth, RemotePluginScope::Global).await
+    fetch_and_cache_remote_plugin_catalog(inkstack_home, config, auth, RemotePluginScope::Global)
+        .await
 }
 
 pub fn invalidate_cached_remote_plugin_catalog_scopes(
@@ -1014,7 +1020,11 @@ pub fn invalidate_cached_remote_plugin_catalog_scopes(
     };
     for scope in scopes {
         catalog_cache::remove_cached_directory_plugins(
-            inkstack_home, config, auth, *scope, /*collection*/ None,
+            inkstack_home,
+            config,
+            auth,
+            *scope,
+            /*collection*/ None,
         );
         if *scope == RemotePluginScope::Global {
             catalog_cache::remove_cached_directory_plugins(
@@ -1148,7 +1158,11 @@ pub(crate) fn has_fresh_cached_remote_plugin_catalog(
         return false;
     };
     catalog_cache::load_cached_directory_plugins(
-        inkstack_home, config, auth, scope, /*collection*/ None,
+        inkstack_home,
+        config,
+        auth,
+        scope,
+        /*collection*/ None,
     )
     .is_some_and(|cached| {
         matches!(
@@ -1170,7 +1184,11 @@ pub(crate) fn cached_remote_plugin_catalog_scopes(
         .into_iter()
         .filter(|scope| {
             catalog_cache::load_cached_directory_plugins(
-                inkstack_home, config, auth, *scope, /*collection*/ None,
+                inkstack_home,
+                config,
+                auth,
+                *scope,
+                /*collection*/ None,
             )
             .is_some()
         })
@@ -1741,7 +1759,12 @@ pub async fn uninstall_remote_plugin(
 
     let legacy_plugin_id = response.id;
     tokio::task::spawn_blocking(move || {
-        remove_remote_plugin_cache(inkstack_home, marketplace_name, plugin_name, legacy_plugin_id)
+        remove_remote_plugin_cache(
+            inkstack_home,
+            marketplace_name,
+            plugin_name,
+            legacy_plugin_id,
+        )
     })
     .await
     .map_err(|err| {
@@ -2068,7 +2091,11 @@ async fn fetch_directory_plugins_for_scope_with_cache(
     if cache_mode != RemotePluginCatalogCacheMode::ForceRefetch
         && let Some(inkstack_home) = inkstack_home
         && let Some(cached) = catalog_cache::load_cached_directory_plugins(
-            inkstack_home, config, auth, scope, collection,
+            inkstack_home,
+            config,
+            auth,
+            scope,
+            collection,
         )
         && (cache_mode == RemotePluginCatalogCacheMode::PreferCache
             || cached.freshness == catalog_cache::RemotePluginCatalogCacheFreshness::Fresh)
@@ -2088,7 +2115,12 @@ async fn fetch_directory_plugins_for_scope_with_cache(
             .await?;
     if let Some(inkstack_home) = inkstack_home {
         catalog_cache::write_cached_directory_plugins(
-            inkstack_home, config, auth, scope, collection, &plugins,
+            inkstack_home,
+            config,
+            auth,
+            scope,
+            collection,
+            &plugins,
         );
     }
     Ok(DirectoryPluginsFetchOutcome {
@@ -2344,7 +2376,9 @@ fn remote_plugin_skill_detail_url(
     Ok(url.to_string())
 }
 
-fn ensure_chatgpt_auth(auth: Option<&InkStackAuth>) -> Result<&InkStackAuth, RemotePluginCatalogError> {
+fn ensure_chatgpt_auth(
+    auth: Option<&InkStackAuth>,
+) -> Result<&InkStackAuth, RemotePluginCatalogError> {
     let Some(auth) = auth else {
         return Err(RemotePluginCatalogError::AuthRequired);
     };

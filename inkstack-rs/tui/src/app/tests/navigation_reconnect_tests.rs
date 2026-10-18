@@ -166,7 +166,9 @@ async fn reconnect_daemon_command_center_after_socket_replacement_without_a_conv
         let socket_path = directory.path().join("daemon.sock");
         let listener = UnixListener::bind(&socket_path)?;
         let endpoint = crate::RemoteAppServerEndpoint::UnixSocket {
-            socket_path: inkstack_utils_absolute_path::AbsolutePathBuf::try_from(socket_path.clone())?,
+            socket_path: inkstack_utils_absolute_path::AbsolutePathBuf::try_from(
+                socket_path.clone(),
+            )?,
         };
         app.app_server_target = AppServerTarget::LocalDaemon {
             allow_embedded_fallback: true,
@@ -482,8 +484,10 @@ async fn reconnect_daemon_command_center_after_socket_replacement_without_a_conv
             .await?;
             assert_eq!(app.chat_widget.composer_text_with_pending(), "latest draft");
             assert!(
-                !std::iter::from_fn(|| events.try_recv().ok())
-                    .any(|event| matches!(event, AppEvent::InkStackOp(AppCommand::UserTurn { .. })))
+                !std::iter::from_fn(|| events.try_recv().ok()).any(|event| matches!(
+                    event,
+                    AppEvent::InkStackOp(AppCommand::UserTurn { .. })
+                ))
             );
             app.handle_tui_event(&mut tui, &mut session, TuiEvent::Paste("!".into()))
                 .await?;

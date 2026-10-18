@@ -241,7 +241,9 @@ impl MessageBoardHost for LocalBoardHost {
         Box::pin(async move {
             let recipient = match self.actor(recipient_id).await {
                 Ok(thread) => thread,
-                Err(error) if matches!(error.details(), InkStackErrorDetails::ThreadNotFound(_)) => {
+                Err(error)
+                    if matches!(error.details(), InkStackErrorDetails::ThreadNotFound(_)) =>
+                {
                     return Ok(NotificationDelivery::SkippedInactive);
                 }
                 Err(error) => return Err(error),

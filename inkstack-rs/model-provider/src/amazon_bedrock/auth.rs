@@ -392,13 +392,13 @@ mod tests {
                 api_key: "managed-bedrock-api-key".to_string(),
                 region: "us-east-1".to_string(),
             }));
-        let managed_access_keys = AuthManager::from_auth_for_testing(InkStackAuth::BedrockAccessKeys(
-            BedrockAccessKeysAuth {
+        let managed_access_keys = AuthManager::from_auth_for_testing(
+            InkStackAuth::BedrockAccessKeys(BedrockAccessKeysAuth {
                 access_key_id: "managed-access-key-id".to_string(),
                 secret_access_key: "managed-secret-access-key".to_string(),
                 session_token: None,
-            },
-        ));
+            }),
+        );
         let cases: &[(
             &ModelProviderInfo,
             Option<&AuthManager>,

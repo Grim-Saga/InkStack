@@ -28,7 +28,10 @@ fn configured_marketplace_update() -> MarketplaceConfigUpdate<'static> {
     }
 }
 
-fn write_installed_marketplace(inkstack_home: &std::path::Path, marketplace_name: &str) -> Result<()> {
+fn write_installed_marketplace(
+    inkstack_home: &std::path::Path,
+    marketplace_name: &str,
+) -> Result<()> {
     let root = marketplace_install_root(inkstack_home).join(marketplace_name);
     std::fs::create_dir_all(root.join(".agents/plugins"))?;
     std::fs::write(root.join(".agents/plugins/marketplace.json"), "{}")?;
@@ -52,7 +55,11 @@ fn canonicalize_path_with_existing_parent(path: &std::path::Path) -> Result<std:
 async fn marketplace_remove_deletes_config_and_installed_root(user_entry: bool) -> Result<()> {
     let inkstack_home = TempDir::new()?;
     if user_entry {
-        record_user_marketplace(inkstack_home.path(), "debug", &configured_marketplace_update())?;
+        record_user_marketplace(
+            inkstack_home.path(),
+            "debug",
+            &configured_marketplace_update(),
+        )?;
     }
     write_installed_marketplace(inkstack_home.path(), "debug")?;
     let installed_root = marketplace_install_root(inkstack_home.path()).join("debug");
@@ -133,10 +140,14 @@ async fn marketplace_remove_ignores_startup_project_config() -> Result<()> {
     let project_config_path = inkstack_home.path().join(".inkstack/config.toml");
     let project_config = "[marketplaces.debug]\nsource_type = \"git\"\nsource = \"https://github.com/owner/repo.git\"\n";
     std::fs::write(&project_config_path, project_config)?;
-    set_project_trust_level(inkstack_home.path(), inkstack_home.path(), TrustLevel::Trusted)?;
+    set_project_trust_level(
+        inkstack_home.path(),
+        inkstack_home.path(),
+        TrustLevel::Trusted,
+    )?;
     write_installed_marketplace(inkstack_home.path(), "debug")?;
-    let snapshot_path =
-        marketplace_install_root(inkstack_home.path()).join("debug/.agents/plugins/marketplace.json");
+    let snapshot_path = marketplace_install_root(inkstack_home.path())
+        .join("debug/.agents/plugins/marketplace.json");
 
     let mut mcp = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())

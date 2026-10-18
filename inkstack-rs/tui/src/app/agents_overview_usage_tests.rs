@@ -140,9 +140,11 @@ async fn selected_usage_is_cached_and_account_changes_discard_old_results() -> R
             .replace("fwd del", "del")
     );
     for notification in [
-        ServerNotification::ThreadReverted(inkstack_app_server_protocol::ThreadRevertedNotification {
-            thread_id: selected.to_string(),
-        }),
+        ServerNotification::ThreadReverted(
+            inkstack_app_server_protocol::ThreadRevertedNotification {
+                thread_id: selected.to_string(),
+            },
+        ),
         ServerNotification::ThreadClosed(ThreadClosedNotification {
             thread_id: selected.to_string(),
         }),

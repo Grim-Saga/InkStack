@@ -44,7 +44,8 @@ fn external_editors_keep_the_screen_and_return_the_draft() -> Result<()> {
         };
         let inkstack = inkstack_utils_cargo_bin::cargo_bin("inkstack-tui")
             .or_else(|_| inkstack_utils_cargo_bin::cargo_bin("inkstack"))?;
-        let mut terminal = PtyInkStack::start_binary(&inkstack, &repo_root, home, &args, Some(&editor))?;
+        let mut terminal =
+            PtyInkStack::start_binary(&inkstack, &repo_root, home, &args, Some(&editor))?;
         terminal.wait_for_startup()?;
         terminal.wait_for_screen("GPT-5.6-Terra")?;
         terminal.write_input(b"initial draft")?;

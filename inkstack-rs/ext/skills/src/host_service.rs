@@ -119,7 +119,11 @@ impl HostSkillsRequest<'_> {
 
 impl HostSkillsService {
     pub fn new(inkstack_home: AbsolutePathBuf, bundled_skills_enabled: bool) -> Self {
-        Self::new_with_restriction_product(inkstack_home, bundled_skills_enabled, Some(Product::InkStack))
+        Self::new_with_restriction_product(
+            inkstack_home,
+            bundled_skills_enabled,
+            Some(Product::InkStack),
+        )
     }
 
     pub fn new_with_restriction_product(

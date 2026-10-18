@@ -335,7 +335,10 @@ impl<'call> ToolExecutor<ExtensionToolCall<'call>> for TestNamespaceExtensionToo
         })
     }
 
-    fn handle<'a>(&'a self, _call: ExtensionToolCall<'call>) -> inkstack_tools::ToolExecutorFuture<'a>
+    fn handle<'a>(
+        &'a self,
+        _call: ExtensionToolCall<'call>,
+    ) -> inkstack_tools::ToolExecutorFuture<'a>
     where
         'call: 'a,
     {
@@ -374,7 +377,10 @@ impl<'call> ToolExecutor<ExtensionToolCall<'call>> for DeferredExtensionTool {
         ToolExposure::Deferred
     }
 
-    fn handle<'a>(&'a self, _call: ExtensionToolCall<'call>) -> inkstack_tools::ToolExecutorFuture<'a>
+    fn handle<'a>(
+        &'a self,
+        _call: ExtensionToolCall<'call>,
+    ) -> inkstack_tools::ToolExecutorFuture<'a>
     where
         'call: 'a,
     {
@@ -1207,7 +1213,8 @@ async fn sleep_tool_stays_direct_and_outside_code_mode() {
         );
         plan.assert_registered_lacks(&[wait_agent_tool_name.as_str()]);
 
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         if code_mode_only {
@@ -1456,7 +1463,8 @@ async fn code_mode_tool_search_respects_direct_only_functions() {
             },
         );
         assert_eq!(plan.code_mode_tool_names.get("tool_search"), None);
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         assert!(!exec.description.contains("await tools.tool_search("));
@@ -1505,7 +1513,8 @@ async fn dynamic_tool_search_does_not_enable_ranked_search_guidance() {
             plan.code_mode_tool_names.get("tool_search"),
             Some(&ToolName::plain("tool_search")),
         );
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         assert!(exec.description.contains("tool_search dynamic tool"));
@@ -1559,7 +1568,8 @@ async fn code_mode_tool_search_respects_exclusions_and_requires_deferred_tools()
                 .any(|name| name == "tool_search"),
             has_deferred_tools,
         );
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         assert!(!exec.description.contains("await tools.tool_search("));
@@ -2199,7 +2209,8 @@ async fn code_mode_uses_the_first_normalized_tool_identity() {
             assert_eq!(shadow.description, "lookup dynamic tool");
         }
 
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         assert!(!exec.description.contains("lookup dynamic tool"));
@@ -2575,7 +2586,8 @@ async fn code_mode_config_updates_exec_description() {
         })
         .await;
 
-        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME) else {
+        let ToolSpec::Freeform(exec) = plan.visible_spec(inkstack_code_mode::PUBLIC_TOOL_NAME)
+        else {
             panic!("expected code mode exec tool");
         };
         assert!(

@@ -147,26 +147,28 @@ fn step_settings_models() -> Vec<ModelInfo> {
 }
 
 fn step_settings_test() -> TestInkStackBuilder {
-    test_inkstack().with_model(MODEL_A).with_config(move |config| {
-        for feature in [
-            Feature::StepModelSwitching,
-            Feature::DefaultModeRequestUserInput,
-            Feature::FastMode,
-        ] {
-            config
-                .features
-                .enable(feature)
-                .expect("test config should allow feature update");
-        }
-        config.model_catalog = Some(ModelsResponse {
-            models: step_settings_models(),
-        });
-        config.model_reasoning_effort = Some(ReasoningEffort::Low);
-        config.model_reasoning_summary = Some(ReasoningSummary::Concise);
-        config.service_tier = None;
-        config.permissions.approval_policy = Constrained::allow_any(AskForApproval::OnRequest);
-        config.approvals_reviewer = ApprovalsReviewer::User;
-    })
+    test_inkstack()
+        .with_model(MODEL_A)
+        .with_config(move |config| {
+            for feature in [
+                Feature::StepModelSwitching,
+                Feature::DefaultModeRequestUserInput,
+                Feature::FastMode,
+            ] {
+                config
+                    .features
+                    .enable(feature)
+                    .expect("test config should allow feature update");
+            }
+            config.model_catalog = Some(ModelsResponse {
+                models: step_settings_models(),
+            });
+            config.model_reasoning_effort = Some(ReasoningEffort::Low);
+            config.model_reasoning_summary = Some(ReasoningSummary::Concise);
+            config.service_tier = None;
+            config.permissions.approval_policy = Constrained::allow_any(AskForApproval::OnRequest);
+            config.approvals_reviewer = ApprovalsReviewer::User;
+        })
 }
 
 fn direct_tool_settings_test() -> TestInkStackBuilder {
@@ -579,7 +581,9 @@ async fn tool_result_history_keeps_originating_model_across_switch_and_replay() 
             .resume_legacy_thread_from_rollout(
                 replay_config.clone(),
                 rollout_path.clone(),
-                inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key("dummy")),
+                inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key(
+                    "dummy",
+                )),
                 /*parent_trace*/ None,
                 ClientMcpExtensions::default(),
             )
@@ -713,7 +717,9 @@ async fn custom_tool_output_replay_preserves_originating_budget() -> Result<()> 
         .resume_legacy_thread_from_rollout(
             replay_config.clone(),
             rollout_path.clone(),
-            inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key("dummy")),
+            inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key(
+                "dummy",
+            )),
             /*parent_trace*/ None,
             ClientMcpExtensions::default(),
         )
@@ -1755,7 +1761,8 @@ async fn captured_model_enables_and_executes_code_mode() -> Result<()> {
                 .set_permission_profile(PermissionProfile::Disabled)
                 .expect("test permissions");
             for model in &mut config.model_catalog.as_mut().expect("models").models {
-                model.input_modalities = vec![inkstack_protocol::openai_models::InputModality::Text];
+                model.input_modalities =
+                    vec![inkstack_protocol::openai_models::InputModality::Text];
                 model.supports_image_detail_original = false;
                 if model.slug == MODEL_B {
                     model
@@ -2021,7 +2028,10 @@ async fn sparse_updates_preserve_divergent_active_and_future_models() -> Result<
         matches!(event, EventMsg::TurnComplete(_))
     })
     .await;
-    assert_eq!(test.inkstack.current_turn_model(&request.turn_id).await, None);
+    assert_eq!(
+        test.inkstack.current_turn_model(&request.turn_id).await,
+        None
+    );
     test.submit_text_turn("start the next turn").await?;
 
     let requests = response_mock.requests();
@@ -2760,14 +2770,15 @@ async fn captured_step_controls_exec_completion_and_write_stdin_output() -> Resu
                 .expect("test permissions");
             for model in &mut config.model_catalog.as_mut().expect("models").models {
                 model.shell_type = ConfigShellToolType::UnifiedExec;
-                model.truncation_policy = inkstack_protocol::openai_models::TruncationPolicyConfig {
-                    mode: inkstack_protocol::openai_models::TruncationMode::Bytes,
-                    limit: match model.slug.as_str() {
-                        MODEL_B => 400,
-                        MODEL_C => 800,
-                        _ => 8_000,
-                    },
-                };
+                model.truncation_policy =
+                    inkstack_protocol::openai_models::TruncationPolicyConfig {
+                        mode: inkstack_protocol::openai_models::TruncationMode::Bytes,
+                        limit: match model.slug.as_str() {
+                            MODEL_B => 400,
+                            MODEL_C => 800,
+                            _ => 8_000,
+                        },
+                    };
             }
         })
         .build_with_auto_env(&server)
@@ -2888,16 +2899,18 @@ async fn captured_step_controls_mcp_output_limit(supports_images: bool) -> Resul
         .with_config(move |config| {
             for model in &mut config.model_catalog.as_mut().expect("models").models {
                 model.supports_image_detail_original = model.slug != MODEL_B;
-                model.input_modalities = vec![inkstack_protocol::openai_models::InputModality::Text];
+                model.input_modalities =
+                    vec![inkstack_protocol::openai_models::InputModality::Text];
                 if model.slug != MODEL_B || supports_images {
                     model
                         .input_modalities
                         .push(inkstack_protocol::openai_models::InputModality::Image);
                 }
-                model.truncation_policy = inkstack_protocol::openai_models::TruncationPolicyConfig {
-                    mode: inkstack_protocol::openai_models::TruncationMode::Bytes,
-                    limit: if model.slug == MODEL_B { 80 } else { 8_000 },
-                };
+                model.truncation_policy =
+                    inkstack_protocol::openai_models::TruncationPolicyConfig {
+                        mode: inkstack_protocol::openai_models::TruncationMode::Bytes,
+                        limit: if model.slug == MODEL_B { 80 } else { 8_000 },
+                    };
             }
             config
                 .mcp_servers

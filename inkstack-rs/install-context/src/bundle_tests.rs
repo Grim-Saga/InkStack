@@ -70,7 +70,10 @@ fn winget_root_requires_metadata_for_the_actual_executable() -> std::io::Result<
             resources_dir: Some(package.join(RESOURCES_DIRNAME)),
             path_dir: Some(package.join(PATH_DIRNAME)),
         });
-        assert_eq!(InkStackPackageLayout::from_exe(executable.as_path()), expected);
+        assert_eq!(
+            InkStackPackageLayout::from_exe(executable.as_path()),
+            expected
+        );
     }
     Ok(())
 }

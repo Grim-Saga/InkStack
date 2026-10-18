@@ -68,7 +68,10 @@ struct DirectorySizes {
     archived_sessions: u64,
 }
 
-fn directory_sizes(inkstack_home: &Path, shutdown: &CancellationToken) -> io::Result<DirectorySizes> {
+fn directory_sizes(
+    inkstack_home: &Path,
+    shutdown: &CancellationToken,
+) -> io::Result<DirectorySizes> {
     let sessions = inkstack_home.join(SESSIONS_SUBDIR);
     let archived_sessions = inkstack_home.join(ARCHIVED_SESSIONS_SUBDIR);
     let mut sizes = DirectorySizes::default();

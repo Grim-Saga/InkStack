@@ -314,8 +314,14 @@ fn snapshot_filters_profile_exports_after_capture() {
         exclude: vec!["PROFILE_DENIED".to_string()],
         r#set: HashMap::from([
             ("PROFILE_ALLOWED".to_string(), "override".to_string()),
-            ("INKSTACK_THREAD_ID".to_string(), "policy-thread".to_string()),
-            ("INKSTACK_TOOL_CALL_ID".to_string(), "policy-call".to_string()),
+            (
+                "INKSTACK_THREAD_ID".to_string(),
+                "policy-thread".to_string(),
+            ),
+            (
+                "INKSTACK_TOOL_CALL_ID".to_string(),
+                "policy-call".to_string(),
+            ),
         ]),
         // Metadata must survive policy filtering so the cache owns its removal.
         include_only: vec![

@@ -391,7 +391,10 @@ async fn sandbox_blocks_first_time_dot_inkstack_creation() {
     .await
     .expect("should spawn command creating .inkstack");
 
-    let status = child.wait().await.expect("should wait for .inkstack command");
+    let status = child
+        .wait()
+        .await
+        .expect("should wait for .inkstack command");
     assert!(
         !status.success(),
         "sandbox unexpectedly allowed first-time .inkstack creation: {status:?}"

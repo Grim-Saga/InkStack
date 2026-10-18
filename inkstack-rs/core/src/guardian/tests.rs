@@ -128,7 +128,8 @@ impl inkstack_extension_api::ContextContributor for GuardianMemoryContextProbe {
         &'a self,
         _session_store: &'a inkstack_extension_api::ExtensionData,
         thread_store: &'a inkstack_extension_api::ExtensionData,
-    ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::PromptFragment>> {
+    ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::PromptFragment>>
+    {
         Box::pin(async move {
             if thread_store
                 .get::<GuardianMemoryContextEnabled>()
@@ -512,9 +513,9 @@ async fn build_guardian_prompt_includes_parent_turn_denied_reads() -> anyhow::Re
             },
             FileSystemSandboxEntry {
                 path: FileSystemPath::Special {
-                    value: inkstack_protocol::permissions::FileSystemSpecialPath::project_roots(Some(
-                        "private".to_string(),
-                    )),
+                    value: inkstack_protocol::permissions::FileSystemSpecialPath::project_roots(
+                        Some("private".to_string()),
+                    ),
                 },
                 access: FileSystemAccessMode::Deny,
                 missing_path_behavior: None,
@@ -724,9 +725,9 @@ async fn guardian_mcp_uses_thread_permissions_for_an_unavailable_captured_enviro
             ),
             FileSystemSandboxEntry::new(
                 FileSystemPath::Special {
-                    value: inkstack_protocol::permissions::FileSystemSpecialPath::project_roots(Some(
-                        "private".into(),
-                    )),
+                    value: inkstack_protocol::permissions::FileSystemSpecialPath::project_roots(
+                        Some("private".into()),
+                    ),
                 },
                 FileSystemAccessMode::Deny,
             ),
@@ -745,7 +746,8 @@ async fn guardian_mcp_uses_thread_permissions_for_an_unavailable_captured_enviro
     let mut selection = original.selection();
     selection.cwd = PathUri::from_abs_path(&captured_root);
     selection.workspace_roots = vec![selection.cwd.clone()];
-    selection.config = inkstack_protocol::protocol::EnvironmentConfigState::Failed("offline".into());
+    selection.config =
+        inkstack_protocol::protocol::EnvironmentConfigState::Failed("offline".into());
     let captured = crate::environment_selection::TurnEnvironmentSnapshot {
         environments: vec![TurnEnvironmentState::Failed {
             required_skills: Vec::new(),
@@ -1156,7 +1158,9 @@ fn collect_guardian_transcript_entries_includes_recent_tool_calls_and_output() {
         entries[2],
         ConversationTranscriptEntry {
             kind: ConversationTranscriptEntryKind::ToolOutput("tool read_file result".to_string()),
-            content: inkstack_guardian_context::TranscriptContent::Text("repo is public".to_string()),
+            content: inkstack_guardian_context::TranscriptContent::Text(
+                "repo is public".to_string()
+            ),
             original_bytes: "repo is public".len(),
             retained_source: None,
         }
@@ -1171,8 +1175,9 @@ fn collect_guardian_transcript_entries_includes_recent_tool_calls_and_output() {
 
     let oversized_result = "é🙂".repeat(/*n*/ 10_000);
     if let ResponseItem::FunctionCallOutput { output, .. } = &mut items[2] {
-        *output =
-            inkstack_protocol::models::FunctionCallOutputPayload::from_text(oversized_result.clone());
+        *output = inkstack_protocol::models::FunctionCallOutputPayload::from_text(
+            oversized_result.clone(),
+        );
     }
     for token_cap in [
         GUARDIAN_MAX_TOOL_ENTRY_TOKENS,
@@ -1984,7 +1989,8 @@ async fn guardian_reuse_respects_effective_policy_and_personality_opt_out(
         .unwrap()
         .policy = Some("changed action policy".to_string());
     let mut different_personality = changed_policy.clone();
-    different_personality.personality = Some(inkstack_protocol::config_types::Personality::Pragmatic);
+    different_personality.personality =
+        Some(inkstack_protocol::config_types::Personality::Pragmatic);
     let mut omit_personality = different_personality.clone();
     omit_personality.personality = Some(inkstack_protocol::config_types::Personality::None);
     for (index, context) in [
@@ -2426,7 +2432,9 @@ async fn guardian_review_request_layout_matches_model_visible_request_snapshot()
     // Check exact separators before the snapshot normalizes trailing whitespace.
     let guardian_user_text = request.message_input_texts("user").concat();
     assert!(guardian_user_text.contains(">>> TRANSCRIPT START\n"));
-    assert!(guardian_user_text.contains("The InkStack agent has requested the following action:\n"));
+    assert!(
+        guardian_user_text.contains("The InkStack agent has requested the following action:\n")
+    );
     assert!(guardian_user_text.contains(&format!(
         ">>> TRANSCRIPT END\nReviewed InkStack session id: {}\n",
         fixed_guardian_parent_session_id()
@@ -2558,7 +2566,10 @@ async fn guardian_reuses_prompt_cache_key_and_appends_prior_reviews() -> anyhow:
     let mut reviewer_model = session
         .services
         .models_manager
-        .get_model_info("inkstack-auto-review", &turn.config.to_models_manager_config())
+        .get_model_info(
+            "inkstack-auto-review",
+            &turn.config.to_models_manager_config(),
+        )
         .await;
     reviewer_model.comp_hash = Some("test-checkpoint".to_owned());
     let auth_manager = Arc::clone(&session.services.auth_manager);
@@ -3457,8 +3468,10 @@ async fn guardian_review_routes_required_actions(
         fn decide<'a>(
             &'a self,
             _input: &'a inkstack_extension_api::ApprovalDecisionInput<'_>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Option<inkstack_extension_api::ApprovalDecision>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Option<inkstack_extension_api::ApprovalDecision>,
+        > {
             Box::pin(async { Some(inkstack_extension_api::ApprovalDecision::Allow) })
         }
     }

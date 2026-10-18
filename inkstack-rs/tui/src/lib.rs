@@ -523,7 +523,8 @@ async fn connect_remote_app_server(
 }
 
 async fn maybe_probe_default_daemon_socket(inkstack_home: &Path) -> Option<AbsolutePathBuf> {
-    let socket_path = inkstack_app_server_client::app_server_control_socket_path(inkstack_home).ok()?;
+    let socket_path =
+        inkstack_app_server_client::app_server_control_socket_path(inkstack_home).ok()?;
     #[cfg(windows)]
     let (validated_path, _directory) =
         inkstack_uds::validate_private_socket_path(socket_path.as_path()).ok()?;
@@ -867,7 +868,9 @@ async fn lookup_latest_session_target_with_app_server(
         if let Some(target) = target
             && (uses_remote_workspace
                 || match target.path.as_deref() {
-                    Some(path) => inkstack_rollout::existing_rollout_path(path).await.is_some(),
+                    Some(path) => inkstack_rollout::existing_rollout_path(path)
+                        .await
+                        .is_some(),
                     None => false,
                 })
         {
@@ -1062,10 +1065,12 @@ async fn cloud_config_bundle_for_app_server_target(
     embedded_network_policy: &inkstack_app_server_client::EmbeddedNetworkPolicy,
 ) -> std::io::Result<CloudConfigBundleLoader> {
     cloud_config_bundle_loader_for_storage(
-        embedded_network_policy
-            .bind_bootstrap_auth(app_server_target.auth_config_for_cloud_loader(
-                bootstrap_auth_config(inkstack_home, bootstrap_config)?,
-            )),
+        embedded_network_policy.bind_bootstrap_auth(
+            app_server_target.auth_config_for_cloud_loader(bootstrap_auth_config(
+                inkstack_home,
+                bootstrap_config,
+            )?),
+        ),
         /*enable_openai_api_key_env*/ false,
     )
     .await
@@ -1453,8 +1458,10 @@ async fn run_ratatui_app(
     // Leave the one-time override initialization below to use the final config.
     if (cli.resume_picker || cli.fork_picker)
         && let Some(name) = config.tui_theme.as_deref()
-        && let Some(theme) =
-            crate::render::highlight::resolve_theme_by_name(name, Some(config.inkstack_home.as_path()))
+        && let Some(theme) = crate::render::highlight::resolve_theme_by_name(
+            name,
+            Some(config.inkstack_home.as_path()),
+        )
     {
         crate::render::highlight::set_syntax_theme(theme);
     }
@@ -1997,7 +2004,9 @@ async fn run_ratatui_app(
     // this must happen after the last possible reload.
     if let Some(w) = crate::render::highlight::set_theme_override(
         local_settings.tui.theme.clone(),
-        find_inkstack_home().ok().map(AbsolutePathBuf::into_path_buf),
+        find_inkstack_home()
+            .ok()
+            .map(AbsolutePathBuf::into_path_buf),
     ) {
         config.startup_warnings.push(w);
     }
@@ -3092,7 +3101,9 @@ requires_openai_auth = {requires_openai_auth}
         assert_eq!(
             resolve_remote_addr("unix://")?,
             RemoteAppServerEndpoint::UnixSocket {
-                socket_path: inkstack_app_server_client::app_server_control_socket_path(&inkstack_home)?,
+                socket_path: inkstack_app_server_client::app_server_control_socket_path(
+                    &inkstack_home
+                )?,
             }
         );
         Ok(())

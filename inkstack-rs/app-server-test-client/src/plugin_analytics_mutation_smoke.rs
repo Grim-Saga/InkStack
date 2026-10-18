@@ -97,7 +97,12 @@ pub(super) fn run(
             if let Err(err) = sequence_result {
                 eprintln!("mutation smoke failed before cleanup: {err:#}");
             }
-            print_dirty_recovery(inkstack_bin, config_overrides, remote_plugin_id, &cleanup_err);
+            print_dirty_recovery(
+                inkstack_bin,
+                config_overrides,
+                remote_plugin_id,
+                &cleanup_err,
+            );
             Err(cleanup_err)
         }
         (sequence_result, RestorationStatus::Unknown(cleanup_err)) => {
@@ -341,7 +346,10 @@ fn run_mutation_sequence(
     }
 }
 
-fn install_remote_plugin(client: &mut InkStackClient, plugin: &RemotePluginExpectation) -> Result<()> {
+fn install_remote_plugin(
+    client: &mut InkStackClient,
+    plugin: &RemotePluginExpectation,
+) -> Result<()> {
     let request_id = client.request_id();
     let _: PluginInstallResponse = client.send_request(
         ClientRequest::PluginInstall {
@@ -467,7 +475,11 @@ fn print_dirty_recovery(
     print_recovery_command(inkstack_bin, config_overrides, remote_plugin_id);
 }
 
-fn print_recovery_command(inkstack_bin: &Path, config_overrides: &[String], remote_plugin_id: &str) {
+fn print_recovery_command(
+    inkstack_bin: &Path,
+    config_overrides: &[String],
+    remote_plugin_id: &str,
+) {
     let test_client = std::env::current_exe()
         .map(|path| path.display().to_string())
         .unwrap_or_else(|_| "inkstack-app-server-test-client".to_string());

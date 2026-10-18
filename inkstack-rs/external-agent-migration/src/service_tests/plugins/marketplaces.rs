@@ -265,9 +265,10 @@ source = {configured_marketplace_root:?}
             raw_errors: Vec::new(),
         }
     );
-    let config: TomlValue =
-        toml::from_str(&fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"))
-            .expect("parse config");
+    let config: TomlValue = toml::from_str(
+        &fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"),
+    )
+    .expect("parse config");
     let expected: TomlValue = toml::from_str(&format!(
         r#"[marketplaces.my-plugins]
 source_type = "local"

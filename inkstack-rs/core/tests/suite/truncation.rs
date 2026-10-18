@@ -571,7 +571,10 @@ async fn mcp_image_output_preserves_image_and_no_text_summary() -> Result<()> {
         .await?;
 
     // Wait for completion to ensure the outbound request is captured.
-    wait_for_event(&fixture.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&fixture.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
     let output_item = final_mock.single_request().function_call_output(call_id);
     // Expect exactly the wall-time text and image item; no trailing truncation summary.
     let output = output_item.get("output").expect("output");
@@ -897,7 +900,8 @@ async fn mcp_tool_output_limit_survives_resume(output_token_limit: Option<usize>
     skip_if_wine_exec!(Ok(()), "requires a Windows test_stdio_server binary");
 
     let server = start_mock_server().await;
-    let builder = test_inkstack().with_config(|config| config.tool_output_token_limit = Some(50_000));
+    let builder =
+        test_inkstack().with_config(|config| config.tool_output_token_limit = Some(50_000));
     let (fixture, output) = call_mcp_echo(
         &server,
         builder,

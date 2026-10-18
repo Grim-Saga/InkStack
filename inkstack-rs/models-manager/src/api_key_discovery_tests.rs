@@ -17,9 +17,9 @@ async fn api_key_discovery_disabled_preserves_command_auth_discovery_and_merging
     });
     let manager = OpenAiModelsManager::new_without_cache(
         endpoint.clone(),
-        Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-            "test-key",
-        ))),
+        Some(AuthManager::from_auth_for_testing(
+            InkStackAuth::from_api_key("test-key"),
+        )),
     );
     let mut merged = load_remote_models_from_file().unwrap();
     merged.extend(models.clone());

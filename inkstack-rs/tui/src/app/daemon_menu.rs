@@ -34,10 +34,11 @@ impl App {
             && connection.is_local_daemon
             && !connection.is_managed_daemon
         {
-            connection.is_managed_daemon =
-                inkstack_app_server_daemon::run(inkstack_app_server_daemon::LifecycleCommand::Version)
-                    .await
-                    .is_ok_and(|output| output.backend.is_some());
+            connection.is_managed_daemon = inkstack_app_server_daemon::run(
+                inkstack_app_server_daemon::LifecycleCommand::Version,
+            )
+            .await
+            .is_ok_and(|output| output.backend.is_some());
         }
     }
 

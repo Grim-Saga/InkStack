@@ -168,7 +168,8 @@ base_url = "{}/v1"
             Some(json!({"threadId": started.thread.id})),
         )
         .await?;
-    let goal: inkstack_app_server_protocol::ThreadGoalGetResponse = server.read_response(id).await?;
+    let goal: inkstack_app_server_protocol::ThreadGoalGetResponse =
+        server.read_response(id).await?;
     assert_eq!(goal.goal.expect("existing goal").objective, "Original goal");
     let id = server
         .send_raw_request(
@@ -222,7 +223,8 @@ base_url = "{}/v1"
             })),
         )
         .await?;
-    let _: inkstack_app_server_protocol::ThreadQueueDeleteResponse = server.read_response(id).await?;
+    let _: inkstack_app_server_protocol::ThreadQueueDeleteResponse =
+        server.read_response(id).await?;
     release_response.send(()).expect("release active response");
     timeout(
         wait,

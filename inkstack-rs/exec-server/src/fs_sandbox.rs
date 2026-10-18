@@ -625,9 +625,11 @@ mod tests {
     #[test]
     fn helper_permissions_preserve_existing_writes() {
         let inkstack_self_exe = std::env::current_exe().expect("current exe");
-        let runtime_paths =
-            ExecServerRuntimeOptions::new(inkstack_self_exe, /*inkstack_linux_sandbox_exe*/ None)
-                .expect("runtime paths");
+        let runtime_paths = ExecServerRuntimeOptions::new(
+            inkstack_self_exe,
+            /*inkstack_linux_sandbox_exe*/ None,
+        )
+        .expect("runtime paths");
         let cwd = AbsolutePathBuf::from_absolute_path(std::env::temp_dir().as_path())
             .expect("absolute cwd");
         let writable = cwd.join("writable");
@@ -818,7 +820,8 @@ mod tests {
         sandbox_context.sandbox_override = SandboxOverride::EscalatedSandboxWithRestrictions;
         #[cfg(windows)]
         let sandbox_context = crate::FileSystemSandboxContext {
-            windows_sandbox_selection: inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
+            windows_sandbox_selection:
+                inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
             ..sandbox_context
         };
         selected.close().expect("remove selected directory");
@@ -898,9 +901,11 @@ mod tests {
     #[test]
     fn sandbox_exec_request_binds_windows_relative_globs_to_policy_cwd() {
         let inkstack_self_exe = std::env::current_exe().expect("current exe");
-        let runtime_paths =
-            ExecServerRuntimeOptions::new(inkstack_self_exe, /*inkstack_linux_sandbox_exe*/ None)
-                .expect("runtime paths");
+        let runtime_paths = ExecServerRuntimeOptions::new(
+            inkstack_self_exe,
+            /*inkstack_linux_sandbox_exe*/ None,
+        )
+        .expect("runtime paths");
         let runner = FileSystemSandboxRunner::new(runtime_paths);
         let selected = tempfile::tempdir().expect("selected directory");
         let selected_cwd = AbsolutePathBuf::from_absolute_path(selected.path()).expect("cwd");
@@ -920,7 +925,8 @@ mod tests {
             ),
         ]);
         let sandbox_context = crate::FileSystemSandboxContext {
-            windows_sandbox_selection: inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
+            windows_sandbox_selection:
+                inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
             ..sandbox_context_with_cwd(&policy, cwd_uri)
         };
         selected.close().expect("remove selected directory");
@@ -988,9 +994,11 @@ mod tests {
     #[test]
     fn helper_permissions_include_only_the_helper_executable() {
         let inkstack_self_exe = std::env::current_exe().expect("current exe");
-        let runtime_paths =
-            ExecServerRuntimeOptions::new(inkstack_self_exe, /*inkstack_linux_sandbox_exe*/ None)
-                .expect("runtime paths");
+        let runtime_paths = ExecServerRuntimeOptions::new(
+            inkstack_self_exe,
+            /*inkstack_linux_sandbox_exe*/ None,
+        )
+        .expect("runtime paths");
         let cwd = AbsolutePathBuf::from_absolute_path(std::env::temp_dir().as_path())
             .expect("absolute cwd");
         let mut policy = restricted_policy(Vec::new());
@@ -1006,12 +1014,10 @@ mod tests {
             cwd.as_path(),
         );
 
-        assert!(
-            policy.can_read_local_path_with_cwd(
-                runtime_paths.inkstack_self_exe.as_path(),
-                cwd.as_path(),
-            )
-        );
+        assert!(policy.can_read_local_path_with_cwd(
+            runtime_paths.inkstack_self_exe.as_path(),
+            cwd.as_path(),
+        ));
         assert!(!policy.can_read_local_path_with_cwd(parent.as_path(), cwd.as_path()));
         assert!(!policy.can_read_local_path_with_cwd(sibling.as_path(), cwd.as_path()));
     }
@@ -1027,7 +1033,10 @@ mod tests {
         let cwd = AbsolutePathBuf::from_absolute_path(std::env::temp_dir().as_path())
             .expect("absolute cwd");
         let mut policy = restricted_policy(Vec::new());
-        let inkstack_parent = runtime_paths.inkstack_self_exe.parent().expect("inkstack parent");
+        let inkstack_parent = runtime_paths
+            .inkstack_self_exe
+            .parent()
+            .expect("inkstack parent");
         let alias = runtime_paths
             .inkstack_linux_sandbox_exe
             .as_ref()
@@ -1040,12 +1049,10 @@ mod tests {
             cwd.as_path(),
         );
 
-        assert!(
-            policy.can_read_local_path_with_cwd(
-                runtime_paths.inkstack_self_exe.as_path(),
-                cwd.as_path(),
-            )
-        );
+        assert!(policy.can_read_local_path_with_cwd(
+            runtime_paths.inkstack_self_exe.as_path(),
+            cwd.as_path(),
+        ));
         assert!(policy.can_read_local_path_with_cwd(alias.as_path(), cwd.as_path()));
         assert!(!policy.can_read_local_path_with_cwd(inkstack_parent.as_path(), cwd.as_path()));
         assert!(!policy.can_read_local_path_with_cwd(alias_parent.as_path(), cwd.as_path()));

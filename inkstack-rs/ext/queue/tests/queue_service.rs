@@ -191,7 +191,10 @@ async fn test_queue() -> anyhow::Result<(Arc<dyn QueueStore>, TempDir)> {
 }
 
 fn loaded_thread_queue(test: &TestInkStack) -> anyhow::Result<Arc<dyn QueueStore>> {
-    let runtime = test.inkstack.state_db().context("state runtime unavailable")?;
+    let runtime = test
+        .inkstack
+        .state_db()
+        .context("state runtime unavailable")?;
     Ok(Arc::new(LocalQueueStore::new(runtime)))
 }
 
@@ -681,7 +684,10 @@ async fn externally_changed_queues_dispatch_independently_and_retry_failed_wakes
     wait_for_queue_empty(&queue, thread_id).await?;
     wait_for_queue_empty(&queue, independent_thread.thread_id).await?;
 
-    let rollout_path = test.inkstack.rollout_path().context("rollout path missing")?;
+    let rollout_path = test
+        .inkstack
+        .rollout_path()
+        .context("rollout path missing")?;
     test.inkstack.shutdown_and_wait().await?;
     test.thread_manager.remove_thread(&thread_id).await;
     external_queue
@@ -777,7 +783,8 @@ async fn rejected_queue_messages_are_consumed_without_retrying_or_blocking_follo
         })
         .collect::<anyhow::Result<Vec<_>>>()?;
     assert_eq!(vec!["A", "C"], prompts);
-    let hook_log = std::fs::read_to_string(test.inkstack_home_path().join("queue_prompt_hook.log"))?;
+    let hook_log =
+        std::fs::read_to_string(test.inkstack_home_path().join("queue_prompt_hook.log"))?;
     assert_eq!(
         vec!["A", "blocked", "C"],
         hook_log.lines().collect::<Vec<_>>()
@@ -808,7 +815,11 @@ async fn explicitly_started_rejected_queue_messages_are_consumed() -> anyhow::Re
     let rejected = queue.enqueue(thread_id, user_input("blocked")).await?;
     let submission = tokio::time::timeout(
         Duration::from_secs(10),
-        queue.start(test.inkstack.as_ref(), Some(rejected.id), /*trace*/ None),
+        queue.start(
+            test.inkstack.as_ref(),
+            Some(rejected.id),
+            /*trace*/ None,
+        ),
     )
     .await?
     .expect("explicitly started input should be submitted");
@@ -818,7 +829,8 @@ async fn explicitly_started_rejected_queue_messages_are_consumed() -> anyhow::Re
     })
     .await;
     assert!(queue.list(thread_id).await?.is_empty());
-    let hook_log = std::fs::read_to_string(test.inkstack_home_path().join("queue_prompt_hook.log"))?;
+    let hook_log =
+        std::fs::read_to_string(test.inkstack_home_path().join("queue_prompt_hook.log"))?;
     assert_eq!(vec!["blocked"], hook_log.lines().collect::<Vec<_>>());
     assert!(responses.requests().is_empty());
     Ok(())

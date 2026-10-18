@@ -51,7 +51,10 @@ impl ExternalAuth for SelectedAuth {
         Box::pin(async { Ok(self.0.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         self.resolve()
     }
 }
@@ -72,7 +75,10 @@ impl ExternalAuth for StallingAuth {
         })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         self.resolve()
     }
 }

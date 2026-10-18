@@ -335,7 +335,10 @@ impl InkStackResponsesMetadata {
             ),
             (SESSION_ID_KEY.to_string(), self.session_id.clone()),
             (THREAD_ID_KEY.to_string(), self.thread_id.clone()),
-            (X_INKSTACK_WINDOW_ID_HEADER.to_string(), self.window_id.clone()),
+            (
+                X_INKSTACK_WINDOW_ID_HEADER.to_string(),
+                self.window_id.clone(),
+            ),
         ]);
         if let Some(turn_id) = &self.turn_id {
             client_metadata.insert(TURN_ID_KEY.to_string(), turn_id.clone());
@@ -361,7 +364,10 @@ impl InkStackResponsesMetadata {
         if self.has_turn_metadata()
             && let Some(turn_metadata_json) = self.turn_metadata_json()
         {
-            client_metadata.insert(X_INKSTACK_TURN_METADATA_HEADER.to_string(), turn_metadata_json);
+            client_metadata.insert(
+                X_INKSTACK_TURN_METADATA_HEADER.to_string(),
+                turn_metadata_json,
+            );
         }
         if include_internal && let Some(attribution) = &self.mcp_attribution {
             let serialized = to_json_string_bounded(attribution, MAX_MCP_ATTRIBUTION_BYTES)

@@ -150,12 +150,12 @@ pub(crate) fn host_from_environments(
     let Some(environments) = environments.filter(|environments| !environments.is_empty()) else {
         return WindowsSandboxHost::Unknown;
     };
-    let local = environments
-        .iter()
-        .any(|environment| environment.environment_id == inkstack_exec_server::LOCAL_ENVIRONMENT_ID);
-    let remote = environments
-        .iter()
-        .any(|environment| environment.environment_id != inkstack_exec_server::LOCAL_ENVIRONMENT_ID);
+    let local = environments.iter().any(|environment| {
+        environment.environment_id == inkstack_exec_server::LOCAL_ENVIRONMENT_ID
+    });
+    let remote = environments.iter().any(|environment| {
+        environment.environment_id != inkstack_exec_server::LOCAL_ENVIRONMENT_ID
+    });
     match (local, remote) {
         (true, false) => WindowsSandboxHost::Local,
         (true, true) => WindowsSandboxHost::Mixed,

@@ -96,11 +96,15 @@ pub(super) async fn lookup(
                     {
                         let expected_root = inkstack_home.join(match collection {
                             SessionCollection::Active => inkstack_rollout::SESSIONS_SUBDIR,
-                            SessionCollection::Archived => inkstack_rollout::ARCHIVED_SESSIONS_SUBDIR,
+                            SessionCollection::Archived => {
+                                inkstack_rollout::ARCHIVED_SESSIONS_SUBDIR
+                            }
                         });
                         if !path.starts_with(expected_root)
                             || (thread.history_mode == ThreadHistoryMode::Legacy
-                                && inkstack_rollout::existing_rollout_path(path).await.is_none())
+                                && inkstack_rollout::existing_rollout_path(path)
+                                    .await
+                                    .is_none())
                         {
                             continue;
                         }

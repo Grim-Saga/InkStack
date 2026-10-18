@@ -60,10 +60,9 @@ impl AgentRunner {
             ));
         }
 
-        let thread_manager = self
-            .thread_manager
-            .upgrade()
-            .ok_or_else(|| InkStackErr::UnsupportedOperation("thread manager dropped".to_string()))?;
+        let thread_manager = self.thread_manager.upgrade().ok_or_else(|| {
+            InkStackErr::UnsupportedOperation("thread manager dropped".to_string())
+        })?;
         let NewThread {
             thread_id, thread, ..
         } = thread_manager

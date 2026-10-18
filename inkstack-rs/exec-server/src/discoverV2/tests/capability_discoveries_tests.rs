@@ -80,7 +80,10 @@ async fn discovery_preserves_inventory_and_v1_metadata() -> anyhow::Result<()> {
         "inkstack/skills/deploy  skill/SKILL.md",
         &SKILL.replace("name: deploy\n", ""),
     )?;
-    for nested in [format!("{root}/nested"), "inkstack/skills/nested".to_string()] {
+    for nested in [
+        format!("{root}/nested"),
+        "inkstack/skills/nested".to_string(),
+    ] {
         write(
             temp.path(),
             &format!("{nested}/.inkstack-plugin/plugin.json"),
@@ -93,7 +96,9 @@ async fn discovery_preserves_inventory_and_v1_metadata() -> anyhow::Result<()> {
         )?;
     }
     let file_system = LocalFileSystem::unsandboxed();
-    let plugin_root = request.inkstack_home.join("plugins/cache/test/demo/local")?;
+    let plugin_root = request
+        .inkstack_home
+        .join("plugins/cache/test/demo/local")?;
     let v1 = discover_root(
         &file_system,
         CapabilityRootDiscoverRequest {
@@ -177,7 +182,9 @@ async fn discovery_preserves_inventory_and_v1_metadata() -> anyhow::Result<()> {
         response.skills,
         vec![
             expected_skill(
-                request.inkstack_home.join("skills/deploy  skill/SKILL.md")?,
+                request
+                    .inkstack_home
+                    .join("skills/deploy  skill/SKILL.md")?,
                 "deploy skill",
             ),
             expected_skill(
@@ -348,8 +355,10 @@ policy:
                 sandbox: None,
             })
             .await?;
-        let mut expected =
-            expected_skill(request.inkstack_home.join("skills/deploy/SKILL.md")?, "deploy");
+        let mut expected = expected_skill(
+            request.inkstack_home.join("skills/deploy/SKILL.md")?,
+            "deploy",
+        );
         expected.dependencies = dependencies;
         expected.policy = policy;
         expected.discovery_root = Some(SkillDiscoveryRoot {

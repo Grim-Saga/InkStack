@@ -300,7 +300,8 @@ async fn remote_compact_v2_retains_metadata_from_resumed_history() -> Result<()>
     )
     .await;
 
-    let builder = || test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
+    let builder =
+        || test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
     let initial = builder()
         .with_pre_build_hook(|home| {
             fs::write(
@@ -538,11 +539,11 @@ async fn remote_compact_v2_records_usage_before_output_validation() -> Result<()
 async fn amazon_bedrock_automatic_compaction_uses_v2_responses_endpoint() -> Result<()> {
     skip_if_no_network!(Ok(()));
 
-    let harness = TestInkStackHarness::with_auto_env_builder(amazon_bedrock_test_inkstack().with_config(
-        |config| {
+    let harness = TestInkStackHarness::with_auto_env_builder(
+        amazon_bedrock_test_inkstack().with_config(|config| {
             config.model_auto_compact_token_limit = Some(200);
-        },
-    ))
+        }),
+    )
     .await?;
     let response_mock = responses::mount_sse_sequence(
         harness.server(),

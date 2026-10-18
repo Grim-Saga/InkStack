@@ -45,8 +45,8 @@ impl CodeModeExecuteHandler {
         code: String,
         telemetry: &mut CodeModeToolCallGuard,
     ) -> Result<CodeModeToolOutput, FunctionCallError> {
-        let args =
-            inkstack_code_mode::parse_exec_source(&code).map_err(FunctionCallError::RespondToModel)?;
+        let args = inkstack_code_mode::parse_exec_source(&code)
+            .map_err(FunctionCallError::RespondToModel)?;
         let exec = ExecContext {
             session,
             turn: Arc::clone(&step_context.turn),
@@ -144,7 +144,10 @@ impl CodeModeExecuteHandler {
         code_cell_trace.record_initial_response(&response);
         // Yielded cells keep running, so terminal lifecycle is only emitted
         // here when the first response also ended the runtime.
-        if !matches!(response, inkstack_code_mode::RuntimeResponse::Yielded { .. }) {
+        if !matches!(
+            response,
+            inkstack_code_mode::RuntimeResponse::Yielded { .. }
+        ) {
             code_cell_trace.record_ended(&response);
             exec.session
                 .services

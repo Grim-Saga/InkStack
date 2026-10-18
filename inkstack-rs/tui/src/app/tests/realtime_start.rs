@@ -119,9 +119,11 @@ async fn background_voice_closes_with_its_owner_not_the_visible_thread() -> Resu
         let closed = if owner_closed { owner } else { visible };
         app.enqueue_thread_notification(
             closed,
-            ServerNotification::ThreadClosed(inkstack_app_server_protocol::ThreadClosedNotification {
-                thread_id: closed.to_string(),
-            }),
+            ServerNotification::ThreadClosed(
+                inkstack_app_server_protocol::ThreadClosedNotification {
+                    thread_id: closed.to_string(),
+                },
+            ),
         )
         .await?;
         assert_eq!(

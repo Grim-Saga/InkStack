@@ -322,8 +322,9 @@ impl SectionHistory for GuardianReviewHistory<'_> {
 
     fn items_with_sources(
         &self,
-    ) -> Box<dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_>
-    {
+    ) -> Box<
+        dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_,
+    > {
         if self.use_parent_checkpoint && !self.history.uses_parent_context_for_review() {
             // The checkpoint replaces the legacy backup. Preserve the current
             // parent window without claiming complete legacy source metadata.
@@ -347,8 +348,9 @@ struct FilteredGuardianHistory<'a>(&'a dyn SectionHistory);
 impl SectionHistory for FilteredGuardianHistory<'_> {
     fn items_with_sources(
         &self,
-    ) -> Box<dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_>
-    {
+    ) -> Box<
+        dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_,
+    > {
         Box::new(
             self.0
                 .items_with_sources()

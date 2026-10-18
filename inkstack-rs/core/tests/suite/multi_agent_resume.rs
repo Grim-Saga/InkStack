@@ -535,7 +535,10 @@ async fn cold_root_resume_restores_agent_identity_and_role_on_followup() -> Resu
     let redirected_server = start_mock_server().await;
     let redirected_base_url = format!("{}/v1", redirected_server.uri());
     std::fs::write(
-        resumed.config.inkstack_home.join("durable-worker-role.toml"),
+        resumed
+            .config
+            .inkstack_home
+            .join("durable-worker-role.toml"),
         format!(
             r#"model = "{ROLE_MODEL}"
 model_reasoning_effort = "high"

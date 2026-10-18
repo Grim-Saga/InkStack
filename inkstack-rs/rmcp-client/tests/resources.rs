@@ -34,7 +34,8 @@ fn init_params() -> InitializeRequestParams {
         Some(ElicitationCapability::new().with_form(FormElicitationCapability::new()));
     InitializeRequestParams::new(
         capabilities,
-        Implementation::new("inkstack-test", "0.0.0-test").with_title("InkStack rmcp resource test"),
+        Implementation::new("inkstack-test", "0.0.0-test")
+            .with_title("InkStack rmcp resource test"),
     )
     .with_protocol_version(ProtocolVersion::V_2025_06_18)
 }
@@ -123,7 +124,10 @@ async fn rmcp_client_can_list_and_read_resources() -> anyhow::Result<()> {
 #[tokio::test(flavor = "multi_thread", worker_threads = 1)]
 async fn rmcp_client_preserves_each_resource_error() -> anyhow::Result<()> {
     let client = resource_client().await?;
-    for uri in ["memo://inkstack/missing-first", "memo://inkstack/missing-second"] {
+    for uri in [
+        "memo://inkstack/missing-first",
+        "memo://inkstack/missing-second",
+    ] {
         let error = client
             .read_resource(
                 ReadResourceRequestParams::new(uri),

@@ -463,7 +463,10 @@ async fn remote_models_long_model_slug_is_sent_with_supported_reasoning(
         }]))
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let request = response_mock.single_request();
     let body = request.body_json();
@@ -710,7 +713,10 @@ async fn remote_models_remote_model_uses_unified_exec() -> Result<()> {
 
     assert_eq!(begin_event.source, ExecCommandSource::UnifiedExecStartup);
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let request = response_mock
         .requests()
@@ -972,7 +978,10 @@ async fn remote_models_apply_legacy_instructions(auth: InkStackAuth) -> Result<(
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     core_test_support::submit_thread_settings(
         &inkstack,
@@ -1002,7 +1011,10 @@ async fn remote_models_apply_legacy_instructions(auth: InkStackAuth) -> Result<(
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let base_model_info = models_manager
         .get_model_info("gpt-5.2", &config.to_models_manager_config())
@@ -1534,7 +1546,8 @@ async fn model_catalog_url_supplies_conversation_model_and_instructions() -> Res
     skip_if_no_network!(Ok(()));
     let server = MockServer::start().await;
     let instructions = "Use the gateway's reviewed conversation instructions.";
-    let mut model = inkstack_models_manager::model_info::model_info_from_slug("gateway-conversation");
+    let mut model =
+        inkstack_models_manager::model_info::model_info_from_slug("gateway-conversation");
     model.visibility = ModelVisibility::List;
     model.supported_in_api = true;
     model.support_verbosity = false;

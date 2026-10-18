@@ -56,7 +56,10 @@ pub(crate) fn detect_recent_cla_sessions_with_limits(
         }
     }
     detect_recent_sessions(
-        inkstack_home, candidates, /*require_existing_cwd*/ true, limits,
+        inkstack_home,
+        candidates,
+        /*require_existing_cwd*/ true,
+        limits,
     )
 }
 

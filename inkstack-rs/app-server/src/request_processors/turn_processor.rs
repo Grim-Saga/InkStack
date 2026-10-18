@@ -1263,7 +1263,9 @@ impl TurnRequestProcessor {
                     .unwrap_or(false),
                 inkstack_responses_as_items: params.inkstack_responses_as_items.unwrap_or(false),
                 inkstack_response_item_prefix: params.inkstack_response_item_prefix,
-                inkstack_response_handoff_mode: params.inkstack_response_handoff_mode.unwrap_or_default(),
+                inkstack_response_handoff_mode: params
+                    .inkstack_response_handoff_mode
+                    .unwrap_or_default(),
                 backend_reasoning_status: params.backend_reasoning_status,
                 inkstack_response_handoff_channel_prefixes: params
                     .inkstack_response_handoff_channel_prefixes,

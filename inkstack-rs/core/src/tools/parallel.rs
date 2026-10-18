@@ -750,7 +750,10 @@ mod tests {
             })
         }
 
-        fn handle<'a>(&'a self, _invocation: ToolInvocation) -> inkstack_tools::ToolExecutorFuture<'a>
+        fn handle<'a>(
+            &'a self,
+            _invocation: ToolInvocation,
+        ) -> inkstack_tools::ToolExecutorFuture<'a>
         where
             ToolInvocation: 'a,
         {

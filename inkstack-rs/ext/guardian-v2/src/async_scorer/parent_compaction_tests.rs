@@ -174,7 +174,9 @@ fn encrypted_parent_compaction_rejects_oversized_latest_item() -> Result<()> {
             .repeat(TruncationPolicy::Tokens(MAX_MODEL_CONTEXT_ITEM_TOKENS).byte_budget()),
         internal_chat_message_metadata_passthrough: None,
     };
-    assert!(inkstack_guardian_context::estimate_input_tokens(&item) < MAX_MODEL_CONTEXT_ITEM_TOKENS);
+    assert!(
+        inkstack_guardian_context::estimate_input_tokens(&item) < MAX_MODEL_CONTEXT_ITEM_TOKENS
+    );
     assert_eq!(
         encrypted_checkpoint(std::iter::once(&item), MAX_MODEL_CONTEXT_ITEM_TOKENS),
         Err(ParentCompactionError::Oversized),

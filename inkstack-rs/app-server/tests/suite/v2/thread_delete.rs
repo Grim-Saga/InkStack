@@ -185,7 +185,8 @@ async fn thread_delete_preflights_external_fork_references_for_spawned_subtrees(
 
     let parent_id = create_delete_test_rollout(inkstack_home.path(), /*minute*/ 0, "parent")?;
     let child_id = create_delete_test_rollout(inkstack_home.path(), /*minute*/ 1, "child")?;
-    let external_id = create_delete_test_rollout(inkstack_home.path(), /*minute*/ 2, "external")?;
+    let external_id =
+        create_delete_test_rollout(inkstack_home.path(), /*minute*/ 2, "external")?;
     let parent_thread_id = ThreadId::from_string(&parent_id)?;
     let child_thread_id = ThreadId::from_string(&child_id)?;
     let external_thread_id = ThreadId::from_string(&external_id)?;

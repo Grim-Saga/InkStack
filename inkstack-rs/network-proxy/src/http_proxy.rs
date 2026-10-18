@@ -1600,7 +1600,9 @@ mod tests {
         for scheme in ["http", "https"] {
             let mut req = Request::builder()
                 .method(Method::GET)
-                .uri(format!("{scheme}://github.com/repos/openai/inkstack/issues"))
+                .uri(format!(
+                    "{scheme}://github.com/repos/openai/inkstack/issues"
+                ))
                 .header(header::HOST, "github.com")
                 .header(header::AUTHORIZATION, format!("Bearer {}", env["GH_TOKEN"]))
                 .body(Body::empty())

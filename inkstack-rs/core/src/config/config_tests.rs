@@ -5521,7 +5521,8 @@ fn filter_plugin_mcp_servers_by_matchers_enforces_name_and_invocation() {
 #[tokio::test]
 async fn rebuild_with_session_layers_refreshes_requirements() -> std::io::Result<()> {
     let inkstack_home = TempDir::new()?;
-    let user_file = AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home.path());
+    let user_file =
+        AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home.path());
     let project_dot_inkstack =
         AbsolutePathBuf::resolve_path_against_base("project/.inkstack", inkstack_home.path());
     let mcp_requirements = BTreeMap::from([
@@ -5740,7 +5741,8 @@ async fn rebuild_with_session_layers_refreshes_plugin_derived_mcp_config() -> an
 }"#,
     )?;
 
-    let user_file = AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home.path());
+    let user_file =
+        AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home.path());
     let refreshed_layer_stack = ConfigLayerStack::new(
         vec![ConfigLayerEntry::new(
             ConfigLayerSource::User {
@@ -6863,12 +6865,14 @@ async fn managed_config_overrides_oauth_store_mode() -> anyhow::Result<()> {
         &inkstack_config::NoopThreadConfigLoader,
     )
     .await?;
-    let cfg =
-        deserialize_config_toml_with_base(config_layer_stack.effective_config(), inkstack_home.path())
-            .map_err(|e| {
-                tracing::error!("Failed to deserialize overridden config: {e}");
-                e
-            })?;
+    let cfg = deserialize_config_toml_with_base(
+        config_layer_stack.effective_config(),
+        inkstack_home.path(),
+    )
+    .map_err(|e| {
+        tracing::error!("Failed to deserialize overridden config: {e}");
+        e
+    })?;
     assert_eq!(
         cfg.mcp_oauth_credentials_store,
         Some(OAuthCredentialsStoreMode::Keyring),
@@ -7006,12 +7010,14 @@ async fn managed_config_wins_over_cli_overrides() -> anyhow::Result<()> {
     )
     .await?;
 
-    let cfg =
-        deserialize_config_toml_with_base(config_layer_stack.effective_config(), inkstack_home.path())
-            .map_err(|e| {
-                tracing::error!("Failed to deserialize overridden config: {e}");
-                e
-            })?;
+    let cfg = deserialize_config_toml_with_base(
+        config_layer_stack.effective_config(),
+        inkstack_home.path(),
+    )
+    .map_err(|e| {
+        tracing::error!("Failed to deserialize overridden config: {e}");
+        e
+    })?;
 
     assert_eq!(cfg.model.as_deref(), Some("managed_config"));
     Ok(())
@@ -13549,7 +13555,8 @@ enabled = false
 #[tokio::test]
 async fn absent_allow_login_shell_does_not_report_an_override() -> std::io::Result<()> {
     let inkstack_home = TempDir::new()?;
-    let config = load_with_enterprise_requirement(&inkstack_home, "allow_login_shell = false").await?;
+    let config =
+        load_with_enterprise_requirement(&inkstack_home, "allow_login_shell = false").await?;
 
     assert!(!config.permissions.allow_login_shell);
     assert!(

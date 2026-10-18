@@ -139,12 +139,12 @@ impl McpEventStreamOpener {
 
     fn matches_auth(&self, current: Option<&InkStackAuth>) -> bool {
         match (self.connection.auth.as_ref(), current) {
-            (Some(InkStackAuth::AgentIdentity(expected)), Some(InkStackAuth::AgentIdentity(current))) => {
-                expected.record() == current.record()
-            }
-            (Some(InkStackAuth::AgentIdentity(_)), _) | (_, Some(InkStackAuth::AgentIdentity(_))) => {
-                false
-            }
+            (
+                Some(InkStackAuth::AgentIdentity(expected)),
+                Some(InkStackAuth::AgentIdentity(current)),
+            ) => expected.record() == current.record(),
+            (Some(InkStackAuth::AgentIdentity(_)), _)
+            | (_, Some(InkStackAuth::AgentIdentity(_))) => false,
             (Some(expected), Some(current)) => {
                 expected.get_account_id() == current.get_account_id()
                     && expected.get_chatgpt_user_id() == current.get_chatgpt_user_id()

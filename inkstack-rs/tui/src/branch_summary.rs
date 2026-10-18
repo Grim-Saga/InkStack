@@ -664,7 +664,10 @@ mod tests {
             repo_search_order_from_output(
                 r#"{"nameWithOwner":"fcoury/inkstack","parent":{"nameWithOwner":"openai/inkstack"}}"#
             ),
-            Some(vec!["openai/inkstack".to_string(), "fcoury/inkstack".to_string()])
+            Some(vec![
+                "openai/inkstack".to_string(),
+                "fcoury/inkstack".to_string()
+            ])
         );
     }
 

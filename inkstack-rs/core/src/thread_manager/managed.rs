@@ -102,7 +102,9 @@ impl ThreadManager {
                 }
             }
         });
-        let thread = receiver.await.map_err(|_| InkStackErr::InternalAgentDied)??;
+        let thread = receiver
+            .await
+            .map_err(|_| InkStackErr::InternalAgentDied)??;
         handoff.disarm();
         Ok(thread)
     }

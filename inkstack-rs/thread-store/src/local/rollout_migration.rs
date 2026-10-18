@@ -348,7 +348,8 @@ impl LocalThreadStore {
             RolloutMigrationPaths::Known(paths) => paths,
         };
         if options.mode == RolloutMigrationMode::Apply {
-            let pending_thread_ids = pending_migration_thread_ids(&self.config.inkstack_home).await?;
+            let pending_thread_ids =
+                pending_migration_thread_ids(&self.config.inkstack_home).await?;
             paths.sort_by_key(|path| {
                 !thread_id_from_rollout_filename(path)
                     .is_some_and(|thread_id| pending_thread_ids.contains(&thread_id))
@@ -978,7 +979,9 @@ impl LocalThreadStore {
             if plan.is_none()
                 && matches!(
                     &line.item,
-                    RolloutItem::EventMsg(inkstack_protocol::protocol::EventMsg::ThreadRolledBack(_))
+                    RolloutItem::EventMsg(inkstack_protocol::protocol::EventMsg::ThreadRolledBack(
+                        _
+                    ))
                 )
             {
                 return Ok(CanonicalizationAttempt::NeedsRollbackPlan);
@@ -1324,7 +1327,8 @@ async fn find_rollout_paths(root: &Path) -> ThreadStoreResult<Vec<PathBuf>> {
 }
 
 async fn find_all_rollout_paths(inkstack_home: &Path) -> ThreadStoreResult<Vec<PathBuf>> {
-    let mut paths = find_rollout_paths(&inkstack_home.join(inkstack_rollout::SESSIONS_SUBDIR)).await?;
+    let mut paths =
+        find_rollout_paths(&inkstack_home.join(inkstack_rollout::SESSIONS_SUBDIR)).await?;
     paths.extend(
         find_rollout_paths(&inkstack_home.join(inkstack_rollout::ARCHIVED_SESSIONS_SUBDIR)).await?,
     );

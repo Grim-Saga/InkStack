@@ -1857,7 +1857,9 @@ impl App {
         };
 
         match &params.request {
-            inkstack_app_server_protocol::McpServerElicitationRequest::UserVerification { .. } => true,
+            inkstack_app_server_protocol::McpServerElicitationRequest::UserVerification {
+                ..
+            } => true,
             inkstack_app_server_protocol::McpServerElicitationRequest::Form { .. } => true,
             inkstack_app_server_protocol::McpServerElicitationRequest::OpenAiForm { .. }
             | inkstack_app_server_protocol::McpServerElicitationRequest::OpenAiElicitationForm {

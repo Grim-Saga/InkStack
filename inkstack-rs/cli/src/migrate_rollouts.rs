@@ -398,7 +398,10 @@ fn format_elapsed(elapsed: Duration) -> String {
     format!("{hours}h{:02}m{:02}s", minutes % 60, seconds % 60)
 }
 
-async fn thread_storage_bytes(inkstack_home: &Path, thread_history_db_path: &Path) -> io::Result<u64> {
+async fn thread_storage_bytes(
+    inkstack_home: &Path,
+    thread_history_db_path: &Path,
+) -> io::Result<u64> {
     let mut bytes = 0_u64;
     let mut directories = vec![
         inkstack_home.join(inkstack_rollout::SESSIONS_SUBDIR),

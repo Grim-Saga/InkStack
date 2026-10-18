@@ -64,7 +64,10 @@ fn large_deny_list_uses_environment_without_changing_the_request() {
     .unwrap();
     assert_eq!(
         args,
-        vec![INKSTACK_WINDOWS_SANDBOX_ARG1, crate::launch_environment::ARG]
+        vec![
+            INKSTACK_WINDOWS_SANDBOX_ARG1,
+            crate::launch_environment::ARG
+        ]
     );
     let decoded = crate::environment_transport::decode(env).unwrap();
     let parsed =

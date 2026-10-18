@@ -74,7 +74,10 @@ impl Hooks {
         config: HooksConfig,
         thread_id: ThreadId,
         mcp_executor: Arc<dyn HookMcpExecutor>,
-    ) -> anyhow::Result<(Self, Receiver<inkstack_protocol::protocol::HookCompletedEvent>)> {
+    ) -> anyhow::Result<(
+        Self,
+        Receiver<inkstack_protocol::protocol::HookCompletedEvent>,
+    )> {
         let (result_sender, result_receiver) = async_channel::unbounded();
         let environment = Arc::new(std::env::vars_os().collect());
         let hooks = Self::from_config(config, mcp_executor, Arc::clone(&environment), |shell| {

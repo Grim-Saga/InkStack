@@ -4057,14 +4057,16 @@ mod tests {
                 inkstack_response_item_prefix: None,
                 inkstack_response_handoff_mode: Some(InkStackResponseHandoffMode::BemTags),
                 backend_reasoning_status: false,
-                inkstack_response_handoff_channel_prefixes: Some(std::collections::BTreeMap::from([
-                    ("analysis".to_string(), vec!["[THINKING]".to_string()]),
-                    (
-                        "commentary".to_string(),
-                        vec!["[PROGRESS]".to_string(), "[UPDATE]".to_string()],
-                    ),
-                    ("final".to_string(), vec!["[DONE]".to_string()]),
-                ])),
+                inkstack_response_handoff_channel_prefixes: Some(std::collections::BTreeMap::from(
+                    [
+                        ("analysis".to_string(), vec!["[THINKING]".to_string()]),
+                        (
+                            "commentary".to_string(),
+                            vec!["[PROGRESS]".to_string(), "[UPDATE]".to_string()],
+                        ),
+                        ("final".to_string(), vec!["[DONE]".to_string()]),
+                    ],
+                )),
                 thread_id: "thr_123".to_string(),
                 model: Some("realtime-treatment-model".to_string()),
                 output_modality: RealtimeOutputModality::Audio,

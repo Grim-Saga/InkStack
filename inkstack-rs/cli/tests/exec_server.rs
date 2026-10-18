@@ -86,7 +86,10 @@ foo = "bar"
 #[test]
 fn local_exec_server_ignores_invalid_config_without_strict_config() -> Result<()> {
     let inkstack_home = TempDir::new()?;
-    std::fs::write(inkstack_home.path().join("config.toml"), "not valid toml = [")?;
+    std::fs::write(
+        inkstack_home.path().join("config.toml"),
+        "not valid toml = [",
+    )?;
 
     let mut cmd = inkstack_command(inkstack_home.path())?;
     cmd.args(["exec-server", "--listen", "stdio"])
@@ -255,7 +258,10 @@ metrics_exporter = {{ otlp-http = {{ endpoint = "{collector_url}/v1/metrics", pr
     let bin_dir = package.path().join("bin");
     std::fs::create_dir(&bin_dir)?;
     let executable = bin_dir.join(format!("inkstack{}", std::env::consts::EXE_SUFFIX));
-    copy_executable(&inkstack_utils_cargo_bin::cargo_bin("inkstack")?, &executable)?;
+    copy_executable(
+        &inkstack_utils_cargo_bin::cargo_bin("inkstack")?,
+        &executable,
+    )?;
     let inkstack_path_dir = package.path().join("inkstack-path");
     std::fs::create_dir(&inkstack_path_dir)?;
     let manifest = package.path().join("inkstack-package.json");

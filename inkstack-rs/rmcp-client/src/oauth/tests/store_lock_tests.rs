@@ -44,7 +44,8 @@ use crate::oauth::stored_oauth_credential_snapshot;
 use crate::oauth::test_support::TempInkStackHome;
 use inkstack_config::types::OAuthCredentialsStoreMode;
 
-const STORE_LOCK_CONTENTION_EVENT_TARGET: &str = "inkstack_rmcp_client::oauth::store_lock::contention";
+const STORE_LOCK_CONTENTION_EVENT_TARGET: &str =
+    "inkstack_rmcp_client::oauth::store_lock::contention";
 // Contention is proven by the tracing event emitted after a real WouldBlock. Keep the timeout
 // generous because it only bounds a failed test; it must not turn worker scheduling latency into
 // a false failure on loaded CI hosts.

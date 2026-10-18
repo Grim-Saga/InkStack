@@ -66,7 +66,9 @@ async fn prewarming_resolves_global_locations_without_cwd_or_config() -> anyhow:
     let mut actual = locations.locations;
     actual.sort_unstable_by_key(|location| location.root.to_string());
     let mut expected = vec![CapabilityLocation {
-        root: request.inkstack_home.join("plugins/cache/team/demo/1.10.0")?,
+        root: request
+            .inkstack_home
+            .join("plugins/cache/team/demo/1.10.0")?,
         standalone_root_id: None,
         plugin: Some(InstalledPlugin {
             id: "demo@team".to_string(),

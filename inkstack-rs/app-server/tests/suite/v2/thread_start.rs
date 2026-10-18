@@ -1880,7 +1880,12 @@ fn create_config_toml_without_approval_policy(
     inkstack_home: &Path,
     server_uri: &str,
 ) -> std::io::Result<()> {
-    create_config_toml(inkstack_home, server_uri, "sandbox_mode = \"read-only\"", "")
+    create_config_toml(
+        inkstack_home,
+        server_uri,
+        "sandbox_mode = \"read-only\"",
+        "",
+    )
 }
 
 fn create_config_toml(

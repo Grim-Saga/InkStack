@@ -219,7 +219,8 @@ fn expected_mcp_turn_metadata(turn_context: &TurnContext) -> serde_json::Value {
 
 fn write_sample_plugin_mcp(inkstack_home: &std::path::Path) {
     let plugin_root = inkstack_home.join("plugins/cache/test/sample/local");
-    std::fs::create_dir_all(plugin_root.join(".inkstack-plugin")).expect("create plugin manifest dir");
+    std::fs::create_dir_all(plugin_root.join(".inkstack-plugin"))
+        .expect("create plugin manifest dir");
     std::fs::write(
         plugin_root.join(".inkstack-plugin/plugin.json"),
         r#"{
@@ -1599,7 +1600,8 @@ async fn inkstack_apps_tool_call_request_meta_includes_turn_metadata_and_inkstac
 }
 
 #[tokio::test]
-async fn inkstack_apps_tool_call_request_meta_includes_call_id_without_existing_inkstack_apps_meta() {
+async fn inkstack_apps_tool_call_request_meta_includes_call_id_without_existing_inkstack_apps_meta()
+{
     let (_, turn_context) = make_session_and_context().await;
     let turn_context = Arc::new(turn_context);
     let step_context = StepContext::for_test(Arc::clone(&turn_context));
@@ -2693,7 +2695,8 @@ async fn maybe_persist_mcp_tool_approval_preserves_plugin_default_activation() {
 
     maybe_persist_mcp_tool_approval(&session, &turn_context, key.clone()).await;
 
-    let contents = std::fs::read_to_string(inkstack_home.join(CONFIG_TOML_FILE)).expect("read config");
+    let contents =
+        std::fs::read_to_string(inkstack_home.join(CONFIG_TOML_FILE)).expect("read config");
     let parsed: ConfigToml = toml::from_str(&contents).expect("parse config");
     let tool = parsed
         .plugins

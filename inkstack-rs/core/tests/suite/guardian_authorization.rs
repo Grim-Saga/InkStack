@@ -170,7 +170,9 @@ async fn guardian_revalidates_owning_session_before_allow(
                     .expect("enable test feature");
             }
         })
-        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?)
+        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-code-mode-host",
+        )?)
         .build_with_auto_env(&server)
         .await?;
     if review_mode == GuardianContextMode::Legacy {
@@ -329,7 +331,10 @@ async fn guardian_authorization_revision_survives_compaction_not_user_input() ->
     test.inkstack
         .inject_response_items(vec![ContextualUserFragment::into(internal_context)])
         .await?;
-    assert_eq!(test.inkstack.guardian_authorization_version().await, expected);
+    assert_eq!(
+        test.inkstack.guardian_authorization_version().await,
+        expected
+    );
 
     // An explicit user goal edit invalidates cached authorization, unlike its continuation.
     test.inkstack
@@ -339,7 +344,10 @@ async fn guardian_authorization_revision_survives_compaction_not_user_input() ->
         })
         .await?;
     expected.user_message_revision += 1;
-    assert_eq!(test.inkstack.guardian_authorization_version().await, expected);
+    assert_eq!(
+        test.inkstack.guardian_authorization_version().await,
+        expected
+    );
 
     // The same text submitted by the user must invalidate, even if it looks internal.
     responses::mount_sse_once(
@@ -349,7 +357,10 @@ async fn guardian_authorization_revision_survives_compaction_not_user_input() ->
     .await;
     test.submit_text_turn(&notification_text).await?;
     expected.user_message_revision += 1;
-    assert_eq!(test.inkstack.guardian_authorization_version().await, expected);
+    assert_eq!(
+        test.inkstack.guardian_authorization_version().await,
+        expected
+    );
 
     // Failed image preparation must not turn a real user message into internal context.
     responses::mount_sse_once(
@@ -370,14 +381,20 @@ async fn guardian_authorization_revision_survives_compaction_not_user_input() ->
     })
     .await;
     expected.user_message_revision += 1;
-    assert_eq!(test.inkstack.guardian_authorization_version().await, expected);
+    assert_eq!(
+        test.inkstack.guardian_authorization_version().await,
+        expected
+    );
 
     test.inkstack.submit(Op::Compact).await?;
     wait_for_event(&test.inkstack, |event| {
         matches!(event, EventMsg::TurnComplete(_))
     })
     .await;
-    assert_eq!(test.inkstack.guardian_authorization_version().await, expected);
+    assert_eq!(
+        test.inkstack.guardian_authorization_version().await,
+        expected
+    );
 
     Ok(())
 }

@@ -335,7 +335,8 @@ mod tests {
         async fn handle_call(
             &self,
             call: inkstack_tools::ToolCall<'_>,
-        ) -> Result<Box<dyn inkstack_tools::ToolOutput>, inkstack_tools::FunctionCallError> {
+        ) -> Result<Box<dyn inkstack_tools::ToolOutput>, inkstack_tools::FunctionCallError>
+        {
             call.turn_item_emitter
                 .emit_started(ExtensionTurnItem {
                     item: ExtensionItem::WebSearch(WebSearchItem {

@@ -467,7 +467,8 @@ async fn sqlite_log_metrics_exports_do_not_create_log_cycles() -> Result<()> {
             loop {
                 let requests = collector.received_requests().await.unwrap_or_default();
                 if requests.iter().any(|request| {
-                    String::from_utf8_lossy(&request.body).contains(inkstack_state::LOG_WRITE_METRIC)
+                    String::from_utf8_lossy(&request.body)
+                        .contains(inkstack_state::LOG_WRITE_METRIC)
                 }) {
                     break requests.len();
                 }
@@ -497,7 +498,10 @@ async fn sqlite_log_metrics_exports_do_not_create_log_cycles() -> Result<()> {
             (inkstack_state::LOG_WRITE_DURATION_METRIC, "histogram"),
             (inkstack_state::LOG_WRITE_BYTES_METRIC, "histogram"),
             (inkstack_state::LOG_WRITE_ENTRIES_METRIC, "histogram"),
-            (inkstack_state::LOG_WRITE_MAX_ENTRY_BYTES_METRIC, "histogram"),
+            (
+                inkstack_state::LOG_WRITE_MAX_ENTRY_BYTES_METRIC,
+                "histogram",
+            ),
         ];
         let payloads = requests
             .iter()
@@ -584,7 +588,9 @@ async fn sqlite_log_metrics_exports_do_not_create_log_cycles() -> Result<()> {
             "test-provider".to_string(),
         )
         .await?;
-        let persisted_logs = state.query_logs(&inkstack_state::LogQuery::default()).await?;
+        let persisted_logs = state
+            .query_logs(&inkstack_state::LogQuery::default())
+            .await?;
         assert_eq!(
             observed_metrics[inkstack_state::LOG_WRITE_ENTRIES_METRIC].1,
             persisted_logs.len() as f64,

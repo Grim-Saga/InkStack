@@ -119,13 +119,15 @@ async fn http1_response(endpoint: &str, request: &[u8]) -> Result<String> {
 
 #[tokio::test]
 async fn tcp_listener_opens_a_grpc_session() -> Result<()> {
-    let mut host = Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?)
-        .args(["--listen", "grpc://127.0.0.1:0"])
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .kill_on_drop(/*kill_on_drop*/ true)
-        .spawn()
-        .context("failed to start gRPC code-mode host")?;
+    let mut host = Command::new(inkstack_utils_cargo_bin::cargo_bin(
+        "inkstack-code-mode-host",
+    )?)
+    .args(["--listen", "grpc://127.0.0.1:0"])
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .kill_on_drop(/*kill_on_drop*/ true)
+    .spawn()
+    .context("failed to start gRPC code-mode host")?;
     let stdout = host
         .stdout
         .take()

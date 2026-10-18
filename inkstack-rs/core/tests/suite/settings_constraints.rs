@@ -101,7 +101,10 @@ impl SettingsOperation {
                 match event.msg {
                     EventMsg::ThreadSettingsApplied(applied) => return Ok(applied.thread_settings),
                     EventMsg::Error(error) => {
-                        assert_eq!(error.inkstack_error_info, Some(InkStackErrorInfo::BadRequest));
+                        assert_eq!(
+                            error.inkstack_error_info,
+                            Some(InkStackErrorInfo::BadRequest)
+                        );
                         anyhow::bail!(error.message);
                     }
                     _ => {}

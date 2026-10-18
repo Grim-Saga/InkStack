@@ -1144,8 +1144,9 @@ async fn sandboxed_file_operations_cannot_read_helper_siblings() -> Result<()> {
     std::fs::create_dir(&workspace)?;
 
     let helper = runtime_dir.join("inkstack-test-helper");
-    std::fs::hard_link(&helper_paths.inkstack_exe, &helper)
-        .or_else(|_| inkstack_utils_cargo_bin::copy_executable(&helper_paths.inkstack_exe, &helper))?;
+    std::fs::hard_link(&helper_paths.inkstack_exe, &helper).or_else(|_| {
+        inkstack_utils_cargo_bin::copy_executable(&helper_paths.inkstack_exe, &helper)
+    })?;
     let linux_sandbox = if helper_paths.inkstack_linux_sandbox_exe.is_some() {
         let alias = runtime_dir.join("inkstack-linux-sandbox");
         std::fs::hard_link(&helper, &alias)

@@ -125,7 +125,11 @@ impl ToolContributor for WebSearchExtension {
         session_store: &ExtensionData,
         thread_store: &ExtensionData,
     ) -> Vec<
-        Arc<dyn for<'call> inkstack_extension_api::ToolExecutor<inkstack_extension_api::ToolCall<'call>>>,
+        Arc<
+            dyn for<'call> inkstack_extension_api::ToolExecutor<
+                    inkstack_extension_api::ToolCall<'call>,
+                >,
+        >,
     > {
         let Some(config) = thread_store.get::<WebSearchExtensionConfig>() else {
             return Vec::new();

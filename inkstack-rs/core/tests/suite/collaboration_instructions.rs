@@ -971,7 +971,10 @@ async fn resume_replays_collaboration_instructions() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let resumed = builder.restart(&server, &initial).await?;
     assert_eq!(
@@ -990,7 +993,10 @@ async fn resume_replays_collaboration_instructions() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&resumed.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&resumed.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let input = req2.single_request().input();
     let dev_texts = developer_texts(&input);
@@ -1014,11 +1020,13 @@ async fn cold_resume_refreshes_legacy_collaboration_snapshot_once(
     let builder_with_instructions = |instructions: &str| {
         let model =
             model_with_collaboration_messages(MODEL, Some(instructions), /*plan*/ None);
-        test_inkstack().with_model(MODEL).with_config(move |config| {
-            config.model_catalog = Some(ModelsResponse {
-                models: vec![model],
-            });
-        })
+        test_inkstack()
+            .with_model(MODEL)
+            .with_config(move |config| {
+                config.model_catalog = Some(ModelsResponse {
+                    models: vec![model],
+                });
+            })
     };
     let server = start_mock_server().await;
     let initial_response = mount_sse_once(

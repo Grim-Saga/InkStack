@@ -202,8 +202,9 @@ fn editor_directory_rejects_explicitly_writable_workspace_fallback() {
     fs::create_dir(&inkstack_home).expect("create InkStack home");
     fs::create_dir(&cwd).expect("create workspace");
     let workspace_inkstack_home = cwd.join(".inkstack");
-    let writable_workspace_inkstack_home = AbsolutePathBuf::from_absolute_path(&workspace_inkstack_home)
-        .expect("absolute workspace metadata directory");
+    let writable_workspace_inkstack_home =
+        AbsolutePathBuf::from_absolute_path(&workspace_inkstack_home)
+            .expect("absolute workspace metadata directory");
     let policy = FileSystemSandboxPolicy::workspace_write(
         &[writable_workspace_inkstack_home],
         /*exclude_tmpdir_env_var*/ false,
@@ -226,7 +227,8 @@ fn editor_directory_rejects_workspace_fallback_symlink_to_writable_target() {
 
     let paths = EditorPaths::new();
     let workspace_inkstack_home = paths.cwd.join(".inkstack");
-    symlink(&paths.inkstack_home, &workspace_inkstack_home).expect("create workspace metadata symlink");
+    symlink(&paths.inkstack_home, &workspace_inkstack_home)
+        .expect("create workspace metadata symlink");
     let policy = workspace_write_policy(&[&paths.inkstack_home]);
 
     assert!(!policy.can_write_local_path_with_cwd(&workspace_inkstack_home, &paths.cwd));
@@ -252,8 +254,12 @@ fn editor_directory_uses_next_protected_candidate_after_creation_error() {
     fs::write(&unavailable_home, "not a directory").expect("create unavailable InkStack home");
     let policy = workspace_write_policy(&[]);
 
-    let directory = editor_directory(&[&unavailable_home, &paths.inkstack_home], &policy, &paths.cwd)
-        .expect("use next protected candidate after directory creation fails");
+    let directory = editor_directory(
+        &[&unavailable_home, &paths.inkstack_home],
+        &policy,
+        &paths.cwd,
+    )
+    .expect("use next protected candidate after directory creation fails");
 
     assert_eq!(directory, paths.inkstack_home.join("editor"));
 }
@@ -326,8 +332,9 @@ async fn editor_process_uses_protected_workspace_fallback_with_default_temporary
     fs::create_dir(&inkstack_home).expect("create InkStack home");
     fs::create_dir(&cwd).expect("create workspace");
     let default_inkstack_home = dirs::home_dir().expect("home directory").join(".inkstack");
-    let writable_default_inkstack_home = AbsolutePathBuf::from_absolute_path(&default_inkstack_home)
-        .expect("absolute default InkStack home");
+    let writable_default_inkstack_home =
+        AbsolutePathBuf::from_absolute_path(&default_inkstack_home)
+            .expect("absolute default InkStack home");
     let policy = FileSystemSandboxPolicy::workspace_write(
         &[writable_default_inkstack_home],
         /*exclude_tmpdir_env_var*/ false,

@@ -4,8 +4,6 @@ mod browser_computer_use_requirements;
 mod browser_use;
 mod cloud_config_bundle;
 mod cloud_config_layers;
-#[cfg(target_os = "macos")]
-mod inkstack_home_symlink;
 mod computer_use;
 mod config_layer_source;
 mod config_requirements;
@@ -18,6 +16,8 @@ mod guardian;
 mod hook_config;
 mod host_name;
 mod in_app_browser_requirements;
+#[cfg(target_os = "macos")]
+mod inkstack_home_symlink;
 mod key_aliases;
 pub mod loader;
 mod marketplace_edit;

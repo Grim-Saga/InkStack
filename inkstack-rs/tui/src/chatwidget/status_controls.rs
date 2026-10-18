@@ -369,7 +369,10 @@ impl ChatWidget {
         );
         preview_data.thread_id = self.thread_id;
 
-        if self.rate_limit_snapshots_by_limit_id.contains_key("inkstack") {
+        if self
+            .rate_limit_snapshots_by_limit_id
+            .contains_key("inkstack")
+        {
             for item in [
                 StatusSurfacePreviewItem::FiveHourLimit,
                 StatusSurfacePreviewItem::WeeklyLimit,

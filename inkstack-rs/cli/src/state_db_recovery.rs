@@ -31,7 +31,9 @@ fn sqlite_home_is_blocking_file(startup_error: &LocalStateDbStartupError) -> boo
 
 pub(crate) fn print_auto_backup_start(startup_error: &LocalStateDbStartupError) {
     eprintln!("InkStack couldn't start because its local database appears to be damaged.");
-    eprintln!("Moving the damaged local database aside so InkStack can rebuild it from saved data.");
+    eprintln!(
+        "Moving the damaged local database aside so InkStack can rebuild it from saved data."
+    );
     print_technical_details(startup_error);
 }
 

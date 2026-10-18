@@ -110,7 +110,8 @@ pub(crate) fn build_service_tier_selection_edits(service_tier: Option<&str>) -> 
             let config_value = if service_tier == SERVICE_TIER_DEFAULT_REQUEST_VALUE {
                 SERVICE_TIER_DEFAULT_REQUEST_VALUE
             } else {
-                match inkstack_protocol::config_types::ServiceTier::from_request_value(service_tier) {
+                match inkstack_protocol::config_types::ServiceTier::from_request_value(service_tier)
+                {
                     Some(inkstack_protocol::config_types::ServiceTier::Fast) => "fast",
                     Some(inkstack_protocol::config_types::ServiceTier::Flex) => "flex",
                     None => service_tier,

@@ -584,8 +584,9 @@ async fn execution_metadata_applies_captured_settings_to_responses_metadata() {
     let (_session, mut turn) = make_session_and_context().await;
     let config = Arc::make_mut(&mut turn.config);
     config.approvals_reviewer = inkstack_protocol::config_types::ApprovalsReviewer::AutoReview;
-    config.permissions.approval_policy =
-        crate::config::Constrained::allow_any(inkstack_protocol::protocol::AskForApproval::OnRequest);
+    config.permissions.approval_policy = crate::config::Constrained::allow_any(
+        inkstack_protocol::protocol::AskForApproval::OnRequest,
+    );
     update_turn_settings_for_test(&mut turn, |settings| {
         let model_info = Arc::make_mut(&mut settings.model_info);
         model_info.slug = "captured-step-model".to_string();
@@ -807,7 +808,10 @@ fn turn_metadata_state_merges_client_metadata_without_replacing_reserved_fields(
         ("workspace_kind".to_string(), "projectless".to_string()),
         ("source".to_string(), "client-source".to_string()),
         ("model".to_string(), "client-supplied".to_string()),
-        ("inkstack_version".to_string(), "client-supplied".to_string()),
+        (
+            "inkstack_version".to_string(),
+            "client-supplied".to_string(),
+        ),
         (
             "reasoning_effort".to_string(),
             "client-supplied".to_string(),
@@ -1124,7 +1128,10 @@ fn turn_metadata_state_overlays_compaction_only_on_compaction_requests(
     assert_eq!(compact_json["request_kind"].as_str(), Some("compaction"));
     assert_eq!(compact_json["turn_id"].as_str(), Some("turn-a"));
     assert_eq!(compact_json[WINDOW_ID_KEY].as_str(), Some("thread-a:2"));
-    assert_eq!(compact_json["inkstack_security_surface"].as_str(), Some("sdk"));
+    assert_eq!(
+        compact_json["inkstack_security_surface"].as_str(),
+        Some("sdk")
+    );
     assert_eq!(
         compact_json["misalignment_override"].as_str(),
         compaction_override
@@ -1145,7 +1152,10 @@ fn turn_metadata_state_overlays_compaction_only_on_compaction_requests(
     assert_eq!(regular_json["misalignment_override"], continuation);
     assert_eq!(regular_json["request_kind"].as_str(), Some("turn"));
     assert_eq!(regular_json[WINDOW_ID_KEY].as_str(), Some("thread-a:3"));
-    assert_eq!(regular_json["inkstack_security_surface"].as_str(), Some("sdk"));
+    assert_eq!(
+        regular_json["inkstack_security_surface"].as_str(),
+        Some("sdk")
+    );
     assert!(regular_json.get("compaction").is_none());
 }
 

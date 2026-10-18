@@ -163,7 +163,10 @@ async fn retry_busy_rollouts(
         .iter()
         .filter(|skipped_rollout| skipped_rollout.skip_reason == BUSY_SKIP_REASON)
     {
-        let stored_path = store.config.inkstack_home.join(&skipped_rollout.rollout_path);
+        let stored_path = store
+            .config
+            .inkstack_home
+            .join(&skipped_rollout.rollout_path);
         let path = if tokio::fs::try_exists(&stored_path)
             .await
             .map_err(migration_error)?
@@ -380,7 +383,12 @@ fn skipped_rollout_file_names(
     skipped_rollouts
         .iter()
         .filter_map(|skipped_rollout| {
-            plain_rollout_file_name(&store.config.inkstack_home.join(&skipped_rollout.rollout_path))
+            plain_rollout_file_name(
+                &store
+                    .config
+                    .inkstack_home
+                    .join(&skipped_rollout.rollout_path),
+            )
         })
         .collect()
 }

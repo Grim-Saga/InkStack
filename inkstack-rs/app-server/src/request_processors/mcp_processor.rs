@@ -598,8 +598,8 @@ impl McpRequestProcessor {
             let request_id = request_id.clone();
 
             let task = async move {
-                let origin_call_id =
-                    origin_call_id.filter(|_| server == inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME);
+                let origin_call_id = origin_call_id
+                    .filter(|_| server == inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME);
                 let result = match origin_call_id.as_deref() {
                     Some(call_id) => {
                         thread

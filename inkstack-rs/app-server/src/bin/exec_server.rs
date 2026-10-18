@@ -19,7 +19,11 @@ fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let _ = args.next();
     let argv1 = args.next();
     #[cfg(unix)]
-    if argv1.as_deref() == Some(OsStr::new(inkstack_exec_server::INKSTACK_ARG0_EXEC_HELPER_ARG1)) {
+    if argv1.as_deref()
+        == Some(OsStr::new(
+            inkstack_exec_server::INKSTACK_ARG0_EXEC_HELPER_ARG1,
+        ))
+    {
         inkstack_exec_server::run_arg0_exec_helper_main();
     }
     if argv1.as_deref() == Some(OsStr::new(inkstack_exec_server::INKSTACK_FS_HELPER_ARG1)) {

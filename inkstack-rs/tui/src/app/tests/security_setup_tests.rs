@@ -15,8 +15,8 @@ use serde_json::json;
 use tokio::net::TcpListener;
 
 #[tokio::test]
-async fn security_setup_fetch_with_default_features_uses_authenticated_inkstack_endpoint() -> Result<()>
-{
+async fn security_setup_fetch_with_default_features_uses_authenticated_inkstack_endpoint()
+-> Result<()> {
     let (mut app, mut events, _ops) = make_test_app_with_channels().await;
     let backend = wiremock::MockServer::start().await;
     app.config.chatgpt_base_url = backend.uri();

@@ -162,15 +162,17 @@ async fn disabling_plugins_clears_cloud_catalog_and_skips_discovery() -> anyhow:
                 .await;
         }
         registry.mcp_server_contributors()[0]
-            .contribute(inkstack_extension_api::McpServerContributionContext::for_step(
-                &config,
-                &thread_init,
-                &thread,
-                "test",
-                &[],
-                /*executor_capability_discovery*/ None,
-                /*executor_capability_discovery_v2*/ None,
-            ))
+            .contribute(
+                inkstack_extension_api::McpServerContributionContext::for_step(
+                    &config,
+                    &thread_init,
+                    &thread,
+                    "test",
+                    &[],
+                    /*executor_capability_discovery*/ None,
+                    /*executor_capability_discovery_v2*/ None,
+                ),
+            )
             .await;
         if let Some(state) = thread.get::<PluginsThreadState>() {
             assert_eq!(state.cloud_catalog(), expected_catalog, "turn {turn_id}");
@@ -496,7 +498,8 @@ async fn run_cloud_catalog_refresh_lifecycle() -> anyhow::Result<()> {
             test.thread_manager.auth_manager().reload().await;
             tokio::time::timeout(std::time::Duration::from_secs(10), async {
                 loop {
-                    if resources.auth_cache_key_for_server(inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME)
+                    if resources
+                        .auth_cache_key_for_server(inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME)
                         != previous_auth
                         && test
                             .inkstack

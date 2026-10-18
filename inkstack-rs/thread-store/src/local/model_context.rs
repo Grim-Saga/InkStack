@@ -130,7 +130,8 @@ pub(super) async fn load_for_fork(
                     let ScanOutcome::Parsed(line) = outcome else {
                         continue;
                     };
-                    if let Some(version) = inkstack_rollout::resume_multi_agent_version(&line.item) {
+                    if let Some(version) = inkstack_rollout::resume_multi_agent_version(&line.item)
+                    {
                         return Ok(Some(version));
                     }
                     // Ancestor metadata does not describe the immediate source's runtime.

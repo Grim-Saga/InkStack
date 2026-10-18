@@ -299,8 +299,10 @@ async fn success_body_revocation_preserves_the_policy_error() {
     .unwrap();
     assert!(matches!(
         result,
-        Err(OAuthError::Transport(inkstack_http_client::HttpError::Policy(
-            inkstack_http_client::NetworkPolicyDenied::Revoked
-        )))
+        Err(OAuthError::Transport(
+            inkstack_http_client::HttpError::Policy(
+                inkstack_http_client::NetworkPolicyDenied::Revoked
+            )
+        ))
     ));
 }

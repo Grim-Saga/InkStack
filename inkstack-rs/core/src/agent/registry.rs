@@ -93,10 +93,10 @@ impl AgentRegistry {
     ) -> Result<SpawnReservation> {
         if let Some(max_threads) = max_threads {
             if !self.try_increment_spawned(max_threads) {
-                return Err(
-                    InkStackErr::new(InkStackErrorDetails::AgentLimitReached { max_threads })
-                        .with_agent_context(AgentErrorContext::RegistryCapacity),
-                );
+                return Err(InkStackErr::new(InkStackErrorDetails::AgentLimitReached {
+                    max_threads,
+                })
+                .with_agent_context(AgentErrorContext::RegistryCapacity));
             }
         } else {
             self.total_count.fetch_add(1, Ordering::AcqRel);

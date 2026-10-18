@@ -134,7 +134,8 @@ async fn v2_rpc_refreshes_metadata_and_enforces_sandbox() -> anyhow::Result<()> 
         );
         #[cfg(windows)]
         let sandbox = FileSystemSandboxContext {
-            windows_sandbox_selection: inkstack_exec_server::WindowsSandboxSelection::RestrictedToken,
+            windows_sandbox_selection:
+                inkstack_exec_server::WindowsSandboxSelection::RestrictedToken,
             ..sandbox
         };
         let restricted = DiscoverV2CapabilitiesRequest {

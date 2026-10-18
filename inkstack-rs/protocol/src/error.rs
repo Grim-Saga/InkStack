@@ -455,7 +455,9 @@ impl InkStackErr {
                     .unwrap_or_else(|| backoff(retry_count)),
             ),
             #[cfg(target_os = "linux")]
-            InkStackErrorDetails::LandlockRuleset(_) | InkStackErrorDetails::LandlockPathFd(_) => None,
+            InkStackErrorDetails::LandlockRuleset(_) | InkStackErrorDetails::LandlockPathFd(_) => {
+                None
+            }
         }
     }
 
@@ -500,10 +502,13 @@ impl InkStackErr {
             InkStackErrorDetails::MisalignmentPolicyViolation { .. } => {
                 InkStackErrorInfo::MisalignmentPolicyViolation
             }
-            InkStackErrorDetails::RetryLimit(_) => InkStackErrorInfo::ResponseTooManyFailedAttempts {
-                http_status_code: self.http_status_code_value(),
-            },
-            InkStackErrorDetails::ConnectionFailed(_) | InkStackErrorDetails::UnexpectedStatus(_) => {
+            InkStackErrorDetails::RetryLimit(_) => {
+                InkStackErrorInfo::ResponseTooManyFailedAttempts {
+                    http_status_code: self.http_status_code_value(),
+                }
+            }
+            InkStackErrorDetails::ConnectionFailed(_)
+            | InkStackErrorDetails::UnexpectedStatus(_) => {
                 InkStackErrorInfo::HttpConnectionFailed {
                     http_status_code: self.http_status_code_value(),
                 }

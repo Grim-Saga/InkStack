@@ -446,12 +446,14 @@ pub async fn run() -> Result<()> {
         }
         CliCommand::ThreadIncrementElicitation { thread_id } => {
             ensure_dynamic_tools_unused(&dynamic_tools, "thread-increment-elicitation")?;
-            let url = resolve_shared_websocket_url(inkstack_bin, url, "thread-increment-elicitation")?;
+            let url =
+                resolve_shared_websocket_url(inkstack_bin, url, "thread-increment-elicitation")?;
             thread_increment_elicitation(&url, thread_id)
         }
         CliCommand::ThreadDecrementElicitation { thread_id } => {
             ensure_dynamic_tools_unused(&dynamic_tools, "thread-decrement-elicitation")?;
-            let url = resolve_shared_websocket_url(inkstack_bin, url, "thread-decrement-elicitation")?;
+            let url =
+                resolve_shared_websocket_url(inkstack_bin, url, "thread-decrement-elicitation")?;
             thread_decrement_elicitation(&url, thread_id)
         }
         CliCommand::LiveElicitationTimeoutPause {
@@ -479,7 +481,8 @@ pub async fn run() -> Result<()> {
             if url.is_some() {
                 bail!("plugin-analytics-smoke requires --inkstack-bin and does not support --url");
             }
-            let inkstack_bin = inkstack_bin.context("plugin-analytics-smoke requires --inkstack-bin")?;
+            let inkstack_bin =
+                inkstack_bin.context("plugin-analytics-smoke requires --inkstack-bin")?;
             plugin_analytics_smoke::run(&inkstack_bin, &config_overrides, &plugin_id, capture_file)
         }
         CliCommand::PluginAnalyticsMutationSmoke {
@@ -513,7 +516,8 @@ pub async fn run() -> Result<()> {
             if url.is_some() {
                 bail!("plugin-remote-uninstall requires --inkstack-bin and does not support --url");
             }
-            let inkstack_bin = inkstack_bin.context("plugin-remote-uninstall requires --inkstack-bin")?;
+            let inkstack_bin =
+                inkstack_bin.context("plugin-remote-uninstall requires --inkstack-bin")?;
             plugin_analytics_mutation_smoke::run_cleanup(
                 &inkstack_bin,
                 &config_overrides,
@@ -1475,7 +1479,9 @@ fn item_started_before_helper_done_is_unexpected(
 impl InkStackClient {
     fn connect(endpoint: &Endpoint, config_overrides: &[String]) -> Result<Self> {
         match endpoint {
-            Endpoint::SpawnInkStack(inkstack_bin) => Self::spawn_stdio(inkstack_bin, config_overrides),
+            Endpoint::SpawnInkStack(inkstack_bin) => {
+                Self::spawn_stdio(inkstack_bin, config_overrides)
+            }
             Endpoint::ConnectWs(url) => Self::connect_websocket(url),
         }
     }

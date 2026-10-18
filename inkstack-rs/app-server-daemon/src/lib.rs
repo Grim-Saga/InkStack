@@ -337,12 +337,13 @@ impl Daemon {
         let state_dir = inkstack_home.as_path().join(STATE_DIR_NAME);
         let managed_inkstack_bin = managed_inkstack_bin(inkstack_home.as_path());
         // Old CLIs must not mistake a daemon-owned installation for their backend.
-        let (pid_file, update_pid_file) =
-            if managed_inkstack_bin.starts_with(inkstack_home.as_path().join("packages/standalone")) {
-                (LEGACY_PID_FILE_NAME, LEGACY_UPDATE_PID_FILE_NAME)
-            } else {
-                (DAEMON_PID_FILE_NAME, DAEMON_UPDATE_PID_FILE_NAME)
-            };
+        let (pid_file, update_pid_file) = if managed_inkstack_bin
+            .starts_with(inkstack_home.as_path().join("packages/standalone"))
+        {
+            (LEGACY_PID_FILE_NAME, LEGACY_UPDATE_PID_FILE_NAME)
+        } else {
+            (DAEMON_PID_FILE_NAME, DAEMON_UPDATE_PID_FILE_NAME)
+        };
         Ok(Self {
             log_diagnostics: false,
             socket_path,
@@ -541,10 +542,12 @@ impl Daemon {
             // this lock or probes the running server. Never restart from a
             // release that is no longer the selected latest-channel binary.
             if !self.is_stable_standalone_release()?
-                || managed_install::resolved_managed_inkstack_bin(&self.current_managed_inkstack_bin()?)
-                    .await
-                    .ok()
-                    .as_deref()
+                || managed_install::resolved_managed_inkstack_bin(
+                    &self.current_managed_inkstack_bin()?,
+                )
+                .await
+                .ok()
+                .as_deref()
                     != Some(managed_inkstack_bin)
             {
                 return Ok(RestartIfRunningOutcome::AlreadyCurrent);
@@ -1065,7 +1068,9 @@ impl Daemon {
 
     #[cfg(any(unix, windows))]
     async fn managed_inkstack_version_best_effort(&self) -> Option<String> {
-        managed_inkstack_version(&self.managed_inkstack_bin).await.ok()
+        managed_inkstack_version(&self.managed_inkstack_bin)
+            .await
+            .ok()
     }
 
     #[cfg(not(any(unix, windows)))]

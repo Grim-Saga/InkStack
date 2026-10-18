@@ -121,7 +121,11 @@ fn sync_openai_plugins_repo_with_transport_overrides(
                     "git sync failed for curated plugin sync; falling back to GitHub HTTP"
                 );
             }
-            match sync_openai_plugins_repo_via_http(inkstack_home, api_base_url, http_client_factory) {
+            match sync_openai_plugins_repo_via_http(
+                inkstack_home,
+                api_base_url,
+                http_client_factory,
+            ) {
                 Ok(remote_sha) => {
                     emit_curated_plugins_startup_sync_metric("http", "success");
                     emit_curated_plugins_startup_sync_final_metric("http", "success");

@@ -65,7 +65,8 @@ async fn worktree_creation_rejects_running_agent_before_allocation() -> Result<(
     let (mut app, mut events, _op_rx) = make_test_app_with_channels().await;
     let home = tempfile::tempdir()?;
     app.config.inkstack_home = home.path().to_path_buf().abs();
-    app.config.active_project.trust_level = Some(inkstack_protocol::config_types::TrustLevel::Trusted);
+    app.config.active_project.trust_level =
+        Some(inkstack_protocol::config_types::TrustLevel::Trusted);
     let primary = ThreadId::new();
     app.primary_thread_id = Some(primary);
     app.chat_widget

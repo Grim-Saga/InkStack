@@ -183,8 +183,11 @@ fn unavailable_artifact_has_explicit_fallback() {
         .expect("UUIDv7 thread id should provide a timestamp");
 
     assert_eq!(
-        rewrite_inline_visualizations("::inkstack-inline-vis{file=\"missing.html\"}", Some(&context),)
-            .markdown,
+        rewrite_inline_visualizations(
+            "::inkstack-inline-vis{file=\"missing.html\"}",
+            Some(&context),
+        )
+        .markdown,
         "_Visualization unavailable on this device._"
     );
 }

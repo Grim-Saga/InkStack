@@ -100,7 +100,6 @@ mod attestation;
 mod auth_mode;
 mod bespoke_event_handling;
 mod code_mode_host;
-mod inkstack_home_metrics;
 mod command_exec;
 mod config_layer;
 mod config_manager;
@@ -121,6 +120,7 @@ mod fuzzy_file_search;
 mod gateway_oauth_notifications;
 mod image_url;
 pub mod in_process;
+mod inkstack_home_metrics;
 mod log_write_warning;
 #[cfg(unix)]
 mod managed_daemon;
@@ -386,7 +386,10 @@ fn project_config_warning(config: &Config) -> Option<ConfigWarningNotification> 
     let mut disabled_folders = Vec::new();
 
     for layer in config.config_layer_stack.all_layers_low_to_high() {
-        let ConfigLayerSource::Project { dot_inkstack_folder } = &layer.name else {
+        let ConfigLayerSource::Project {
+            dot_inkstack_folder,
+        } = &layer.name
+        else {
             continue;
         };
         let Some(disabled_reason) = &layer.disabled_reason else {
@@ -548,10 +551,12 @@ pub async fn run_main_with_transport_options(
         .load_startup_config(startup_cwd.clone())
         .await?
         .config;
-    let bootstrap_auth =
-        AuthManager::shared_from_config(&bootstrap_config, /*enable_openai_api_key_env*/ false)
-            .await
-            .map_err(std::io::Error::other)?;
+    let bootstrap_auth = AuthManager::shared_from_config(
+        &bootstrap_config,
+        /*enable_openai_api_key_env*/ false,
+    )
+    .await
+    .map_err(std::io::Error::other)?;
     config_manager.replace_cloud_config_bundle_loader(
         bootstrap_auth,
         bootstrap_config.chatgpt_base_url.clone(),
@@ -597,7 +602,10 @@ pub async fn run_main_with_transport_options(
 
     #[cfg(target_os = "macos")]
     let local_runtime_paths = local_runtime_paths.with_allowed_symlinked_inkstack_home(
-        inkstack_config::allowed_symlinked_inkstack_home(&config.config_layer_stack, &config.inkstack_home),
+        inkstack_config::allowed_symlinked_inkstack_home(
+            &config.config_layer_stack,
+            &config.inkstack_home,
+        ),
     );
     let code_mode_session_provider: Option<Arc<dyn CodeModeSessionProvider>> =
         match &runtime_options.code_mode_host_transport {

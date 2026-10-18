@@ -2777,7 +2777,8 @@ async fn shell_startup_credentials_are_brokered(
     let global_startup = matches!(shell_mode, "filtered_startup" | "startup_override");
 
     let builder = {
-        let Some(zsh) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Zsh) else {
+        let Some(zsh) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Zsh)
+        else {
             return Ok(());
         };
         test_inkstack()
@@ -2828,7 +2829,8 @@ async fn shell_startup_credentials_are_brokered(
         "export LOGIN_SHELL_READY=ready\n",
     )?;
     let startup_shell = if global_startup {
-        let Some(zsh) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Zsh) else {
+        let Some(zsh) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Zsh)
+        else {
             return Ok(());
         };
         let zsh_path = zsh.derive_exec_args("", /*use_login_shell*/ false)[0].clone();
@@ -2870,7 +2872,8 @@ ZDOTDIR = "{}"
         .with_home(home)
         .with_cloud_config_bundle(managed_network_requirements_loader());
     if !allow_login_shell {
-        let Some(bash) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Bash) else {
+        let Some(bash) = inkstack_core::shell::get_shell(inkstack_core::shell::ShellType::Bash)
+        else {
             return Ok(());
         };
         builder = builder.with_user_shell(bash);
@@ -3027,7 +3030,10 @@ ZDOTDIR = "{}"
             .flat_map(opentelemetry_sdk::metrics::data::ScopeMetrics::metrics)
         {
             let count = match (metric.name(), metric.data()) {
-                ("inkstack.shell_snapshot.command", AggregatedMetrics::U64(MetricData::Sum(sum))) => {
+                (
+                    "inkstack.shell_snapshot.command",
+                    AggregatedMetrics::U64(MetricData::Sum(sum)),
+                ) => {
                     for point in sum.data_points() {
                         let tags = point
                             .attributes()
@@ -3828,8 +3834,7 @@ async fn invalid_requested_prefix_rule_falls_back_for_compound_command() -> Resu
     let test = builder.build(&server).await?;
 
     let call_id = "invalid-prefix-rule";
-    let command =
-        "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
+    let command = "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
     let event = shell_event_with_prefix_rule(
         call_id,
         command,
@@ -3881,8 +3886,7 @@ async fn approving_fallback_rule_for_compound_command_works() -> Result<()> {
     let test = builder.build(&server).await?;
 
     let call_id = "invalid-prefix-rule";
-    let command =
-        "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
+    let command = "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
     let event = shell_event_with_prefix_rule(
         call_id,
         command,
@@ -3928,8 +3932,7 @@ async fn approving_fallback_rule_for_compound_command_works() -> Result<()> {
     wait_for_completion(&test).await;
 
     let call_id = "invalid-prefix-rule-again";
-    let command =
-        "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
+    let command = "touch /tmp/inkstack-fallback-rule-test.txt && echo hello > /tmp/inkstack-fallback-rule-test.txt";
     let event = shell_event_with_prefix_rule(
         call_id,
         command,

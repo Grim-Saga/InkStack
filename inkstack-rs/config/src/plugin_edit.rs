@@ -34,7 +34,8 @@ pub async fn set_user_plugin_enabled(
 }
 
 pub async fn clear_user_plugin(inkstack_home: &Path, plugin_key: String) -> std::io::Result<()> {
-    apply_user_plugin_config_edits(inkstack_home, vec![PluginConfigEdit::Clear { plugin_key }]).await
+    apply_user_plugin_config_edits(inkstack_home, vec![PluginConfigEdit::Clear { plugin_key }])
+        .await
 }
 
 pub async fn apply_user_plugin_config_edits(

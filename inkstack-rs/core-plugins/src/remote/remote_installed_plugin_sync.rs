@@ -433,8 +433,11 @@ async fn remove_stale_remote_plugin_caches(
             if installed_plugin_names.contains(&plugin_name) {
                 continue;
             }
-            if is_remote_plugin_cache_mutation_in_flight(inkstack_home, marketplace_name, &plugin_name)
-            {
+            if is_remote_plugin_cache_mutation_in_flight(
+                inkstack_home,
+                marketplace_name,
+                &plugin_name,
+            ) {
                 continue;
             }
 
@@ -779,8 +782,10 @@ mod tests {
             );
             assert_eq!(
                 serde_json::from_str::<serde_json::Value>(
-                    &std::fs::read_to_string(plugin_root.join(".inkstack-remote-plugin-install.json"))
-                        .expect("read remote plugin install metadata")
+                    &std::fs::read_to_string(
+                        plugin_root.join(".inkstack-remote-plugin-install.json")
+                    )
+                    .expect("read remote plugin install metadata")
                 )
                 .expect("parse remote plugin install metadata"),
                 json!({

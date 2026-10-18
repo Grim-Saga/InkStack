@@ -679,8 +679,8 @@ fn refresh_non_curated_plugin_cache_with_mode(
             let materialized =
                 materialize_marketplace_plugin_source_with_mode(inkstack_home, &source, git_mode)
                     .map_err(|err| {
-                        format!("failed to materialize plugin source for {plugin_key}: {err}")
-                    })?;
+                    format!("failed to materialize plugin source for {plugin_key}: {err}")
+                })?;
             let source_path = materialized.path;
             let plugin_version = match manifest_fallback_contents.as_deref() {
                 Some(manifest_contents) => plugin_version_for_source_with_fallback_manifest(

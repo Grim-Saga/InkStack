@@ -302,11 +302,13 @@ async fn exec_command_rejects_login_when_disabled() -> Result<()> {
 async fn exec_command_hides_and_rejects_tty_when_disabled() -> Result<()> {
     skip_if_no_network!(Ok(()));
 
-    let builder = test_inkstack().with_model("gpt-5.4").with_cloud_config_bundle(
-        CloudConfigBundleFixture::loader_with_enterprise_requirement(
-            "[features]\nunified_exec_tty = false\n",
-        ),
-    );
+    let builder = test_inkstack()
+        .with_model("gpt-5.4")
+        .with_cloud_config_bundle(
+            CloudConfigBundleFixture::loader_with_enterprise_requirement(
+                "[features]\nunified_exec_tty = false\n",
+            ),
+        );
     let harness = TestInkStackHarness::with_auto_env_builder(builder).await?;
     let call_id = "tty-denied";
     let arguments = json!({"cmd": "echo should-not-run > tty-disabled-rejected", "tty": true});
@@ -353,11 +355,13 @@ async fn exec_command_runs_without_tty_when_tty_disabled() -> Result<()> {
         "basic PowerShell execution through Wine is unavailable"
     );
 
-    let builder = test_inkstack().with_model("gpt-5.4").with_cloud_config_bundle(
-        CloudConfigBundleFixture::loader_with_enterprise_requirement(
-            "[features]\nunified_exec_tty = false\n",
-        ),
-    );
+    let builder = test_inkstack()
+        .with_model("gpt-5.4")
+        .with_cloud_config_bundle(
+            CloudConfigBundleFixture::loader_with_enterprise_requirement(
+                "[features]\nunified_exec_tty = false\n",
+            ),
+        );
     let harness = TestInkStackHarness::with_auto_env_builder(builder).await?;
     let mut responses = Vec::new();
     for (call_id, arguments) in [
@@ -2992,7 +2996,10 @@ async fn unified_exec_keeps_long_running_session_after_turn_end() -> Result<()> 
         "expected numeric pid, got {pid:?}"
     );
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     assert!(
         process_is_alive(&pid)?,
@@ -3000,7 +3007,10 @@ async fn unified_exec_keeps_long_running_session_after_turn_end() -> Result<()> 
     );
 
     inkstack.submit(Op::Shutdown).await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
     wait_for_process_exit(&pid).await?;
 
     Ok(())
@@ -3670,7 +3680,10 @@ async fn unified_exec_runs_under_sandbox() -> Result<()> {
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = request_log.requests();
     assert!(!requests.is_empty(), "expected at least one POST request");
@@ -3786,7 +3799,10 @@ async fn unified_exec_enforces_glob_deny_read_policy() -> Result<()> {
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = request_log.requests();
     assert!(!requests.is_empty(), "expected at least one POST request");
@@ -3915,7 +3931,10 @@ async fn unified_exec_python_prompt_under_seatbelt() -> Result<()> {
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = request_log.requests();
     assert!(!requests.is_empty(), "expected at least one POST request");

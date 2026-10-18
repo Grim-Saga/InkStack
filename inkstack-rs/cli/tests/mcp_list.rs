@@ -115,7 +115,10 @@ enabled = true
 async fn list_discovers_local_oauth_server_through_environment_proxy() -> Result<()> {
     let inkstack_home = TempDir::new()?;
     configure_http_oauth_server(inkstack_home.path(), "http://mcp-proxy.invalid/mcp").await?;
-    std::fs::write(inkstack_home.path().join("environments.toml"), "invalid = [")?;
+    std::fs::write(
+        inkstack_home.path().join("environments.toml"),
+        "invalid = [",
+    )?;
 
     let listener = TcpListener::bind("127.0.0.1:0")?;
     listener.set_nonblocking(true)?;
@@ -471,7 +474,9 @@ fn list_and_get_redact_http_headers_helper() -> Result<()> {
         &["mcp", "get", "docs", "--json"][..],
         &["mcp", "get", "docs"][..],
     ] {
-        let output = inkstack_command(inkstack_home.path())?.args(args).output()?;
+        let output = inkstack_command(inkstack_home.path())?
+            .args(args)
+            .output()?;
         assert!(output.status.success());
         let stdout = String::from_utf8(output.stdout)?;
         assert!(stdout.contains("http_headers_helper"));

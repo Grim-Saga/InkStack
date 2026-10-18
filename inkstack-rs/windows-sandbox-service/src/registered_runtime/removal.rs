@@ -160,9 +160,11 @@ pub(crate) fn prepare(
         None
     } else {
         Some(
-            inkstack_windows_sandbox::string_from_sid_bytes(&inkstack_windows_sandbox::resolve_sid(
-                inkstack_windows_sandbox::SANDBOX_USERS_GROUP,
-            )?)
+            inkstack_windows_sandbox::string_from_sid_bytes(
+                &inkstack_windows_sandbox::resolve_sid(
+                    inkstack_windows_sandbox::SANDBOX_USERS_GROUP,
+                )?,
+            )
             .map_err(anyhow::Error::msg)?,
         )
     };

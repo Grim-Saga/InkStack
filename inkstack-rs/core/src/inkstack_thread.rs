@@ -1029,7 +1029,10 @@ impl InkStackThread {
     /// Captures the exact MCP config and environment bindings for the current thread state.
     pub async fn current_mcp_config_and_runtime_context(
         &self,
-    ) -> (Arc<inkstack_mcp::McpConfig>, inkstack_mcp::McpRuntimeContext) {
+    ) -> (
+        Arc<inkstack_mcp::McpConfig>,
+        inkstack_mcp::McpRuntimeContext,
+    ) {
         let config = self.session.get_config().await;
         let (mcp_config, runtime_context) = self.runtime_mcp_config_and_context(&config).await;
         (Arc::new(mcp_config), runtime_context)

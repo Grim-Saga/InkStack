@@ -68,7 +68,8 @@ impl ContextContributor for MemoriesExtension {
             }
 
             let Some(instructions) =
-                build_memory_tool_developer_instructions(&config.inkstack_home, config.version).await
+                build_memory_tool_developer_instructions(&config.inkstack_home, config.version)
+                    .await
             else {
                 return Vec::new();
             };
@@ -138,7 +139,11 @@ impl ToolContributor for MemoriesExtension {
         _session_store: &ExtensionData,
         thread_store: &ExtensionData,
     ) -> Vec<
-        Arc<dyn for<'call> inkstack_extension_api::ToolExecutor<inkstack_extension_api::ToolCall<'call>>>,
+        Arc<
+            dyn for<'call> inkstack_extension_api::ToolExecutor<
+                    inkstack_extension_api::ToolCall<'call>,
+                >,
+        >,
     > {
         let Some(config) = thread_store.get::<MemoriesExtensionConfig>() else {
             return Vec::new();

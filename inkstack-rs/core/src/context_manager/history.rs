@@ -166,8 +166,9 @@ impl ConversationHistorySnapshot for SharedConversationHistory {
 
     fn review_items_with_sources(
         &self,
-    ) -> Box<dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_>
-    {
+    ) -> Box<
+        dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_,
+    > {
         if self.guardian_review_mode != GuardianContextMode::ThreadOwned {
             let items = self
                 .review_history

@@ -35,15 +35,16 @@ fn startup_fallback_exports_one_logical_operation_without_error_contents() -> cr
     if run_in_subprocess() {
         return Ok(());
     }
-    let mut telemetry = AuthStorageOriginator::from_client_name("InkStack Desktop").sync_scope(|| {
-        StorageTelemetry::new(
-            CredentialKind::InkStack,
-            StoreMode::Auto,
-            Store::Secrets,
-            Operation::Save,
-            AuthStorageOriginator::current(),
-        )
-    });
+    let mut telemetry =
+        AuthStorageOriginator::from_client_name("InkStack Desktop").sync_scope(|| {
+            StorageTelemetry::new(
+                CredentialKind::InkStack,
+                StoreMode::Auto,
+                Store::Secrets,
+                Operation::Save,
+                AuthStorageOriginator::current(),
+            )
+        });
     let logs = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
     let writer = LogWriter(logs.clone());
     let subscriber = tracing_subscriber::fmt()

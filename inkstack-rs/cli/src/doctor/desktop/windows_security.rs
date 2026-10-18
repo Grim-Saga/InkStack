@@ -146,7 +146,9 @@ fn event_target(value: &str) -> Option<&'static str> {
     let value = value.to_ascii_lowercase();
     let parts = value.split(['\\', '/']).map(str::trim).collect::<Vec<_>>();
     let name = *parts.last()?;
-    let package = parts.iter().any(|part| part.starts_with("openai.inkstack_"));
+    let package = parts
+        .iter()
+        .any(|part| part.starts_with("openai.inkstack_"));
     let trusted = package || parts.windows(2).any(|pair| pair == ["openai", "inkstack"]);
     match name {
         "inkstack-windows-sandbox-setup.exe" => Some("sandbox_setup"),
@@ -201,7 +203,9 @@ fn classify(channels: &[Option<Vec<Evidence>>]) -> DoctorCheck {
         (CheckStatus::Ok, _) if channels.contains(&None) => "security event coverage is incomplete",
         (CheckStatus::Ok, _) => "no locally visible recent InkStack security enforcement was found",
         (CheckStatus::Warning, false) => "security event channels could not be inspected",
-        (CheckStatus::Warning, true) => "recent InkStack security audit or detection requires review",
+        (CheckStatus::Warning, true) => {
+            "recent InkStack security audit or detection requires review"
+        }
         (CheckStatus::Fail, _) => "endpoint security blocked or quarantined a InkStack executable",
     };
     let mut check = desktop_check("desktop.security.enforcement", status, summary).details(details);

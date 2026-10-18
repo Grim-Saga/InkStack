@@ -8,7 +8,8 @@ use inkstack_exec_server::HttpResponseBodyStream;
 use futures::future::BoxFuture;
 
 const OPENAI_DEVELOPER_DOCS_MCP_URL: &str = "https://developers.openai.com/mcp";
-const OPENAI_DEVELOPER_DOCS_MCP_INKSTACK_URL: &str = "https://developers.openai.com/mcp?source=codex";
+const OPENAI_DEVELOPER_DOCS_MCP_INKSTACK_URL: &str =
+    "https://developers.openai.com/mcp?source=codex";
 
 pub(crate) fn maybe_with_openai_docs_source_attribution(
     mcp_server_url: &str,

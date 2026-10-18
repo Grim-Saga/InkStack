@@ -311,7 +311,8 @@ impl App {
                     .permissions
                     .active_permission_profile()
                     .is_some_and(|profile| {
-                        profile.id == inkstack_protocol::models::BUILT_IN_PERMISSION_PROFILE_WORKSPACE
+                        profile.id
+                            == inkstack_protocol::models::BUILT_IN_PERMISSION_PROFILE_WORKSPACE
                     }))
         {
             match crate::config_update::read_effective_config_if_supported(

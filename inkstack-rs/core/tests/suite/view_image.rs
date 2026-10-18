@@ -85,7 +85,11 @@ enum ImageBudgetPolicy {
     UnifiedResponsesLiteWithoutOriginalSupport,
 }
 
-fn disabled_user_turn(test: &TestInkStack, items: Vec<UserInput>, model: String) -> TurnInputRequest {
+fn disabled_user_turn(
+    test: &TestInkStack,
+    items: Vec<UserInput>,
+    model: String,
+) -> TurnInputRequest {
     let (sandbox_policy, permission_profile) =
         turn_permission_fields(PermissionProfile::Disabled, test.config.cwd.as_path());
     TurnInputRequest::user_input(items).with_thread_settings(ThreadSettingsOverrides {
@@ -161,7 +165,10 @@ fn png_bytes(width: u32, height: u32, rgba: [u8; 4]) -> anyhow::Result<Vec<u8>> 
     Ok(cursor.into_inner())
 }
 
-async fn create_workspace_directory(test: &TestInkStack, rel_path: &str) -> anyhow::Result<PathUri> {
+async fn create_workspace_directory(
+    test: &TestInkStack,
+    rel_path: &str,
+) -> anyhow::Result<PathUri> {
     let abs_path_uri = test.workspace_path_uri(rel_path)?;
     test.fs()
         .create_directory(
@@ -479,13 +486,19 @@ async fn view_image_tool_attaches_local_image() -> anyhow::Result<()> {
         inkstack,
         |event| match event {
             EventMsg::ItemStarted(event) => {
-                if matches!(&event.item, inkstack_protocol::items::TurnItem::ImageView(_)) {
+                if matches!(
+                    &event.item,
+                    inkstack_protocol::items::TurnItem::ImageView(_)
+                ) {
                     item_started = Some(event.item.clone());
                 }
                 false
             }
             EventMsg::ItemCompleted(event) => {
-                if matches!(&event.item, inkstack_protocol::items::TurnItem::ImageView(_)) {
+                if matches!(
+                    &event.item,
+                    inkstack_protocol::items::TurnItem::ImageView(_)
+                ) {
                     item_completed = Some(event.item.clone());
                 }
                 false

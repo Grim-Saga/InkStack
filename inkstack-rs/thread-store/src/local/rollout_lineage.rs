@@ -120,7 +120,9 @@ impl LocalThreadStore {
                     // target. Keep references inside canonical managed roots so nested symlinks
                     // cannot escape them.
                     let is_managed_rollout = [
-                        self.config.inkstack_home.join(inkstack_rollout::SESSIONS_SUBDIR),
+                        self.config
+                            .inkstack_home
+                            .join(inkstack_rollout::SESSIONS_SUBDIR),
                         self.config
                             .inkstack_home
                             .join(inkstack_rollout::ARCHIVED_SESSIONS_SUBDIR),
@@ -206,11 +208,14 @@ async fn resolve_rollout_path_by_id(
     store: &LocalThreadStore,
     rollout_id: ThreadId,
 ) -> ThreadStoreResult<Option<PathBuf>> {
-    inkstack_rollout::find_rollout_path_by_rollout_id(store.config.inkstack_home.as_path(), rollout_id)
-        .await
-        .map_err(|err| ThreadStoreError::Internal {
-            message: format!("failed to locate rollout {rollout_id}: {err}"),
-        })
+    inkstack_rollout::find_rollout_path_by_rollout_id(
+        store.config.inkstack_home.as_path(),
+        rollout_id,
+    )
+    .await
+    .map_err(|err| ThreadStoreError::Internal {
+        message: format!("failed to locate rollout {rollout_id}: {err}"),
+    })
 }
 
 #[derive(Clone, Copy)]

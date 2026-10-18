@@ -88,8 +88,8 @@ impl ChatWidget {
         {
             self.automatic_model_switch_state.reserve_return =
                 self.thread_id().and_then(|thread_id| {
-                    ReserveReturnModel::load(self.config.inkstack_home.as_path(), thread_id).or_else(
-                        || {
+                    ReserveReturnModel::load(self.config.inkstack_home.as_path(), thread_id)
+                        .or_else(|| {
                             // Forks inherit Reserve settings, but need their own return target:
                             // the parent's recovery will delete the parent's saved target.
                             let previous = ReserveReturnModel::load(
@@ -105,8 +105,7 @@ impl ChatWidget {
                                 .save(self.config.inkstack_home.as_path(), thread_id)
                                 .ok()?;
                             Some(previous)
-                        },
-                    )
+                        })
                 });
         }
         if self

@@ -57,7 +57,10 @@ async fn workspace_roots_test(server: &MockServer) -> Result<TestInkStack> {
 }
 
 fn outside_workspace_path(test: &TestInkStack, file_name: &str) -> Result<PathUri> {
-    let file_name = format!("inkstack-workspace-roots-{}-{file_name}", std::process::id());
+    let file_name = format!(
+        "inkstack-workspace-roots-{}-{file_name}",
+        std::process::id()
+    );
     PathUri::from_abs_path(&test.config.cwd)
         .parent()
         .context("test workspace should have a parent")?

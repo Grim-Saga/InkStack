@@ -77,7 +77,12 @@ plugins = true
 
 fn write_marketplace_source_with_manifest(source: &Path, marketplace_manifest: &str) -> Result<()> {
     std::fs::create_dir_all(source.join(".agents").join("plugins"))?;
-    std::fs::create_dir_all(source.join("plugins").join("sample").join(".inkstack-plugin"))?;
+    std::fs::create_dir_all(
+        source
+            .join("plugins")
+            .join("sample")
+            .join(".inkstack-plugin"),
+    )?;
     std::fs::write(
         source
             .join(".agents")
@@ -1018,7 +1023,9 @@ async fn plugin_add_json_prints_install_outcome() -> Result<()> {
         .success();
     let stdout = assert.get_output().stdout.as_slice();
     let actual: serde_json::Value = serde_json::from_slice(stdout)?;
-    let installed_path = inkstack_home.path().join("plugins/cache/debug/sample/1.2.3");
+    let installed_path = inkstack_home
+        .path()
+        .join("plugins/cache/debug/sample/1.2.3");
     let normalized_installed_path = canonicalize_existing_preserving_symlinks(&installed_path)?;
 
     assert_eq!(
@@ -1293,17 +1300,22 @@ impl RemoteMarketplaceFixture {
     }
 
     async fn run(&self, args: &[&str]) -> Result<Output> {
-        Ok(Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?)
-            .current_dir(self.home.path())
-            .env("INKSTACK_HOME", self.home.path())
-            .env("HOME", self.home.path())
-            .env_remove("OPENAI_API_KEY")
-            .env_remove("OPENAI_API_KEY")
-            .env_remove("INKSTACK_ACCESS_TOKEN")
-            .env("INKSTACK_TEST_ALLOW_HTTP_REMOTE_PLUGIN_BUNDLE_DOWNLOADS", "1")
-            .args(args)
-            .output()
-            .await?)
+        Ok(
+            Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?)
+                .current_dir(self.home.path())
+                .env("INKSTACK_HOME", self.home.path())
+                .env("HOME", self.home.path())
+                .env_remove("OPENAI_API_KEY")
+                .env_remove("OPENAI_API_KEY")
+                .env_remove("INKSTACK_ACCESS_TOKEN")
+                .env(
+                    "INKSTACK_TEST_ALLOW_HTTP_REMOTE_PLUGIN_BUNDLE_DOWNLOADS",
+                    "1",
+                )
+                .args(args)
+                .output()
+                .await?,
+        )
     }
 
     async fn success(&self, args: &[&str]) -> Result<String> {

@@ -834,8 +834,8 @@ url = "ws://127.0.0.1:4513"
 "#,
         )
         .expect("write environments.toml");
-        let provider =
-            environment_provider_from_inkstack_home(inkstack_home.path()).expect("environment provider");
+        let provider = environment_provider_from_inkstack_home(inkstack_home.path())
+            .expect("environment provider");
         let manager = EnvironmentManager::from_snapshot(
             provider.snapshot().await.expect("environment snapshot"),
             /*local_runtime_paths*/ None,
@@ -932,7 +932,9 @@ unknown = true
         ];
 
         for (index, (contents, expected)) in cases.into_iter().enumerate() {
-            let path = inkstack_home.path().join(format!("environments-{index}.toml"));
+            let path = inkstack_home
+                .path()
+                .join(format!("environments-{index}.toml"));
             std::fs::write(&path, contents).expect("write environments.toml");
 
             let err = load_environments_toml(&path).expect_err("unknown field should fail");
@@ -976,8 +978,8 @@ include_local = false
         )
         .expect("write environments.toml");
 
-        let provider =
-            environment_provider_from_inkstack_home(inkstack_home.path()).expect("environment provider");
+        let provider = environment_provider_from_inkstack_home(inkstack_home.path())
+            .expect("environment provider");
 
         let snapshot = provider.snapshot().await.expect("environments");
         let environment_ids: Vec<_> = snapshot
@@ -995,8 +997,8 @@ include_local = false
     async fn environment_provider_from_inkstack_home_falls_back_when_file_is_missing() {
         let inkstack_home = tempdir().expect("tempdir");
 
-        let provider =
-            environment_provider_from_inkstack_home(inkstack_home.path()).expect("environment provider");
+        let provider = environment_provider_from_inkstack_home(inkstack_home.path())
+            .expect("environment provider");
 
         let snapshot = provider.snapshot().await.expect("environments");
         let environment_ids: Vec<_> = snapshot

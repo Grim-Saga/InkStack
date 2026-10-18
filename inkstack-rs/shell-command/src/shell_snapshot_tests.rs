@@ -111,8 +111,14 @@ fn snapshot_capture_selects_declarations_and_environment() -> Result<()> {
 
             // Both replay paths must preserve current metadata from a full capture.
             let replay_environment = HashMap::from([
-                ("INKSTACK_THREAD_ID".to_string(), "capture-thread".to_string()),
-                ("INKSTACK_TOOL_CALL_ID".to_string(), "profile-call".to_string()),
+                (
+                    "INKSTACK_THREAD_ID".to_string(),
+                    "capture-thread".to_string(),
+                ),
+                (
+                    "INKSTACK_TOOL_CALL_ID".to_string(),
+                    "profile-call".to_string(),
+                ),
                 ("APP_SETTING".to_string(), "value".to_string()),
             ]);
             let empty = HashMap::new();
@@ -133,7 +139,10 @@ fn snapshot_capture_selects_declarations_and_environment() -> Result<()> {
                 ),
                 brokered.script,
             ] {
-                assert!(!snapshot.contains("INKSTACK_THREAD_ID"), "{shell}: {snapshot}");
+                assert!(
+                    !snapshot.contains("INKSTACK_THREAD_ID"),
+                    "{shell}: {snapshot}"
+                );
                 assert!(
                     !snapshot.contains("INKSTACK_TOOL_CALL_ID"),
                     "{shell}: {snapshot}"
@@ -167,7 +176,10 @@ fn bash_snapshot_filters_invalid_exports() -> Result<()> {
         .env("BASH_ENV", "/dev/null")
         .env("VALID_NAME", "ok")
         .env("PWD", "/tmp/stale")
-        .env("NEXTEST_BIN_EXE_inkstack-write-config-schema", "/path/to/bin")
+        .env(
+            "NEXTEST_BIN_EXE_inkstack-write-config-schema",
+            "/path/to/bin",
+        )
         .env("BAD-NAME", "broken")
         .output()?;
 

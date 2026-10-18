@@ -93,7 +93,8 @@ async fn computer_use_scoring_follows_model_review_requirement(
     let mut reviewed_model =
         inkstack_core::test_support::construct_model_info_offline(REVIEWED_MODEL, &config);
     reviewed_model.node_repl_auto_review_required = true;
-    write_models_cache_with_models(inkstack_home.path(), vec![ordinary_model, reviewed_model]).await?;
+    write_models_cache_with_models(inkstack_home.path(), vec![ordinary_model, reviewed_model])
+        .await?;
     let mut app_server = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())
         .build_initialized_with_timeout(TIMEOUT)

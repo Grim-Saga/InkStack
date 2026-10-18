@@ -514,8 +514,14 @@ fn maybe_wrap_shell_lc_with_snapshot_restores_inkstack_metadata_from_env() {
             .to_string(),
     ];
     let env = HashMap::from([
-        ("INKSTACK_THREAD_ID".to_string(), "nested-thread".to_string()),
-        ("INKSTACK_TOOL_CALL_ID".to_string(), "nested-call".to_string()),
+        (
+            "INKSTACK_THREAD_ID".to_string(),
+            "nested-thread".to_string(),
+        ),
+        (
+            "INKSTACK_TOOL_CALL_ID".to_string(),
+            "nested-call".to_string(),
+        ),
         (
             "INKSTACK_VERSION".to_string(),
             env!("CARGO_PKG_VERSION").to_string(),

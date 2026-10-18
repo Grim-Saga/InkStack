@@ -614,7 +614,10 @@ async fn shell_snapshot_v2_prewarm_stops_on_shutdown() -> Result<()> {
 
     let inkstack = &harness.test().inkstack;
     inkstack.submit(Op::Shutdown {}).await?;
-    wait_for_event(inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    wait_for_event(inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
     tokio::time::timeout(Duration::from_secs(2), async {
         while tokio::process::Command::new("/bin/kill")
             .args(["-0", &pid])
@@ -1266,7 +1269,10 @@ async fn macos_unified_exec_resolves_command_from_tied_path_snapshot(
         .join("bin");
     fs::create_dir_all(&command_dir).await?;
     let command_path = command_dir.join("snapshot-only-command");
-    inkstack_utils_cargo_bin::write_executable(&command_path, "#!/bin/sh\nprintf tied-path-command")?;
+    inkstack_utils_cargo_bin::write_executable(
+        &command_path,
+        "#!/bin/sh\nprintf tied-path-command",
+    )?;
 
     run_tool_turn_on_harness(
         &harness,

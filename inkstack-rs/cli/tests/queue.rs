@@ -251,7 +251,10 @@ async fn remote_session_commands_with_workload_identity_use_server_auth() -> Res
             ("INKSTACK_ACCESS_TOKEN", None),
             (OPENAI_FEDERATION_RULE_ID_ENV_VAR, None),
             (OPENAI_IDENTITY_TOKEN_FILE_ENV_VAR, None),
-            ("INKSTACK_QUEUE_SERVER_API_KEY", Some("server-only-test-key")),
+            (
+                "INKSTACK_QUEUE_SERVER_API_KEY",
+                Some("server-only-test-key"),
+            ),
         ])
         .build()
         .await?;
@@ -459,13 +462,14 @@ fn remote_session_commands_validate_config() -> Result<()> {
         for &(args, config_file, config) in cases {
             let inkstack_home = TempDir::new()?;
             std::fs::write(inkstack_home.path().join(config_file), config)?;
-            let output = std::process::Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?)
-                .env("INKSTACK_HOME", inkstack_home.path())
-                .current_dir(inkstack_home.path())
-                .args(args)
-                .args(["--remote", "ws://127.0.0.1:1"])
-                .args(command)
-                .output()?;
+            let output =
+                std::process::Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?)
+                    .env("INKSTACK_HOME", inkstack_home.path())
+                    .current_dir(inkstack_home.path())
+                    .args(args)
+                    .args(["--remote", "ws://127.0.0.1:1"])
+                    .args(command)
+                    .output()?;
             let stderr = String::from_utf8(output.stderr)?;
             assert!(!output.status.success());
             assert!(

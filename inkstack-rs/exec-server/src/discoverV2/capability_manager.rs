@@ -64,7 +64,9 @@ impl CapabilityManager {
             .prewarmed_locations
             .get_or_try_init(|| async {
                 let request = CapabilityLocationRequest {
-                    inkstack_home: PathUri::from_abs_path(&inkstack_utils_home_dir::find_inkstack_home()?),
+                    inkstack_home: PathUri::from_abs_path(
+                        &inkstack_utils_home_dir::find_inkstack_home()?,
+                    ),
                     user_home: dirs::home_dir()
                         .and_then(|home| PathUri::from_host_native_path(home).ok()),
                     system_skills_root: system_config_toml_file()?

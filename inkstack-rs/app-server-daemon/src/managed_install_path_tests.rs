@@ -25,7 +25,9 @@ fn discovers_package_and_legacy_installs() {
     );
     std::fs::write(state.join("app-server.stderr.log"), b"").unwrap();
     assert_eq!(super::managed_inkstack_bin(home.path()), legacy);
-    let packaged = current.join("bin").join(super::managed_inkstack_file_name());
+    let packaged = current
+        .join("bin")
+        .join(super::managed_inkstack_file_name());
     std::fs::create_dir(current.join("bin")).expect("bin directory");
     std::fs::write(&packaged, b"packaged").expect("packaged executable");
     assert_eq!(super::managed_inkstack_bin(home.path()), packaged);
@@ -116,8 +118,10 @@ fn updater_only_runs_for_stable_installer_owned_releases() {
 async fn older_managed_binary_does_not_claim_updater_support() {
     let temp = tempfile::TempDir::new().expect("home");
     let binary = temp.path().join("inkstack");
-    inkstack_utils_cargo_bin::write_executable(&binary, "#!/bin/sh\nexit 2\n").expect("older binary");
+    inkstack_utils_cargo_bin::write_executable(&binary, "#!/bin/sh\nexit 2\n")
+        .expect("older binary");
     assert!(!super::supports_daemon_update_loop(&binary).await);
-    inkstack_utils_cargo_bin::write_executable(&binary, "#!/bin/sh\nexit 0\n").expect("newer binary");
+    inkstack_utils_cargo_bin::write_executable(&binary, "#!/bin/sh\nexit 0\n")
+        .expect("newer binary");
     assert!(super::supports_daemon_update_loop(&binary).await);
 }

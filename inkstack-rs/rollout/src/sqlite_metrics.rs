@@ -56,7 +56,10 @@ impl DbTelemetry for OtelDbTelemetry {
     }
 }
 
-pub(crate) fn recorder(metrics: inkstack_otel::MetricsClient, originator: &str) -> DbTelemetryHandle {
+pub(crate) fn recorder(
+    metrics: inkstack_otel::MetricsClient,
+    originator: &str,
+) -> DbTelemetryHandle {
     Arc::new(OtelDbTelemetry {
         metrics,
         originator: bounded_originator_tag_value(originator),

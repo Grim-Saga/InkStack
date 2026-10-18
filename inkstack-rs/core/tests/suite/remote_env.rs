@@ -1807,7 +1807,9 @@ async fn shared_executor_keeps_ready_capability_roots_scoped_to_each_attachment(
     }
 
     assert_eq!(
-        test.inkstack.inspect_selected_capability_roots().ready_roots,
+        test.inkstack
+            .inspect_selected_capability_roots()
+            .ready_roots,
         vec![root("first-updated-root")]
     );
     let requests = response_mock.requests();
@@ -4608,7 +4610,10 @@ async fn remote_test_env_sandboxed_read_allows_readable_root() -> Result<()> {
     let test_env = test_env().await?;
     let file_system = test_env.environment().get_filesystem();
 
-    let allowed_dir = PathBuf::from(format!("/tmp/inkstack-remote-readable-{}", std::process::id()));
+    let allowed_dir = PathBuf::from(format!(
+        "/tmp/inkstack-remote-readable-{}",
+        std::process::id()
+    ));
     let file_path = allowed_dir.join("note.txt");
     let allowed_dir_uri = PathUri::from_host_native_path(&allowed_dir)?;
     let file_path_uri = PathUri::from_host_native_path(&file_path)?;
@@ -4661,7 +4666,10 @@ async fn remote_test_env_sandboxed_read_rejects_symlink_parent_dotdot_escape() -
     let test_env = test_env().await?;
     let file_system = test_env.environment().get_filesystem();
 
-    let root = PathBuf::from(format!("/tmp/inkstack-remote-dotdot-{}", std::process::id()));
+    let root = PathBuf::from(format!(
+        "/tmp/inkstack-remote-dotdot-{}",
+        std::process::id()
+    ));
     let allowed_dir = root.join("allowed");
     let outside_dir = root.join("outside");
     let secret_path = root.join("secret.txt");

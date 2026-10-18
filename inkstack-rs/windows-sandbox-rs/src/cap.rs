@@ -185,15 +185,17 @@ mod tests {
         std::fs::create_dir_all(&workspace).expect("create workspace");
         std::fs::create_dir_all(&extra_root).expect("create extra root");
 
-        let workspace_sid = workspace_write_cap_sid_for_root(&inkstack_home, &workspace, &workspace)
-            .expect("workspace sid");
+        let workspace_sid =
+            workspace_write_cap_sid_for_root(&inkstack_home, &workspace, &workspace)
+                .expect("workspace sid");
         let extra_sid = workspace_write_cap_sid_for_root(&inkstack_home, &workspace, &extra_root)
             .expect("extra root sid");
 
         assert_ne!(workspace_sid, extra_sid);
         assert_eq!(
             extra_sid,
-            writable_root_cap_sid_for_path(&inkstack_home, &extra_root).expect("extra root sid again")
+            writable_root_cap_sid_for_path(&inkstack_home, &extra_root)
+                .expect("extra root sid again")
         );
 
         let caps = load_or_create_cap_sids(&inkstack_home).expect("load caps");

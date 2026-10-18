@@ -36,7 +36,8 @@ use self::persistence::persist_inkstack_apps_cache;
 use self::persistence::server_info_cache_path;
 use self::persistence::tools_cache_path;
 
-const MCP_TOOLS_CACHE_PUBLISH_DURATION_METRIC: &str = "inkstack.mcp.tools.cache_publish.duration_ms";
+const MCP_TOOLS_CACHE_PUBLISH_DURATION_METRIC: &str =
+    "inkstack.mcp.tools.cache_publish.duration_ms";
 
 /// The current immutable tools for matching discovery inputs.
 struct CatalogProvider<T> {

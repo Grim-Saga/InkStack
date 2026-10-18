@@ -244,7 +244,8 @@ fn handler_normalizes_only_the_default_namespace() {
 #[test]
 fn registry_rejects_default_namespace_alias_collisions() {
     let plain_name = inkstack_tools::ToolName::plain("lookup");
-    let namespaced_name = inkstack_tools::ToolName::namespaced(DEFAULT_FUNCTION_NAMESPACE, "lookup");
+    let namespaced_name =
+        inkstack_tools::ToolName::namespaced(DEFAULT_FUNCTION_NAMESPACE, "lookup");
 
     for [first_name, duplicate_name] in [
         [plain_name.clone(), namespaced_name.clone()],
@@ -432,7 +433,10 @@ async fn readiness_selects_exact_tool_with_registry_owned_exposure() {
 
     assert!(
         registry
-            .tool(&inkstack_tools::ToolName::namespaced("mcp__missing__", "echo"))
+            .tool(&inkstack_tools::ToolName::namespaced(
+                "mcp__missing__",
+                "echo"
+            ))
             .is_none()
     );
     assert_eq!(
@@ -737,7 +741,8 @@ async fn dispatch_uses_canonical_tool_names_for_lifecycle_contributors() -> anyh
     turn.turn_metadata_state
         .set_root_turn_id("root-turn".to_string());
     let records = Arc::new(std::sync::Mutex::new(Vec::new()));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.tool_lifecycle_contributor(Arc::new(ToolLifecycleRecorder {
         records: Arc::clone(&records),
     }));

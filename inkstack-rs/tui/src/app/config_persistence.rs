@@ -1935,7 +1935,8 @@ enabled = false
         expected_widget_settings.tui.terminal_resize_reflow_max_rows = Some(9000);
         expected_widget_settings.tui.session_picker_view =
             Some(inkstack_config::types::SessionPickerViewMode::Comfortable);
-        expected_widget_settings.tui.resume_cwd = Some(inkstack_config::types::ResumeCwdMode::Current);
+        expected_widget_settings.tui.resume_cwd =
+            Some(inkstack_config::types::ResumeCwdMode::Current);
         let inkstack_home = tempdir()?;
         app.config.inkstack_home = inkstack_home.path().to_path_buf().abs();
         std::fs::write(

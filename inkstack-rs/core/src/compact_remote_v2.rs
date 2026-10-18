@@ -965,7 +965,10 @@ mod tests {
             truncate_retained_messages_for_remote_compaction(vec![item], /*max_tokens*/ 4);
 
         assert_eq!(truncated.len(), 1);
-        assert_eq!(truncated[0].metadata, Some(InkStackHarnessMetadata::default()));
+        assert_eq!(
+            truncated[0].metadata,
+            Some(InkStackHarnessMetadata::default())
+        );
     }
 
     #[test]

@@ -112,7 +112,10 @@ fn user_verification_is_projected_only_to_the_host_owned_plugin_service() {
         ),
         (
             INKSTACK_APPS_MCP_SERVER_NAME,
-            McpServerRegistration::from_config(INKSTACK_APPS_MCP_SERVER_NAME.into(), config.clone()),
+            McpServerRegistration::from_config(
+                INKSTACK_APPS_MCP_SERVER_NAME.into(),
+                config.clone(),
+            ),
             json!({"form": {}}),
         ),
         (

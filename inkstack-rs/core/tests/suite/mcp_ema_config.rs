@@ -44,7 +44,10 @@ async fn refresh_ema_denial_clears_authority_for_configured_servers() -> Result<
         ))
         .build_with_auto_env(&responses_server)
         .await?;
-    let (before, _) = fixture.inkstack.current_mcp_config_and_runtime_context().await;
+    let (before, _) = fixture
+        .inkstack
+        .current_mcp_config_and_runtime_context()
+        .await;
     let current_config = fixture.inkstack.config().await;
     let refreshed = ConfigBuilder::default()
         .loader_overrides(LoaderOverrides::without_managed_config_for_tests())
@@ -64,7 +67,10 @@ async fn refresh_ema_denial_clears_authority_for_configured_servers() -> Result<
             .await,
         ConfigRefreshOutcome::Published
     );
-    let (after, _) = fixture.inkstack.current_mcp_config_and_runtime_context().await;
+    let (after, _) = fixture
+        .inkstack
+        .current_mcp_config_and_runtime_context()
+        .await;
     let old_servers = inkstack_mcp::configured_mcp_servers(&before);
     let new_servers = inkstack_mcp::configured_mcp_servers(&after);
     let old = old_servers["enterprise"]
@@ -120,7 +126,10 @@ async fn enterprise_activation_respects_configuration(scenario: ActivationScenar
         ))
         .build_with_auto_env(&responses_server)
         .await?;
-    let (runtime_config, _) = fixture.inkstack.current_mcp_config_and_runtime_context().await;
+    let (runtime_config, _) = fixture
+        .inkstack
+        .current_mcp_config_and_runtime_context()
+        .await;
     let expected_enabled = match scenario {
         ActivationScenario::FeatureDisabled | ActivationScenario::MissingIdp => Some(false),
         ActivationScenario::OperatorEnabled => Some(true),

@@ -395,8 +395,16 @@ async fn ordinary_clone_rejects_tracked_embedded_bare_repository() {
     })
     .expect_err("patch root discovery should reject the tracked embedded repository");
     assert!(apply_error.to_string().contains("not a git repository"));
-    assert!(inkstack_git_utils::collect_git_info(&nested).await.is_none());
-    assert!(inkstack_git_utils::git_diff_to_remote(&nested).await.is_none());
+    assert!(
+        inkstack_git_utils::collect_git_info(&nested)
+            .await
+            .is_none()
+    );
+    assert!(
+        inkstack_git_utils::git_diff_to_remote(&nested)
+            .await
+            .is_none()
+    );
     assert!(
         !marker.exists(),
         "Rust-owned Git inspection must not execute the tracked helper"
@@ -1455,7 +1463,10 @@ fn curated_repo_backup_archive_zip_bytes(sha: &str) -> Vec<u8> {
         )
         .expect("write marketplace");
     writer
-        .start_file("plugins/plugins/gmail/.inkstack-plugin/plugin.json", options)
+        .start_file(
+            "plugins/plugins/gmail/.inkstack-plugin/plugin.json",
+            options,
+        )
         .expect("start plugin manifest entry");
     writer
         .write_all(br#"{"name":"gmail"}"#)

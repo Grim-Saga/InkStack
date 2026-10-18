@@ -881,7 +881,9 @@ fn map_network_unix_socket_permission_to_api(
     permission: inkstack_config::NetworkUnixSocketPermissionToml,
 ) -> NetworkUnixSocketPermission {
     match permission {
-        inkstack_config::NetworkUnixSocketPermissionToml::Allow => NetworkUnixSocketPermission::Allow,
+        inkstack_config::NetworkUnixSocketPermissionToml::Allow => {
+            NetworkUnixSocketPermission::Allow
+        }
         inkstack_config::NetworkUnixSocketPermissionToml::Deny => NetworkUnixSocketPermission::Deny,
     }
 }
@@ -979,12 +981,13 @@ client_id = "mcp-client"
         let initial = config_manager
             .load_latest_config(Some(home.path().to_path_buf()))
             .await?;
-        let thread_manager = inkstack_core::test_support::thread_manager_with_models_provider_and_home(
-            InkStackAuth::from_api_key("dummy"),
-            initial.model_provider.clone(),
-            initial.inkstack_home.to_path_buf(),
-            Arc::new(EnvironmentManager::default_for_tests()),
-        );
+        let thread_manager =
+            inkstack_core::test_support::thread_manager_with_models_provider_and_home(
+                InkStackAuth::from_api_key("dummy"),
+                initial.model_provider.clone(),
+                initial.inkstack_home.to_path_buf(),
+                Arc::new(EnvironmentManager::default_for_tests()),
+            );
         let thread = thread_manager
             .start_thread(inkstack_core::StartThreadOptions::new(initial))
             .await?
@@ -1185,12 +1188,14 @@ client_id = "mcp-client"
         assert_eq!(
             mapped.browser_use,
             Some(BrowserUseRequirements {
-                extension: Some(inkstack_app_server_protocol::BrowserUseExtensionRequirements {
-                    request_headers: Some(vec![inkstack_app_server_protocol::RequestHeader {
-                        name: "x-browser-agent".into(),
-                        value: "ChatGPT/{{session_id}}".into()
-                    }]),
-                }),
+                extension: Some(
+                    inkstack_app_server_protocol::BrowserUseExtensionRequirements {
+                        request_headers: Some(vec![inkstack_app_server_protocol::RequestHeader {
+                            name: "x-browser-agent".into(),
+                            value: "ChatGPT/{{session_id}}".into()
+                        }]),
+                    }
+                ),
                 allow_webmcp: Some(true),
                 allow_history_access: Some(false),
                 disable_auto_review: Some(true),

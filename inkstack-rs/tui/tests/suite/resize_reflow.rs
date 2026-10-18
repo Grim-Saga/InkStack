@@ -392,8 +392,11 @@ async fn tmux_scrolled_composer_resize_preserves_visible_draft_text() -> Result<
             .arg("-l")
             .arg(&final_line),
     )?;
-    let baseline =
-        wait_for_capture_contains(&inkstack_pane, &final_line, Duration::from_secs(/*secs*/ 15))?;
+    let baseline = wait_for_capture_contains(
+        &inkstack_pane,
+        &final_line,
+        Duration::from_secs(/*secs*/ 15),
+    )?;
 
     for (phase, width, height, minimum_visible_rows) in
         [("narrowed", "28", "9", 2), ("restored", "44", "14", 6)]

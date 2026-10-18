@@ -219,17 +219,18 @@ impl ExecServerCommand {
                 )
                 .await?
             };
-            let mut remote_config = inkstack_exec_server::RemoteEnvironmentConfig::new_with_transport(
-                base_url,
-                environment_id,
-                if direct_transport {
-                    inkstack_exec_server::RemoteEnvironmentTransport::Direct
-                } else {
-                    inkstack_exec_server::RemoteEnvironmentTransport::Noise
-                },
-                auth_provider,
-                config.http_client_factory(),
-            )?;
+            let mut remote_config =
+                inkstack_exec_server::RemoteEnvironmentConfig::new_with_transport(
+                    base_url,
+                    environment_id,
+                    if direct_transport {
+                        inkstack_exec_server::RemoteEnvironmentTransport::Direct
+                    } else {
+                        inkstack_exec_server::RemoteEnvironmentTransport::Noise
+                    },
+                    auth_provider,
+                    config.http_client_factory(),
+                )?;
             if let Some(name) = self.name {
                 remote_config.name = name;
             }
@@ -369,13 +370,16 @@ async fn load_exec_server_remote_auth_provider(
 ) -> anyhow::Result<inkstack_api::SharedAuthProvider> {
     if use_agent_identity_auth {
         read_inkstack_access_token_from_env().ok_or_else(|| {
-            anyhow::anyhow!("INKSTACK_ACCESS_TOKEN is required when --use-agent-identity-auth is set")
+            anyhow::anyhow!(
+                "INKSTACK_ACCESS_TOKEN is required when --use-agent-identity-auth is set"
+            )
         })?;
-        let auth = AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false)
-            .await?
-            .auth()
-            .await
-            .ok_or_else(|| anyhow::anyhow!("Agent Identity authentication is unavailable"))?;
+        let auth =
+            AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false)
+                .await?
+                .auth()
+                .await
+                .ok_or_else(|| anyhow::anyhow!("Agent Identity authentication is unavailable"))?;
         if !matches!(auth, InkStackAuth::AgentIdentity(_)) {
             anyhow::bail!(
                 "INKSTACK_ACCESS_TOKEN did not provide permitted Agent Identity authentication"

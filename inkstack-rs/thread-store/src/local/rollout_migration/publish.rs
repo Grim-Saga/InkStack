@@ -45,12 +45,12 @@ pub(super) fn migration_journal_path(inkstack_home: &Path, thread_id: ThreadId) 
 pub(super) async fn pending_migration_thread_ids(
     inkstack_home: &Path,
 ) -> ThreadStoreResult<HashSet<ThreadId>> {
-    let mut entries = match tokio::fs::read_dir(inkstack_home.join(MIGRATION_JOURNAL_DIRECTORY)).await
-    {
-        Ok(entries) => entries,
-        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(HashSet::new()),
-        Err(error) => return Err(migration_error(error)),
-    };
+    let mut entries =
+        match tokio::fs::read_dir(inkstack_home.join(MIGRATION_JOURNAL_DIRECTORY)).await {
+            Ok(entries) => entries,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(HashSet::new()),
+            Err(error) => return Err(migration_error(error)),
+        };
     let mut thread_ids = HashSet::new();
     while let Some(entry) = entries.next_entry().await.map_err(migration_error)? {
         if !entry.file_type().await.map_err(migration_error)?.is_file() {
@@ -177,7 +177,8 @@ pub(super) async fn rewrite_subagent_history_boundary(
         .read_until(b'\n', &mut head_bytes)
         .await
         .map_err(migration_error)?;
-    let mut head = inkstack_rollout::parse_rollout_line_bytes(&head_bytes).map_err(migration_error)?;
+    let mut head =
+        inkstack_rollout::parse_rollout_line_bytes(&head_bytes).map_err(migration_error)?;
     let RolloutItem::SessionMeta(session_meta) = &mut head.item else {
         return Err(migration_error(
             "staged rollout head is not session metadata",

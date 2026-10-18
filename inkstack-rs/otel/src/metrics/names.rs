@@ -21,7 +21,8 @@ pub const WEBSOCKET_CONTINUATION_COUNT_METRIC: &str = "inkstack.websocket.contin
 pub const WEBSOCKET_REQUEST_DURATION_METRIC: &str = "inkstack.websocket.request.duration_ms";
 pub const WEBSOCKET_EVENT_COUNT_METRIC: &str = "inkstack.websocket.event";
 pub const WEBSOCKET_EVENT_DURATION_METRIC: &str = "inkstack.websocket.event.duration_ms";
-pub const RESPONSES_API_OVERHEAD_DURATION_METRIC: &str = "inkstack.responses_api_overhead.duration_ms";
+pub const RESPONSES_API_OVERHEAD_DURATION_METRIC: &str =
+    "inkstack.responses_api_overhead.duration_ms";
 pub const RESPONSES_API_INFERENCE_TIME_DURATION_METRIC: &str =
     "inkstack.responses_api_inference_time.duration_ms";
 pub const RESPONSES_API_ENGINE_IAPI_TTFT_DURATION_METRIC: &str =
@@ -47,7 +48,8 @@ pub const GUARDIAN_REVIEW_DURATION_METRIC: &str = "inkstack.guardian.review.dura
 pub const GUARDIAN_REVIEW_TTFT_DURATION_METRIC: &str = "inkstack.guardian.review.ttft.duration_ms";
 pub const GUARDIAN_REVIEW_TOKEN_USAGE_METRIC: &str = "inkstack.guardian.review.token_usage";
 pub const GUARDIAN_REVIEW_TRUNCATION_METRIC: &str = "inkstack.guardian.review.truncation";
-pub const GUARDIAN_REVIEW_TRUNCATION_BYTES_METRIC: &str = "inkstack.guardian.review.truncation.bytes";
+pub const GUARDIAN_REVIEW_TRUNCATION_BYTES_METRIC: &str =
+    "inkstack.guardian.review.truncation.bytes";
 pub const GOAL_CREATED_METRIC: &str = "inkstack.goal.created";
 pub const GOAL_RESUMED_METRIC: &str = "inkstack.goal.resumed";
 pub const GOAL_COMPLETED_METRIC: &str = "inkstack.goal.completed";
@@ -56,7 +58,8 @@ pub const GOAL_USAGE_LIMITED_METRIC: &str = "inkstack.goal.usage_limited";
 pub const GOAL_BLOCKED_METRIC: &str = "inkstack.goal.blocked";
 pub const GOAL_TOKEN_COUNT_METRIC: &str = "inkstack.goal.token_count";
 pub const GOAL_DURATION_SECONDS_METRIC: &str = "inkstack.goal.duration_s";
-pub const PLUGIN_INSTALL_ELICITATION_SENT_METRIC: &str = "inkstack.plugins.install_elicitation.sent";
+pub const PLUGIN_INSTALL_ELICITATION_SENT_METRIC: &str =
+    "inkstack.plugins.install_elicitation.sent";
 pub const PLUGIN_INSTALL_SUGGESTION_METRIC: &str = "inkstack.plugins.install_suggestion";
 pub const CURATED_PLUGINS_STARTUP_SYNC_METRIC: &str = "inkstack.plugins.startup_sync";
 pub const CURATED_PLUGINS_STARTUP_SYNC_FINAL_METRIC: &str = "inkstack.plugins.startup_sync.final";

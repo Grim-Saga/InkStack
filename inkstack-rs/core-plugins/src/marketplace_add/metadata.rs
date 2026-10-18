@@ -281,9 +281,10 @@ mod tests {
             &[],
         );
         let canonical = source.path().canonicalize().unwrap();
-        let legacy =
-            inkstack_utils_absolute_path::normalize_windows_device_path(&canonical.to_string_lossy())
-                .unwrap();
+        let legacy = inkstack_utils_absolute_path::normalize_windows_device_path(
+            &canonical.to_string_lossy(),
+        )
+        .unwrap();
         for spelling in [
             canonical.to_string_lossy().into_owned(),
             legacy.replace('\\', "/"),
@@ -323,7 +324,8 @@ mod tests {
             },
             &[],
         );
-        record_added_marketplace_entry(inkstack_home.path(), "source", &configured_metadata).unwrap();
+        record_added_marketplace_entry(inkstack_home.path(), "source", &configured_metadata)
+            .unwrap();
         let canonical_source = source_root.canonicalize().unwrap();
         let request_metadata = MarketplaceInstallMetadata::from_source(
             &MarketplaceSource::Local {

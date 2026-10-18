@@ -805,7 +805,8 @@ pub(crate) async fn run_turn(
                         {
                             if matches!(
                                 err.details(),
-                                InkStackErrorDetails::Interrupted | InkStackErrorDetails::TurnAborted
+                                InkStackErrorDetails::Interrupted
+                                    | InkStackErrorDetails::TurnAborted
                             ) {
                                 return Err(err);
                             }

@@ -891,17 +891,18 @@ async fn remote_control_transport_manages_virtual_clients_and_routes_messages() 
         "non-initialize client messages should be ignored before connection creation"
     );
 
-    let initialize_message = JSONRPCMessage::Request(inkstack_app_server_protocol::JSONRPCRequest {
-        id: inkstack_app_server_protocol::RequestId::Integer(1),
-        method: "initialize".to_string(),
-        params: Some(json!({
-            "clientInfo": {
-                "name": "remote-test-client",
-                "version": "0.1.0"
-            }
-        })),
-        trace: None,
-    });
+    let initialize_message =
+        JSONRPCMessage::Request(inkstack_app_server_protocol::JSONRPCRequest {
+            id: inkstack_app_server_protocol::RequestId::Integer(1),
+            method: "initialize".to_string(),
+            params: Some(json!({
+                "clientInfo": {
+                    "name": "remote-test-client",
+                    "version": "0.1.0"
+                }
+            })),
+            trace: None,
+        });
     send_client_event(
         &mut websocket,
         ClientEnvelope {
@@ -1572,17 +1573,18 @@ async fn remote_control_transport_clears_outgoing_buffer_when_backend_acks() {
     .await;
 
     let client_id = ClientId("client-1".to_string());
-    let initialize_message = JSONRPCMessage::Request(inkstack_app_server_protocol::JSONRPCRequest {
-        id: inkstack_app_server_protocol::RequestId::Integer(1),
-        method: "initialize".to_string(),
-        params: Some(json!({
-            "clientInfo": {
-                "name": "remote-test-client",
-                "version": "0.1.0"
-            }
-        })),
-        trace: None,
-    });
+    let initialize_message =
+        JSONRPCMessage::Request(inkstack_app_server_protocol::JSONRPCRequest {
+            id: inkstack_app_server_protocol::RequestId::Integer(1),
+            method: "initialize".to_string(),
+            params: Some(json!({
+                "clientInfo": {
+                    "name": "remote-test-client",
+                    "version": "0.1.0"
+                }
+            })),
+            trace: None,
+        });
     send_client_event(
         &mut first_websocket,
         ClientEnvelope {

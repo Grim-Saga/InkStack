@@ -120,7 +120,9 @@ pub fn arg0_dispatch() -> Option<Arg0PathEntryGuard> {
                 }
             }
             None => {
-                eprintln!("Error: {INKSTACK_CORE_APPLY_PATCH_ARG1} requires a UTF-8 PATCH argument.");
+                eprintln!(
+                    "Error: {INKSTACK_CORE_APPLY_PATCH_ARG1} requires a UTF-8 PATCH argument."
+                );
                 1
             }
         };

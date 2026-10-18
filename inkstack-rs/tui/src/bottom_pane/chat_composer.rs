@@ -4201,7 +4201,8 @@ impl ChatComposer {
                 if !connector.is_accessible || !connector.is_enabled {
                     continue;
                 }
-                let display_name = inkstack_connectors::metadata::connector_display_label(connector);
+                let display_name =
+                    inkstack_connectors::metadata::connector_display_label(connector);
                 let description = Some(Self::connector_brief_description(connector));
                 let slug = inkstack_connectors::metadata::connector_mention_slug(connector);
                 let search_terms = vec![display_name.clone(), connector.id.clone(), slug.clone()];
@@ -7662,8 +7663,9 @@ mod tests {
             /*enhanced_keys_supported*/ false,
             |composer| {
                 let features = inkstack_features::Features::with_defaults();
-                composer
-                    .set_mentions_v2_enabled(features.enabled(inkstack_features::Feature::MentionsV2));
+                composer.set_mentions_v2_enabled(
+                    features.enabled(inkstack_features::Feature::MentionsV2),
+                );
                 composer.set_skill_mentions(Some(vec![
                     SkillMetadata {
                         name: "sample-tools:search".to_string(),

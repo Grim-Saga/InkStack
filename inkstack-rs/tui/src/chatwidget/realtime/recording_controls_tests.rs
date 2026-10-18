@@ -638,7 +638,9 @@ async fn compact_voice_meters_keep_real_speaker_history_when_the_microphone_is_m
     assert!(meters.contains("mic ▁▃▄▅▇█"));
     assert!(meters.contains("inkstack █▇▅▃▂▁"));
     assert_eq!(
-        live.lines().filter(|line| line.contains("inkstack")).count(),
+        live.lines()
+            .filter(|line| line.contains("inkstack"))
+            .count(),
         1
     );
 

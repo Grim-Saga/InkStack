@@ -771,11 +771,11 @@ async fn network_approval_uses_published_task_authority_within_same_turn(
             config.permissions.approval_policy = Constrained::allow_any(admitted_policy);
             config.approvals_reviewer = ApprovalsReviewer::AutoReview;
             config
-                    .permissions
-                    .set_permission_profile(
-                        inkstack_protocol::models::PermissionProfile::workspace_write(),
-                    )
-                    .expect("set managed permissions");
+                .permissions
+                .set_permission_profile(
+                    inkstack_protocol::models::PermissionProfile::workspace_write(),
+                )
+                .expect("set managed permissions");
         },
     )
     .await;
@@ -974,13 +974,15 @@ async fn sandbox_denied_retry_uses_the_action_policy_and_reviewer() {
         ) -> Result<String, ToolError> {
             self.attempts += 1;
             if self.attempts == 1 {
-                return Err(ToolError::InkStack(InkStackErr::Sandbox(SandboxErr::Denied {
-                    output: Box::new(ExecToolCallOutput {
-                        exit_code: 1,
-                        ..Default::default()
-                    }),
-                    network_policy_decision: None,
-                })));
+                return Err(ToolError::InkStack(InkStackErr::Sandbox(
+                    SandboxErr::Denied {
+                        output: Box::new(ExecToolCallOutput {
+                            exit_code: 1,
+                            ..Default::default()
+                        }),
+                        network_policy_decision: None,
+                    },
+                )));
             }
             Ok("sandbox-retry-succeeded".to_string())
         }
@@ -1265,7 +1267,8 @@ async fn guardian_subagent_does_not_inherit_parent_exec_policy_rules() {
         }
     );
 
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
     let models_manager = models_manager_with_provider(
         config.inkstack_home.to_path_buf(),
         auth_manager.clone(),

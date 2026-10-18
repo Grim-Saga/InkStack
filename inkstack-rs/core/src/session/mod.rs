@@ -1129,7 +1129,9 @@ impl SessionIo {
             residency_guard: None,
         })
         .await?;
-        reply_rx.await.unwrap_or(Err(InkStackErr::InternalAgentDied))
+        reply_rx
+            .await
+            .unwrap_or(Err(InkStackErr::InternalAgentDied))
     }
 
     pub(crate) async fn submit_recover_turn(
@@ -1155,7 +1157,9 @@ impl SessionIo {
             residency_guard: None,
         })
         .await?;
-        reply_rx.await.unwrap_or(Err(InkStackErr::InternalAgentDied))
+        reply_rx
+            .await
+            .unwrap_or(Err(InkStackErr::InternalAgentDied))
     }
 
     pub(crate) async fn shutdown_and_wait(&self) -> InkStackResult<()> {
@@ -2354,16 +2358,17 @@ impl Session {
                     warn!("user config path has no parent directory");
                     return;
                 };
-                let user_config = match inkstack_config::loader::resolve_relative_paths_in_config_toml(
-                    user_config,
-                    &config_dir,
-                ) {
-                    Ok(config) => config,
-                    Err(err) => {
-                        warn!("failed to resolve paths while reloading user config: {err}");
-                        return;
-                    }
-                };
+                let user_config =
+                    match inkstack_config::loader::resolve_relative_paths_in_config_toml(
+                        user_config,
+                        &config_dir,
+                    ) {
+                        Ok(config) => config,
+                        Err(err) => {
+                            warn!("failed to resolve paths while reloading user config: {err}");
+                            return;
+                        }
+                    };
                 reloaded_user_configs.push((config_toml_path, user_config));
             }
 
@@ -2398,7 +2403,11 @@ impl Session {
     }
 
     /// Record a terminal InkStackErr before the app-server completion notification is reduced.
-    pub(crate) fn track_turn_inkstack_error(&self, turn_context: &TurnContext, error: &InkStackErr) {
+    pub(crate) fn track_turn_inkstack_error(
+        &self,
+        turn_context: &TurnContext,
+        error: &InkStackErr,
+    ) {
         self.services
             .analytics_events_client
             .track_turn_inkstack_error(TurnInkStackErrorFact::from_inkstack_err(
@@ -2640,7 +2649,9 @@ impl Session {
     /// Delivers an event without creating a local rollout for a thread that has not materialized.
     pub(crate) async fn send_event_raw_without_materializing_rollout(&self, event: Event) {
         let persist = match self.current_rollout_path().await {
-            Ok(Some(path)) => inkstack_rollout::existing_rollout_path(&path).await.is_some(),
+            Ok(Some(path)) => inkstack_rollout::existing_rollout_path(&path)
+                .await
+                .is_some(),
             Ok(None) => true,
             Err(err) => {
                 warn!("failed to check whether thread persistence is materialized: {err}");
@@ -5288,10 +5299,12 @@ impl Session {
                 model_info,
                 vec![ResponseItemEnvelope {
                     item: response_item,
-                    metadata: metadata.acceptance_order.map(|order| InkStackHarnessMetadata {
-                        user_input_order: Some(order),
-                        ..Default::default()
-                    }),
+                    metadata: metadata
+                        .acceptance_order
+                        .map(|order| InkStackHarnessMetadata {
+                            user_input_order: Some(order),
+                            ..Default::default()
+                        }),
                 }],
             )
             .await;

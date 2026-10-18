@@ -67,19 +67,20 @@ pub(super) async fn background_server_check(config: &Config) -> DoctorCheck {
     );
     push_configured_updater(&mut details, &state_dir.join(SETTINGS_FILE_NAME));
 
-    let socket_path = match inkstack_app_server::app_server_control_socket_path(&config.inkstack_home) {
-        Ok(socket_path) => socket_path,
-        Err(err) => {
-            return DoctorCheck::new(
-                "app_server.status",
-                "app-server",
-                CheckStatus::Warning,
-                "background server socket path could not be resolved",
-            )
-            .details(details)
-            .detail(err.to_string());
-        }
-    };
+    let socket_path =
+        match inkstack_app_server::app_server_control_socket_path(&config.inkstack_home) {
+            Ok(socket_path) => socket_path,
+            Err(err) => {
+                return DoctorCheck::new(
+                    "app_server.status",
+                    "app-server",
+                    CheckStatus::Warning,
+                    "background server socket path could not be resolved",
+                )
+                .details(details)
+                .detail(err.to_string());
+            }
+        };
 
     details.push(format!("control socket: {}", socket_path.display()));
     let status = socket_status(socket_path.as_path()).await;
@@ -248,8 +249,9 @@ mod tests {
     }
 
     fn create_socket_placeholder(config: &Config) {
-        let socket_path = inkstack_app_server::app_server_control_socket_path(&config.inkstack_home)
-            .expect("socket path");
+        let socket_path =
+            inkstack_app_server::app_server_control_socket_path(&config.inkstack_home)
+                .expect("socket path");
         std::fs::create_dir_all(socket_path.parent().expect("socket parent"))
             .expect("create socket dir");
         std::fs::write(socket_path, "").expect("create socket placeholder");

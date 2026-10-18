@@ -1009,7 +1009,9 @@ async fn background_network_approval_uses_current_review_settings_and_original_e
                 turn_id: active_turn_id.clone(),
                 update: inkstack_protocol::protocol::TurnSettingsUpdate {
                     model: Some("guardian-parent-b".to_string()),
-                    effort: Some(Some(inkstack_protocol::openai_models::ReasoningEffort::Medium)),
+                    effort: Some(Some(
+                        inkstack_protocol::openai_models::ReasoningEffort::Medium,
+                    )),
                     ..Default::default()
                 },
                 reply,

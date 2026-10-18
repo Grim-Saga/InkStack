@@ -91,7 +91,10 @@ async fn retries_on_early_close() {
         .unwrap();
 
     // Wait until TurnComplete (should succeed after retry).
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = server.requests().await;
     assert_eq!(
@@ -157,8 +160,10 @@ async fn connection_failure_pauses_retry_budget_until_provider_is_reachable() ->
     };
     assert_eq!(stream_error.message, "Reconnecting... 1/1");
 
-    let EventMsg::TurnComplete(completed) =
-        wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await
+    let EventMsg::TurnComplete(completed) = wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await
     else {
         unreachable!("predicate guarantees a turn complete event");
     };

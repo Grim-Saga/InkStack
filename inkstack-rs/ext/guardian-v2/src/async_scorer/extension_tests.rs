@@ -178,9 +178,10 @@ async fn json_transcript_mode_reaches_classifier_instructions_and_evidence() -> 
             .iter()
             .filter(|item| item["role"] == "developer")
             .flat_map(|item| item["content"].as_array().into_iter().flatten())
-            .any(|part| part["text"].as_str().is_some_and(
-                |text| text.starts_with(inkstack_guardian_context::TRANSCRIPT_JSON_INSTRUCTIONS)
-            ))
+            .any(|part| part["text"]
+                .as_str()
+                .is_some_and(|text| text
+                    .starts_with(inkstack_guardian_context::TRANSCRIPT_JSON_INSTRUCTIONS)))
     );
     let record = input
         .iter()
@@ -217,7 +218,8 @@ async fn installed_extension_warms_connections_without_blocking_thread_start() -
     ];
     connections[0].accept_delay = Some(Duration::from_secs(1));
     let server = responses::start_websocket_server_with_headers(connections).await;
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
     let mut config = test.config.clone();
     config.model_provider = ModelProviderInfo::create_openai_provider(Some(format!(
         "http://{}/v1",
@@ -710,7 +712,8 @@ async fn computer_use_only_scores_cannot_approve_other_actions() -> Result<()> {
         .get::<GuardianV2ScoreProgress>()
         .expect("Guardian v2 should track score progress per thread");
     // The seeded low score belongs to the model selected above.
-    let authorization = ScoreAuthorization::current(&fixture.test.inkstack, &Default::default()).await;
+    let authorization =
+        ScoreAuthorization::current(&fixture.test.inkstack, &Default::default()).await;
     seed_cached_score(&progress, thread_store, /*index*/ 1, authorization);
     let cached = progress.inspect(/*call_id*/ None);
     let turn_store = ExtensionData::new("turn-1");
@@ -1002,8 +1005,9 @@ async fn sample_configured_conversation_history_with_delivery(
         builder
     };
     let mut builder = if code_mode {
-        builder
-            .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?)
+        builder.with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-code-mode-host",
+        )?)
     } else {
         builder
     };
@@ -1024,7 +1028,8 @@ async fn sample_configured_conversation_history_with_delivery(
         "http://{}/v1",
         server.uri().trim_start_matches("ws://")
     )));
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
     let mut config = test.config.clone();
     config.model_provider = provider_info;
     config.features.enable(Feature::GuardianV2)?;
@@ -2416,7 +2421,8 @@ async fn contributor_skips_required_models_in_standard_scope() -> Result<()> {
         "http://{}/v1",
         server.uri().trim_start_matches("ws://")
     )));
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
     let mut config = test.config.clone();
     config.model_provider = provider_info;
     let mut builder = ExtensionRegistryBuilder::new();
@@ -3254,7 +3260,8 @@ async fn assert_parent_compaction_reuse(parent_context_for_review: bool) -> Resu
         "http://{}/v1",
         server.uri().trim_start_matches("ws://")
     )));
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
     let mut config = test.config.clone();
     config.model_provider = provider_info;
     config.features.enable(Feature::GuardianV2)?;
@@ -3329,7 +3336,8 @@ async fn assert_parent_compaction_reuse(parent_context_for_review: bool) -> Resu
         retained,
         current: conversation_history,
         compaction_model_hash: parent_model.comp_hash.clone(),
-        retained_context: parent_context_for_review.then(inkstack_history::RetainedContext::default),
+        retained_context: parent_context_for_review
+            .then(inkstack_history::RetainedContext::default),
         review_context_revision,
     };
     thread_store.insert(parent_model);
@@ -3761,7 +3769,8 @@ async fn cached_score_publication_rejects_delayed_results_without_changing_cover
     let fixture = GuardianFailureFixture::new().await?;
     let store = fixture.test.inkstack.thread_extension_data();
     let progress = store.get::<GuardianV2ScoreProgress>().unwrap();
-    let authorization = ScoreAuthorization::current(&fixture.test.inkstack, &Default::default()).await;
+    let authorization =
+        ScoreAuthorization::current(&fixture.test.inkstack, &Default::default()).await;
     seed_cached_score(&progress, store, /*index*/ 1, authorization.clone());
     let score = cached_score(store).unwrap();
     observe_unscored_call(&progress, store);

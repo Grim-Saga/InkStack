@@ -29,9 +29,9 @@ impl RemoteControlAuth {
     pub(super) fn capture(manager: Arc<AuthManager>) -> (Self, bool) {
         loop {
             let owner = crate::ConnectionAuth::capture(&manager);
-            let authenticated = manager
-                .auth_cached()
-                .is_some_and(|auth| auth.uses_inkstack_backend() && auth.get_account_id().is_some());
+            let authenticated = manager.auth_cached().is_some_and(|auth| {
+                auth.uses_inkstack_backend() && auth.get_account_id().is_some()
+            });
             if owner.is_current() {
                 return (
                     Self {

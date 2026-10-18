@@ -54,9 +54,9 @@ impl Default for AgentTreeShutdownState {
 
 impl AgentTreeShutdownState {
     pub(crate) async fn wait(&self) -> InkStackResult<()> {
-        self.wait_detailed()
-            .await
-            .map_err(|_| InkStackErr::Fatal("agent tree shutdown did not complete cleanly".to_owned()))
+        self.wait_detailed().await.map_err(|_| {
+            InkStackErr::Fatal("agent tree shutdown did not complete cleanly".to_owned())
+        })
     }
 
     pub(crate) async fn wait_detailed(&self) -> Result<(), AgentTreeShutdownReport> {

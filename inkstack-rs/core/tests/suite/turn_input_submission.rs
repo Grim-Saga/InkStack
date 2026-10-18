@@ -528,7 +528,9 @@ async fn submit_user_message(
     inkstack: &inkstack_core::InkStackThread,
     text: &str,
 ) -> inkstack_protocol::error::Result<TurnInputSubmission> {
-    inkstack.start_or_steer_turn(user_message_request(text)).await
+    inkstack
+        .start_or_steer_turn(user_message_request(text))
+        .await
 }
 
 #[test_case(ModeKind::Default, ModeKind::Plan; "automatic input cannot enter Plan")]
@@ -648,7 +650,11 @@ async fn recover_turn_if_idle_preserves_id_and_resumes_plan_mode() {
         }
     );
     assert_eq!(
-        test.inkstack.config_snapshot().await.collaboration_mode.mode,
+        test.inkstack
+            .config_snapshot()
+            .await
+            .collaboration_mode
+            .mode,
         ModeKind::Plan
     );
 
@@ -955,7 +961,9 @@ async fn recovery_preserves_durable_turn_attribution(
     }
     let next_server = responses::start_mock_server().await;
     test = builder.restart(&next_server, &test).await?;
-    test.inkstack.restore_thread_settings(thread_settings).await?;
+    test.inkstack
+        .restore_thread_settings(thread_settings)
+        .await?;
     let response = responses::mount_sse_once(&next_server, responses::sse_completed("new")).await;
     let TurnInputSubmission::Started {
         turn_id: next_turn_id,

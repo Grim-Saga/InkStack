@@ -70,7 +70,10 @@ pub(super) fn project_config_warning(config: &Config) -> Option<String> {
     let mut disabled_folders = Vec::new();
 
     for layer in config.config_layer_stack.all_layers_low_to_high() {
-        let ConfigLayerSource::Project { dot_inkstack_folder } = &layer.name else {
+        let ConfigLayerSource::Project {
+            dot_inkstack_folder,
+        } = &layer.name
+        else {
             continue;
         };
         let Some(disabled_reason) = &layer.disabled_reason else {

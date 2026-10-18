@@ -495,7 +495,8 @@ fn inkstack_apps_server_config_forwards_thread_originator_header() {
 
 #[test]
 fn inkstack_apps_server_config_sets_product_sku_header() {
-    for (configured_product_sku, expected_product_sku) in [(None, "inkstack"), (Some("tpp"), "tpp")] {
+    for (configured_product_sku, expected_product_sku) in [(None, "inkstack"), (Some("tpp"), "tpp")]
+    {
         let config = inkstack_apps_mcp_server_config(
             "https://chatgpt.com",
             configured_product_sku,

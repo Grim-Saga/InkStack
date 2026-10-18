@@ -429,8 +429,10 @@ async fn run_mcp_permission_request_hook_test(outcome: PermissionRequestHookOutc
         ),
     }
 
-    let hook_inputs =
-        read_hook_inputs(test.inkstack_home_path(), "permission_request_hook_log.jsonl")?;
+    let hook_inputs = read_hook_inputs(
+        test.inkstack_home_path(),
+        "permission_request_hook_log.jsonl",
+    )?;
     assert_eq!(hook_inputs.len(), 1);
     assert_eq!(
         json!({

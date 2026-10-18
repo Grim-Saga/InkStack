@@ -1136,7 +1136,10 @@ timeout = 900
                 .enable(Feature::LoginShellPackagePath)
                 .expect("enable login shell package PATH");
         }
-        if matches!(scenario, PushedExecScenario::InkStackPathWithExplicitOverride) {
+        if matches!(
+            scenario,
+            PushedExecScenario::InkStackPathWithExplicitOverride
+        ) {
             config
                 .permissions
                 .shell_environment_policy
@@ -1676,7 +1679,10 @@ timeout = 900
             exec_command_begin_command,
             Some(expected.into_iter().map(str::to_string).collect())
         );
-        if matches!(scenario, PushedExecScenario::InkStackPathWithExplicitOverride) {
+        if matches!(
+            scenario,
+            PushedExecScenario::InkStackPathWithExplicitOverride
+        ) {
             assert_eq!(params["envPolicy"]["set"]["PATH"], explicit_path);
         }
     } else if matches!(scenario, PushedExecScenario::Complete)

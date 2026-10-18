@@ -238,7 +238,11 @@ async fn user_shell_command_honors_default_and_extended_deadlines() -> anyhow::R
 
         let completed = async {
             loop {
-                let event = fixture.inkstack.next_event().await.expect("read shell event");
+                let event = fixture
+                    .inkstack
+                    .next_event()
+                    .await
+                    .expect("read shell event");
                 if let EventMsg::ExecCommandEnd(end) = event.msg {
                     break end;
                 }
@@ -406,12 +410,13 @@ async fn user_shell_command_does_not_replace_active_turn() -> anyhow::Result<()>
 async fn user_shell_command_history_is_persisted_and_shared_with_model() -> anyhow::Result<()> {
     let server = responses::start_mock_server().await;
     // Disable it to ease command matching.
-    let mut builder = core_test_support::test_inkstack::test_inkstack().with_config(move |config| {
-        config
-            .features
-            .disable(Feature::ShellSnapshot)
-            .expect("test config should allow feature update");
-    });
+    let mut builder =
+        core_test_support::test_inkstack::test_inkstack().with_config(move |config| {
+            config
+                .features
+                .disable(Feature::ShellSnapshot)
+                .expect("test config should allow feature update");
+        });
     let test = builder.build(&server).await?;
 
     #[cfg(windows)]

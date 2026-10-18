@@ -1515,7 +1515,9 @@ impl ThreadRequestProcessor {
                     .unwrap_or(inkstack_app_server_protocol::ThreadStartSource::Startup)
                 {
                     inkstack_app_server_protocol::ThreadStartSource::Startup => InitialHistory::New,
-                    inkstack_app_server_protocol::ThreadStartSource::Clear => InitialHistory::Cleared,
+                    inkstack_app_server_protocol::ThreadStartSource::Clear => {
+                        InitialHistory::Cleared
+                    }
                 },
                 history_mode,
                 thread_source,
@@ -1547,7 +1549,9 @@ impl ThreadRequestProcessor {
                     .await;
                 remove_pending_thread_metadata(thread_store.as_ref(), reserved_thread_id).await;
                 return Err(match err.details() {
-                    InkStackErrorDetails::InvalidRequest(message) => invalid_request(message.clone()),
+                    InkStackErrorDetails::InvalidRequest(message) => {
+                        invalid_request(message.clone())
+                    }
                     InkStackErrorDetails::UnsupportedOperation(message) => {
                         method_not_found(message.clone())
                     }
@@ -4234,8 +4238,12 @@ impl ThreadRequestProcessor {
                             .await;
                     }
                     let state = self.thread_state_manager.thread_state(thread_id).await;
-                    self.ensure_listener_task_running(thread_id, Arc::clone(&inkstack_thread), state)
-                        .await?;
+                    self.ensure_listener_task_running(
+                        thread_id,
+                        Arc::clone(&inkstack_thread),
+                        state,
+                    )
+                    .await?;
                     return Ok(ControlFlow::Break(()));
                 };
                 let request_id = request_id.clone();
@@ -4448,7 +4456,9 @@ impl ThreadRequestProcessor {
             }
             Err(err) => {
                 let error = match err.details() {
-                    InkStackErrorDetails::InvalidRequest(message) => invalid_request(message.clone()),
+                    InkStackErrorDetails::InvalidRequest(message) => {
+                        invalid_request(message.clone())
+                    }
                     _ => internal_error(format!("error resuming thread: {err}")),
                 };
                 return Err(error);
@@ -5511,7 +5521,9 @@ impl ThreadRequestProcessor {
                     InkStackErrorDetails::Io(_) | InkStackErrorDetails::Json(_) => {
                         invalid_request(format!("failed to load thread {source_thread_id}: {err}"))
                     }
-                    InkStackErrorDetails::InvalidRequest(message) => invalid_request(message.clone()),
+                    InkStackErrorDetails::InvalidRequest(message) => {
+                        invalid_request(message.clone())
+                    }
                     _ => internal_error(format!("error forking thread: {err}")),
                 });
             }

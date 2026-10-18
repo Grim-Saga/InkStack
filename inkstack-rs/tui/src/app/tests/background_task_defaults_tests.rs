@@ -55,7 +55,8 @@ fn trust_launch_folder(app: &mut App) {
         "projects".into(),
         TomlValue::try_from(projects).expect("trust fixture"),
     ));
-    app.config.active_project.trust_level = Some(inkstack_protocol::config_types::TrustLevel::Trusted);
+    app.config.active_project.trust_level =
+        Some(inkstack_protocol::config_types::TrustLevel::Trusted);
 }
 
 #[tokio::test]

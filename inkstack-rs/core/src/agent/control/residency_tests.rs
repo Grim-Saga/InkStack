@@ -69,7 +69,9 @@ async fn residency_slot_reservation_unloads_oldest_idle_v2_agent() {
         .expect("second resident slot should evict the first idle agent");
     match manager.get_thread(first.thread_id).await {
         Err(err) => match err.details() {
-            InkStackErrorDetails::ThreadNotFound(thread_id) => assert_eq!(*thread_id, first.thread_id),
+            InkStackErrorDetails::ThreadNotFound(thread_id) => {
+                assert_eq!(*thread_id, first.thread_id)
+            }
             _ => panic!("expected evicted thread to be missing, got {err:?}"),
         },
         Ok(_) => panic!("expected evicted thread to be missing"),
@@ -131,7 +133,9 @@ async fn interrupted_v2_agent_is_lost_after_residency_eviction() {
         .expect("second resident slot should evict the first interrupted idle agent");
     match manager.get_thread(first.thread_id).await {
         Err(err) => match err.details() {
-            InkStackErrorDetails::ThreadNotFound(thread_id) => assert_eq!(*thread_id, first.thread_id),
+            InkStackErrorDetails::ThreadNotFound(thread_id) => {
+                assert_eq!(*thread_id, first.thread_id)
+            }
             _ => panic!("expected evicted thread to be missing, got {err:?}"),
         },
         Ok(_) => panic!("expected evicted thread to be missing"),
@@ -154,7 +158,9 @@ async fn interrupted_v2_agent_is_lost_after_residency_eviction() {
     assert!(manager.get_thread(second.thread_id).await.is_ok());
     match manager.get_thread(first.thread_id).await {
         Err(err) => match err.details() {
-            InkStackErrorDetails::ThreadNotFound(thread_id) => assert_eq!(*thread_id, first.thread_id),
+            InkStackErrorDetails::ThreadNotFound(thread_id) => {
+                assert_eq!(*thread_id, first.thread_id)
+            }
             _ => panic!("expected evicted thread to be missing, got {err:?}"),
         },
         Ok(_) => panic!("expected evicted thread to be missing"),

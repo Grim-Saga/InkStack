@@ -452,7 +452,9 @@ fn assert_pre_sampling_switch_compaction_requests(
     );
 }
 
-async fn assert_compaction_uses_turn_lifecycle_id(inkstack: &std::sync::Arc<inkstack_core::InkStackThread>) {
+async fn assert_compaction_uses_turn_lifecycle_id(
+    inkstack: &std::sync::Arc<inkstack_core::InkStackThread>,
+) {
     let mut turn_started_id = None;
     let mut turn_completed_id = None;
     let mut compact_started_id = None;
@@ -851,7 +853,11 @@ async fn manual_pre_compact_block_decision_does_not_block_compaction() {
         "unsupported PreCompact block output should not prevent the compact request"
     );
 
-    let hook_inputs = read_hook_inputs(&test.inkstack_home_path().join("pre_compact_block_log.jsonl"));
+    let hook_inputs = read_hook_inputs(
+        &test
+            .inkstack_home_path()
+            .join("pre_compact_block_log.jsonl"),
+    );
     assert_eq!(hook_inputs.len(), 1);
     let input = &hook_inputs[0];
     assert_eq!(input["hook_event_name"], "PreCompact");
@@ -909,8 +915,11 @@ async fn compact_hooks_respect_matchers_and_post_runs_after_compaction() {
         "auto matcher should not run for manual compaction"
     );
 
-    let hook_inputs =
-        read_hook_inputs(&test.inkstack_home_path().join("post_compact_manual_log.jsonl"));
+    let hook_inputs = read_hook_inputs(
+        &test
+            .inkstack_home_path()
+            .join("post_compact_manual_log.jsonl"),
+    );
     assert_eq!(hook_inputs.len(), 1);
     let input = &hook_inputs[0];
     assert_eq!(input["hook_event_name"], "PostCompact");
@@ -1338,7 +1347,11 @@ async fn failed_compaction_preserves_history_after_restart() -> Result<()> {
     let test = builder.build_with_auto_env(&server).await?;
     test.submit_turn("inspect the original state").await?;
     assert_eq!(initial.requests().len(), 2);
-    let original_usage = test.inkstack.token_usage_info().await.expect("original usage");
+    let original_usage = test
+        .inkstack
+        .token_usage_info()
+        .await
+        .expect("original usage");
 
     let failed_compaction = mount_sse_once(
         &server,
@@ -1612,8 +1625,8 @@ async fn manual_compact_emits_context_compaction_items() {
         Some(expected_raw_items.clone())
     );
 
-    let rollout =
-        fs::read_to_string(test.inkstack.rollout_path().expect("rollout path")).expect("read rollout");
+    let rollout = fs::read_to_string(test.inkstack.rollout_path().expect("rollout path"))
+        .expect("read rollout");
     let persisted_output = rollout
         .lines()
         .map(|line| {
@@ -3538,7 +3551,10 @@ async fn manual_remote_compact_advice_respects_retry_limit(max_retries: u64) {
         .await
         .expect("build inkstack");
 
-    test.inkstack.submit(Op::Compact).await.expect("run /compact");
+    test.inkstack
+        .submit(Op::Compact)
+        .await
+        .expect("run /compact");
     let mut errors = Vec::new();
     let mut reconnect_messages = Vec::new();
     loop {

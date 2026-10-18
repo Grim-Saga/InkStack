@@ -198,7 +198,10 @@ async fn request_user_input_round_trip_for_mode(mode: ModeKind) -> anyhow::Resul
         .await?;
 
     wait_for_event(&inkstack, |event| matches!(event, EventMsg::TokenCount(_))).await;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let req = second_mock.single_request();
     let output_text = call_output(&req, call_id);
@@ -398,7 +401,10 @@ where
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let req = second_mock.single_request();
     let (output, success) = call_output_content_and_success(&req, &call_id);

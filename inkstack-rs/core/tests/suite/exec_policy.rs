@@ -210,7 +210,11 @@ prefix_rule(pattern=["git", "status"], decision="allow")
     let migrated_policy_path = migrated.inkstack_home_path().join("rules/default.rules");
     assert_eq!(fs::read_to_string(&migrated_policy_path)?, MIGRATED_POLICY);
     assert_eq!(
-        fs::read_to_string(migrated.inkstack_home_path().join(MIGRATION_MARKER_FILENAME))?,
+        fs::read_to_string(
+            migrated
+                .inkstack_home_path()
+                .join(MIGRATION_MARKER_FILENAME)
+        )?,
         "v1\n"
     );
 

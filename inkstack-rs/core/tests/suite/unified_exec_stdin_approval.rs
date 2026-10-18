@@ -205,30 +205,31 @@ async fn stdin_reviews_escalated_terminal_with_denied_reads_before_delivering_in
     skip_if_target_windows!(Ok(()), "uses a POSIX interactive shell");
     skip_if_no_network!(Ok(()));
     skip_if_sandbox!(Ok(()));
-    let harness = TestInkStackHarness::with_auto_env_builder(test_inkstack().with_config(|config| {
-        config.features.enable(Feature::WriteStdinApproval).unwrap();
-        config
-            .features
-            .enable(Feature::ExecPermissionApprovals)
-            .unwrap();
-        config.features.enable(Feature::UnifiedExec).unwrap();
-        config.permissions.approval_policy = Constrained::allow_any(AskForApproval::OnRequest);
-        let mut file_system = PermissionProfile::read_only().file_system_sandbox_policy();
-        file_system.entries.push(FileSystemSandboxEntry::new(
-            FileSystemPath::GlobPattern {
-                pattern: "**/secret.env".into(),
-            },
-            FileSystemAccessMode::Deny,
-        ));
-        config
-            .permissions
-            .set_permission_profile(PermissionProfile::from_runtime_permissions(
-                &file_system,
-                NetworkSandboxPolicy::Restricted,
-            ))
-            .unwrap();
-    }))
-    .await?;
+    let harness =
+        TestInkStackHarness::with_auto_env_builder(test_inkstack().with_config(|config| {
+            config.features.enable(Feature::WriteStdinApproval).unwrap();
+            config
+                .features
+                .enable(Feature::ExecPermissionApprovals)
+                .unwrap();
+            config.features.enable(Feature::UnifiedExec).unwrap();
+            config.permissions.approval_policy = Constrained::allow_any(AskForApproval::OnRequest);
+            let mut file_system = PermissionProfile::read_only().file_system_sandbox_policy();
+            file_system.entries.push(FileSystemSandboxEntry::new(
+                FileSystemPath::GlobPattern {
+                    pattern: "**/secret.env".into(),
+                },
+                FileSystemAccessMode::Deny,
+            ));
+            config
+                .permissions
+                .set_permission_profile(PermissionProfile::from_runtime_permissions(
+                    &file_system,
+                    NetworkSandboxPolicy::Restricted,
+                ))
+                .unwrap();
+        }))
+        .await?;
     let inkstack = &harness.test().inkstack;
     harness.write_file("secret.env", "secret").await?;
     let _open = mount_function_call_agent_response(
@@ -327,8 +328,10 @@ async fn strict_stdin_review_reaches_guardian_with_sandbox_prompts_disabled() ->
         fn decide<'a>(
             &'a self,
             input: &'a inkstack_extension_api::ApprovalDecisionInput<'_>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Option<inkstack_extension_api::ApprovalDecision>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Option<inkstack_extension_api::ApprovalDecision>,
+        > {
             self.0
                 .lock()
                 .unwrap()

@@ -801,7 +801,12 @@ async fn unified_exec_wait_after_final_agent_message_snapshot() {
     let (mut chat, mut rx, _op_rx) = make_chatwidget_manual(/*model_override*/ None).await;
     handle_turn_started(&mut chat, "turn-1");
 
-    begin_unified_exec_startup(&mut chat, "call-wait", "proc-1", "cargo test -p inkstack-core");
+    begin_unified_exec_startup(
+        &mut chat,
+        "call-wait",
+        "proc-1",
+        "cargo test -p inkstack-core",
+    );
     terminal_interaction(&mut chat, "call-wait-stdin", "proc-1", "");
 
     complete_assistant_message(&mut chat, "msg-1", "Final response.", /*phase*/ None);

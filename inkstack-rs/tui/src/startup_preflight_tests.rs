@@ -54,7 +54,9 @@ fn startup_delays_composer_for_homes_without_authentication_state() -> std::io::
         &inkstack_home,
         Ok(system_config_path.clone()),
         || Ok(false),
-        |name| { (name == inkstack_login::INKSTACK_ACCESS_TOKEN_ENV_VAR).then(|| "access-token".into()) },
+        |name| {
+            (name == inkstack_login::INKSTACK_ACCESS_TOKEN_ENV_VAR).then(|| "access-token".into())
+        },
     ));
     // An OpenAI API-key env var does not suppress the first-login composer:
     // the TUI still requires an explicit sign-in.

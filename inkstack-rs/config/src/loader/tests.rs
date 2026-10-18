@@ -734,8 +734,11 @@ sandbox_mode = "danger-full-access"
 "#,
     )
     .expect("write default legacy managed config");
-    std::fs::write(inkstack_home.join(CONFIG_TOML_FILE), r#"model = "user-model""#)
-        .expect("write user config");
+    std::fs::write(
+        inkstack_home.join(CONFIG_TOML_FILE),
+        r#"model = "user-model""#,
+    )
+    .expect("write user config");
 
     let mut overrides = LoaderOverrides::without_managed_config_for_tests();
     overrides.managed_config_path = None;

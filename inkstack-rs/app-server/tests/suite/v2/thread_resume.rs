@@ -179,7 +179,11 @@ async fn thread_resume_paginated_model_context_preserves_original_metadata() -> 
         Some("mock_provider"),
         /*git_info*/ None,
     )?;
-    let path = rollout_path(inkstack_home.path(), "2025-01-05T12-00-00", &conversation_id);
+    let path = rollout_path(
+        inkstack_home.path(),
+        "2025-01-05T12-00-00",
+        &conversation_id,
+    );
     let settings: ThreadSettingsAppliedEvent = serde_json::from_value(json!({
         "thread_id": conversation_id,
         "thread_settings": {
@@ -2611,7 +2615,11 @@ async fn thread_resume_returns_rollout_history() -> Result<()> {
         },
     }))?;
     append_rollout_item_to_path(
-        &rollout_path(inkstack_home.path(), "2025-01-05T12-00-00", &conversation_id),
+        &rollout_path(
+            inkstack_home.path(),
+            "2025-01-05T12-00-00",
+            &conversation_id,
+        ),
         &RolloutItem::EventMsg(EventMsg::ThreadSettingsApplied(settings)),
     )
     .await?;
@@ -4018,7 +4026,11 @@ async fn cold_paginated_resume_restores_usage_without_loading_turns() -> Result<
         Some("mock_provider"),
         /*git_info*/ None,
     )?;
-    let path = rollout_path(inkstack_home.path(), "2025-01-05T12-00-00", &conversation_id);
+    let path = rollout_path(
+        inkstack_home.path(),
+        "2025-01-05T12-00-00",
+        &conversation_id,
+    );
     let canonical_turn_id = "persisted-token-usage-turn";
     append_rollout_item_to_path(
         &path,
@@ -4837,7 +4849,10 @@ async fn thread_resume_checkpoints_settings_without_advancing_recency() -> Resul
         .await?;
     let ThreadResumeResponse { cwd, .. } =
         timeout(DEFAULT_READ_TIMEOUT, mcp.read_response(resume_id)).await??;
-    assert_eq!(cwd, AbsolutePathBuf::from_absolute_path(inkstack_home.path())?);
+    assert_eq!(
+        cwd,
+        AbsolutePathBuf::from_absolute_path(inkstack_home.path())?
+    );
 
     let turn_id = mcp
         .send_turn_start_request(TurnStartParams {
@@ -5197,7 +5212,11 @@ async fn thread_resume_rejects_mismatched_path_for_running_thread_id() -> Result
     }
 
     let stale_thread_id = Uuid::new_v4().to_string();
-    let stale_path = rollout_path(inkstack_home.path(), "2025-01-01T00-00-00", &stale_thread_id);
+    let stale_path = rollout_path(
+        inkstack_home.path(),
+        "2025-01-01T00-00-00",
+        &stale_thread_id,
+    );
     std::fs::create_dir_all(stale_path.parent().expect("stale path parent"))?;
     let thread_uuid = Uuid::parse_str(&stale_thread_id)?;
     let mut stale_file = std::fs::File::create(&stale_path)?;

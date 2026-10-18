@@ -505,7 +505,10 @@ fn collab_is_legacy_alias_for_multi_agent() {
 #[test]
 fn inkstack_hooks_is_legacy_alias_for_hooks() {
     assert_eq!(feature_for_key("hooks"), Some(Feature::InkStackHooks));
-    assert_eq!(feature_for_key("inkstack_hooks"), Some(Feature::InkStackHooks));
+    assert_eq!(
+        feature_for_key("inkstack_hooks"),
+        Some(Feature::InkStackHooks)
+    );
 }
 
 #[test]

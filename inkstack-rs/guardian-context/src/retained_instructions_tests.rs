@@ -305,7 +305,9 @@ impl crate::SectionHistory for RetainedTranscript {
     fn retained_context(&self) -> Option<&RetainedContext> {
         Some(&self.retained)
     }
-    fn items(&self) -> Box<dyn Iterator<Item = &inkstack_protocol::models::ResponseItem> + Send + '_> {
+    fn items(
+        &self,
+    ) -> Box<dyn Iterator<Item = &inkstack_protocol::models::ResponseItem> + Send + '_> {
         Box::new(self.messages.iter().map(|envelope| &envelope.item))
     }
     fn items_with_sources(

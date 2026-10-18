@@ -121,7 +121,10 @@ async fn sqlite_rollout_path_can_load_history_for_thread(
     path: &std::path::Path,
     thread_id: inkstack_protocol::ThreadId,
 ) -> bool {
-    if inkstack_rollout::existing_rollout_path(path).await.is_none() {
+    if inkstack_rollout::existing_rollout_path(path)
+        .await
+        .is_none()
+    {
         return false;
     }
     // SQLite metadata can outlive a moved/recreated rollout path. When history is

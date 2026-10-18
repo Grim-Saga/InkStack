@@ -49,7 +49,10 @@ impl GuardianReviewError {
     }
 
     #[cfg(test)]
-    pub(crate) fn session_with_error_info(err: anyhow::Error, error_info: InkStackErrorInfo) -> Self {
+    pub(crate) fn session_with_error_info(
+        err: anyhow::Error,
+        error_info: InkStackErrorInfo,
+    ) -> Self {
         Self::Session {
             message: err.to_string(),
             error_info: Some(error_info),

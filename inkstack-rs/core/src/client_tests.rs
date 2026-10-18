@@ -187,8 +187,9 @@ async fn workspace_routed_http_rejects_redirects_without_a_routing_header() {
             .respond_with(ResponseTemplate::new(/*status*/ 200))
             .mount(&destination)
             .await;
-        let manager =
-            AuthManager::from_auth_for_testing(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
+        let manager = AuthManager::from_auth_for_testing(
+            InkStackAuth::create_dummy_chatgpt_auth_for_testing(),
+        );
         let resolver: Arc<dyn WorkspaceRoutingResolver> = Arc::new(Routing(routing_override));
         manager.set_workspace_routing_resolver(Arc::downgrade(&resolver));
         let mut client = test_model_client(SessionSource::Exec);
@@ -306,7 +307,8 @@ impl ModelProvider for SetupRefreshProvider {
         inkstack_home: PathBuf,
         config_model_catalog: Option<ModelsResponse>,
     ) -> SharedModelsManager {
-        self.inner.models_manager(inkstack_home, config_model_catalog)
+        self.inner
+            .models_manager(inkstack_home, config_model_catalog)
     }
 }
 
@@ -1775,7 +1777,8 @@ impl ModelProvider for TestRecoveryProvider {
 
     fn recover_from_unauthorized(
         &self,
-    ) -> ModelProviderFuture<'_, inkstack_protocol::error::Result<ProviderUnauthorizedRecovery>> {
+    ) -> ModelProviderFuture<'_, inkstack_protocol::error::Result<ProviderUnauthorizedRecovery>>
+    {
         self.attempts.fetch_add(1, Ordering::Relaxed);
         Box::pin(async move {
             if self.should_fail {
@@ -1793,7 +1796,8 @@ impl ModelProvider for TestRecoveryProvider {
         inkstack_home: PathBuf,
         config_model_catalog: Option<ModelsResponse>,
     ) -> SharedModelsManager {
-        self.inner.models_manager(inkstack_home, config_model_catalog)
+        self.inner
+            .models_manager(inkstack_home, config_model_catalog)
     }
 }
 

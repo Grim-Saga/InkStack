@@ -50,7 +50,10 @@ const WINDOWS_MANAGED_HTTP_PROXY_PORTS: RangeInclusive<u16> = 3128..=3159;
 const WINDOWS_MANAGED_SOCKS_PROXY_PORTS: RangeInclusive<u16> = 8081..=8112;
 
 #[derive(Debug, Clone, Parser)]
-#[command(name = "inkstack-network-proxy", about = "InkStack network sandbox proxy")]
+#[command(
+    name = "inkstack-network-proxy",
+    about = "InkStack network sandbox proxy"
+)]
 pub struct Args {}
 
 #[derive(Debug)]
@@ -758,7 +761,9 @@ fn set_env_keys(env: &mut HashMap<String, String>, keys: &[&str], value: &str) {
 
 #[cfg(target_os = "macos")]
 fn inkstack_proxy_git_ssh_command(socks_addr: SocketAddr) -> String {
-    format!("{INKSTACK_PROXY_GIT_SSH_COMMAND_PREFIX}{socks_addr}{INKSTACK_PROXY_GIT_SSH_COMMAND_SUFFIX}")
+    format!(
+        "{INKSTACK_PROXY_GIT_SSH_COMMAND_PREFIX}{socks_addr}{INKSTACK_PROXY_GIT_SSH_COMMAND_SUFFIX}"
+    )
 }
 
 #[cfg(target_os = "macos")]

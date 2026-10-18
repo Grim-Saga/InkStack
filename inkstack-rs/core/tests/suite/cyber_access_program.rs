@@ -37,7 +37,8 @@ async fn recover_turn_restores_cyber_access_program_without_making_it_sticky() -
             body: responses::sse(vec![responses::ev_completed("resp-initial")]),
         }]])
         .await;
-    let mut builder = test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
+    let mut builder =
+        test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
     let initial = builder.build_with_streaming_server(&initial_server).await?;
     let TurnInputSubmission::Started { turn_id, .. } = initial
         .inkstack

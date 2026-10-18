@@ -54,7 +54,10 @@ impl RolloutCompressionTrigger {
 /// The worker is fire-and-forget: failures are logged, startup is not blocked,
 /// and a run marker under `inkstack_home` prevents overlapping or too-frequent
 /// compression runs from the same local store.
-pub fn spawn_rollout_compression_worker(inkstack_home: PathBuf, trigger: RolloutCompressionTrigger) {
+pub fn spawn_rollout_compression_worker(
+    inkstack_home: PathBuf,
+    trigger: RolloutCompressionTrigger,
+) {
     worker::spawn(inkstack_home, trigger)
 }
 
@@ -1139,7 +1142,8 @@ mod metrics {
     use super::RolloutCompressionTrigger;
     use std::time::Duration;
 
-    const FILE_COMPRESSED_BYTES_HISTOGRAM: &str = "inkstack.rollout_compression.file.compressed_bytes";
+    const FILE_COMPRESSED_BYTES_HISTOGRAM: &str =
+        "inkstack.rollout_compression.file.compressed_bytes";
     pub(super) const FILE_COUNTER: &str = "inkstack.rollout_compression.file";
     const FILE_DURATION_HISTOGRAM: &str = "inkstack.rollout_compression.file.duration_ms";
     const FILE_SOURCE_BYTES_HISTOGRAM: &str = "inkstack.rollout_compression.file.source_bytes";

@@ -1286,7 +1286,9 @@ fn validate_auth_restrictions(
     };
     if matches!(
         auth,
-        InkStackAuth::ApiKey(_) | InkStackAuth::BedrockApiKey(_) | InkStackAuth::BedrockAccessKeys(_)
+        InkStackAuth::ApiKey(_)
+            | InkStackAuth::BedrockApiKey(_)
+            | InkStackAuth::BedrockAccessKeys(_)
     ) {
         return Ok(());
     }
@@ -1651,7 +1653,8 @@ async fn request_chatgpt_token_refresh(
     {
         Ok(response) => Ok(response),
         Err(OAuthError::Rejected(rejection)) => {
-            if let Some(inkstack_http_client::HttpError::Policy(denied)) = rejection.body_read_error {
+            if let Some(inkstack_http_client::HttpError::Policy(denied)) = rejection.body_read_error
+            {
                 return Err(denied.into());
             }
             let status = rejection.status;
@@ -2181,7 +2184,10 @@ impl AuthManager {
         .await
     }
 
-    async fn new_from_auth_config(auth_config: AuthConfig, enable_openai_api_key_env: bool) -> Self {
+    async fn new_from_auth_config(
+        auth_config: AuthConfig,
+        enable_openai_api_key_env: bool,
+    ) -> Self {
         let managed_auth = auth_config
             .load_auth(enable_openai_api_key_env)
             .await
@@ -2263,7 +2269,10 @@ impl AuthManager {
     }
 
     /// Create an AuthManager with a specific InkStackAuth and inkstack home, for testing only.
-    pub fn from_auth_for_testing_with_home(auth: InkStackAuth, inkstack_home: PathBuf) -> Arc<Self> {
+    pub fn from_auth_for_testing_with_home(
+        auth: InkStackAuth,
+        inkstack_home: PathBuf,
+    ) -> Arc<Self> {
         let cached = CachedAuth {
             auth: Some(auth),
             permanent_refresh_failure: None,
@@ -2426,7 +2435,9 @@ impl AuthManager {
         let Some(auth) = self.auth().await else {
             return Ok(None);
         };
-        if policy == AgentIdentityAuthPolicy::ChatGptAuth && matches!(auth, InkStackAuth::Chatgpt(_)) {
+        if policy == AgentIdentityAuthPolicy::ChatGptAuth
+            && matches!(auth, InkStackAuth::Chatgpt(_))
+        {
             let _bootstrap_permit = self
                 .agent_identity_lock
                 .acquire()

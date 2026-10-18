@@ -88,7 +88,8 @@ fn expected_workspace_routing(
     Some(inkstack_app_server_protocol::WorkspaceRouting {
         chatgpt_account_id: account_id.to_string(),
         backend_origin: "https://chatgpt.com".to_string(),
-        account_routing_override: inkstack_app_server_protocol::AccountRoutingOverride::NoConstraint,
+        account_routing_override:
+            inkstack_app_server_protocol::AccountRoutingOverride::NoConstraint,
     })
 }
 
@@ -321,7 +322,10 @@ async fn logout_account_removes_auth_and_notifies(enterprise_cleanup_failure: bo
             toml::to_string(&config)?,
         )?;
         // Fail credential cleanup before touching the platform keyring.
-        std::fs::write(inkstack_home.path().join("mcp-oauth-locks"), "not a directory")?;
+        std::fs::write(
+            inkstack_home.path().join("mcp-oauth-locks"),
+            "not a directory",
+        )?;
     } else {
         login_with_api_key(
             inkstack_home.path(),
@@ -426,11 +430,12 @@ async fn startup_enforces_requirements_at_the_correct_load_stage(
     let require_mxc = "[windows]\nrequire_mxc = true\n";
     let fetch_cloud = local_mxc || cloud_mxc;
     if fetch_cloud {
-        let bundle = inkstack_config::test_support::CloudConfigBundleFixture::enterprise_requirement(
-            if cloud_mxc { require_mxc } else { "" },
-        )
-        .add_enterprise_config(format!("[features]\nprefer_mxc = {local_mxc}\n"))
-        .into_bundle();
+        let bundle =
+            inkstack_config::test_support::CloudConfigBundleFixture::enterprise_requirement(
+                if cloud_mxc { require_mxc } else { "" },
+            )
+            .add_enterprise_config(format!("[features]\nprefer_mxc = {local_mxc}\n"))
+            .into_bundle();
         Mock::given(path("/backend-api/wham/config/bundle"))
             .respond_with(ResponseTemplate::new(200).set_body_json(bundle))
             .expect(1..)
@@ -470,7 +475,8 @@ async fn startup_enforces_requirements_at_the_correct_load_stage(
         .build()
         .await?;
 
-    if cfg!(windows) && fetch_cloud && (!local_mxc || !inkstack_sandboxing::windows_mxc_available()) {
+    if cfg!(windows) && fetch_cloud && (!local_mxc || !inkstack_sandboxing::windows_mxc_available())
+    {
         assert!(
             !timeout(DEFAULT_READ_TIMEOUT, mcp.wait_for_exit())
                 .await??
@@ -1386,7 +1392,10 @@ async fn login_amazon_bedrock_replaces_primary_auth_and_persists_provider(
             timeout(DEFAULT_READ_TIMEOUT, mcp.read_response(request_id)).await??;
         assert_eq!(response, LogoutAccountResponse {});
         assert_eq!(load_file_auth(inkstack_home.path())?, None);
-        assert_eq!(read_config_toml(inkstack_home.path())?, expected_logout_config);
+        assert_eq!(
+            read_config_toml(inkstack_home.path())?,
+            expected_logout_config
+        );
         assert!(!inkstack_home.path().join(".env").exists());
         assert_account_updated(&mut mcp, /*auth_mode*/ None).await?;
         assert_eq!(
@@ -2207,7 +2216,8 @@ async fn login_account_chatgpt_device_code_succeeds_and_notifies() -> Result<()>
         },
     )?;
     write_models_cache(inkstack_home.path()).await?;
-    let collector = super::auth_storage_originator::configure_collector(inkstack_home.path()).await?;
+    let collector =
+        super::auth_storage_originator::configure_collector(inkstack_home.path()).await?;
 
     mock_device_code_usercode(&mock_server, /*interval_seconds*/ 0).await;
     mock_device_code_token_success(&mock_server).await;
@@ -2748,7 +2758,8 @@ async fn login_account_chatgpt_uses_oauth_overrides() -> Result<()> {
         .await?;
 
     let request = mcp.send_list_models_request(Default::default()).await?;
-    let initial: inkstack_app_server_protocol::ModelListResponse = mcp.read_response(request).await?;
+    let initial: inkstack_app_server_protocol::ModelListResponse =
+        mcp.read_response(request).await?;
     assert!(
         !initial
             .data
@@ -2836,7 +2847,8 @@ async fn login_account_chatgpt_uses_oauth_overrides() -> Result<()> {
     );
     // Listing immediately after asynchronous login completion must use the new cloud provider.
     let request = mcp.send_list_models_request(Default::default()).await?;
-    let models: inkstack_app_server_protocol::ModelListResponse = mcp.read_response(request).await?;
+    let models: inkstack_app_server_protocol::ModelListResponse =
+        mcp.read_response(request).await?;
     assert_eq!(
         models
             .data

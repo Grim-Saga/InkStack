@@ -246,7 +246,8 @@ impl InkStackAppsStartupReconnect {
                     Err(error) => {
                         state.last_error = Some(error.clone());
                         state.consecutive_failures = state.consecutive_failures.saturating_add(1);
-                        let retry_after = inkstack_apps_reconnect_backoff(state.consecutive_failures);
+                        let retry_after =
+                            inkstack_apps_reconnect_backoff(state.consecutive_failures);
                         state.retry_not_before = Some(TokioInstant::now() + retry_after);
                         warn!(
                             error = %error,
@@ -1129,7 +1130,8 @@ pub(crate) fn mcp_initialize_request_params(
     }
     InitializeRequestParams::new(
         capabilities,
-        Implementation::new("inkstack-mcp-client", env!("CARGO_PKG_VERSION")).with_title("InkStack"),
+        Implementation::new("inkstack-mcp-client", env!("CARGO_PKG_VERSION"))
+            .with_title("InkStack"),
     )
     .with_protocol_version(ProtocolVersion::V_2025_06_18)
 }

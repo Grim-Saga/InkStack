@@ -13,7 +13,8 @@ async fn authenticated_plugin_migration_uses_chatgpt_curated_marketplace() {
     fs::create_dir_all(&external_agent_home).expect("create external agent home");
     fs::create_dir_all(curated_root.join(".agents/plugins"))
         .expect("create curated marketplace directory");
-    fs::create_dir_all(plugin_root.join(".inkstack-plugin")).expect("create curated plugin directory");
+    fs::create_dir_all(plugin_root.join(".inkstack-plugin"))
+        .expect("create curated plugin directory");
     fs::write(
         external_agent_home.join("settings.json"),
         r#"{"enabledPlugins":{"sample@openai-curated":true}}"#,
@@ -646,7 +647,10 @@ async fn detect_repo_skips_plugins_even_with_installed_marketplace() {
     let external_agent_home = root.path().join(EXTERNAL_AGENT_DIR);
     let inkstack_home = root.path().join(".inkstack");
     let repo_root = root.path().join("repo");
-    let marketplace_root = inkstack_home.join(".tmp").join("marketplaces").join("debug");
+    let marketplace_root = inkstack_home
+        .join(".tmp")
+        .join("marketplaces")
+        .join("debug");
     fs::create_dir_all(repo_root.join(".git")).expect("create git dir");
     fs::create_dir_all(repo_root.join(EXTERNAL_AGENT_DIR)).expect("create repo external agent dir");
     fs::create_dir_all(marketplace_root.join(".agents").join("plugins"))

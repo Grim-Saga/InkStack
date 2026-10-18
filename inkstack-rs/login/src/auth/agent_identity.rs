@@ -26,7 +26,8 @@ use crate::outbound_proxy::AuthRouteConfig;
 use super::storage::AgentIdentityAuthRecord;
 
 pub(super) const MAX_AGENT_IDENTITY_BOOTSTRAP_ATTEMPTS: usize = 3;
-const INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL_ENV_VAR: &str = "INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL";
+const INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL_ENV_VAR: &str =
+    "INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL";
 const INKSTACK_AGENT_IDENTITY_JWKS_BASE_URL_ENV_VAR: &str = "INKSTACK_AGENT_IDENTITY_JWKS_BASE_URL";
 
 fn agent_identity_endpoint_override(environment_variable: &str) -> Option<String> {

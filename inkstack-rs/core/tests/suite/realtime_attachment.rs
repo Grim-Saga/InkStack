@@ -159,7 +159,10 @@ async fn start(
     test: &TestInkStack,
     session: &str,
     url: &str,
-) -> Result<(String, oneshot::Receiver<inkstack_protocol::error::Result<()>>)> {
+) -> Result<(
+    String,
+    oneshot::Receiver<inkstack_protocol::error::Result<()>>,
+)> {
     let params = params(session, url);
     let (reply, result) = oneshot::channel();
     let id = test

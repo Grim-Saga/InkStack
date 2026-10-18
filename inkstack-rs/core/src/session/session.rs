@@ -1052,8 +1052,12 @@ impl Session {
                     InitialHistory::New | InitialHistory::Cleared | InitialHistory::Forked(_) => {
                         let auth = persistence_auth.await;
                         let params = CreateThreadParams {
-                            creator_user_id: auth.as_ref().and_then(InkStackAuth::get_chatgpt_user_id),
-                            creator_account_id: auth.as_ref().and_then(InkStackAuth::get_account_id),
+                            creator_user_id: auth
+                                .as_ref()
+                                .and_then(InkStackAuth::get_chatgpt_user_id),
+                            creator_account_id: auth
+                                .as_ref()
+                                .and_then(InkStackAuth::get_account_id),
                             session_id,
                             thread_id,
                             extra_config: config.extra_config.clone(),

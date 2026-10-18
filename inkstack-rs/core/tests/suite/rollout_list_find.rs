@@ -23,7 +23,11 @@ use uuid::Uuid;
 
 /// Create <subdir>/YYYY/MM/DD and write a minimal rollout file containing the
 /// provided conversation id in the SessionMeta line. Returns the absolute path.
-fn write_minimal_rollout_with_id_in_subdir(inkstack_home: &Path, subdir: &str, id: Uuid) -> PathBuf {
+fn write_minimal_rollout_with_id_in_subdir(
+    inkstack_home: &Path,
+    subdir: &str,
+    id: Uuid,
+) -> PathBuf {
     let sessions = inkstack_home.join(subdir).join("2024/01/01");
     std::fs::create_dir_all(&sessions).unwrap();
 

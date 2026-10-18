@@ -36,9 +36,10 @@ async fn apps_enabled(config: &Config) -> anyhow::Result<bool> {
     let auth_manager =
         AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager.auth().await;
-    Ok(config
-        .features
-        .apps_enabled_for_auth(auth.as_ref().is_some_and(InkStackAuth::uses_inkstack_backend)))
+    Ok(config.features.apps_enabled_for_auth(
+        auth.as_ref()
+            .is_some_and(InkStackAuth::uses_inkstack_backend),
+    ))
 }
 
 async fn connector_auth(config: &Config) -> anyhow::Result<InkStackAuth> {

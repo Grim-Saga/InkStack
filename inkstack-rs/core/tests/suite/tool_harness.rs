@@ -123,7 +123,10 @@ async fn exec_command_tool_executes_command_and_streams_output() -> anyhow::Resu
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let req = second_mock.single_request();
     let (output_text, _) = call_output(&req, call_id);
@@ -522,7 +525,10 @@ async fn apply_patch_reports_parse_diagnostics() -> anyhow::Result<()> {
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let req = second_mock.single_request();
     let (output_text, success_flag) = custom_call_output(&req, call_id);

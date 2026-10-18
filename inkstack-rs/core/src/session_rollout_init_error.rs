@@ -12,7 +12,9 @@ pub(crate) fn map_session_init_error(err: &anyhow::Error, inkstack_home: &Path) 
     {
         match store_error {
             ThreadStoreError::Unsupported { operation } => {
-                return InkStackErr::UnsupportedOperation(format!("{operation} is not supported yet"));
+                return InkStackErr::UnsupportedOperation(format!(
+                    "{operation} is not supported yet"
+                ));
             }
             ThreadStoreError::Conflict { message } => {
                 return InkStackErr::InvalidRequest(message.clone());

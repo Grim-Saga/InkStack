@@ -43,7 +43,8 @@ impl LocalAgentControl {
             Err(err)
                 if matches!(
                     err.details(),
-                    InkStackErrorDetails::ThreadNotFound(_) | InkStackErrorDetails::InternalAgentDied
+                    InkStackErrorDetails::ThreadNotFound(_)
+                        | InkStackErrorDetails::InternalAgentDied
                 ) => {}
             Err(err) => return Err(err),
         }

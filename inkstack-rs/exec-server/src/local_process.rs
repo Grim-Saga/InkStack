@@ -419,18 +419,19 @@ impl LocalProcess {
             .collect::<Vec<_>>();
         #[cfg(not(unix))]
         let inherited_fds = Vec::new();
-        let spawned_result = inkstack_sandboxing::spawn_process(inkstack_sandboxing::SpawnRequest {
-            command: &prepared.command,
-            cwd: prepared.cwd.as_path(),
-            env: &prepared.env,
-            arg0: &prepared.arg0,
-            sandbox: prepared.sandbox,
-            windows_sandbox: prepared.windows_sandbox_spawn_request(),
-            tty: params.tty,
-            stdin_open: params.tty || params.pipe_stdin,
-            inherited_fds: inkstack_utils_pty::ChildFds::Attached(&inherited_fds),
-        })
-        .await;
+        let spawned_result =
+            inkstack_sandboxing::spawn_process(inkstack_sandboxing::SpawnRequest {
+                command: &prepared.command,
+                cwd: prepared.cwd.as_path(),
+                env: &prepared.env,
+                arg0: &prepared.arg0,
+                sandbox: prepared.sandbox,
+                windows_sandbox: prepared.windows_sandbox_spawn_request(),
+                tty: params.tty,
+                stdin_open: params.tty || params.pipe_stdin,
+                inherited_fds: inkstack_utils_pty::ChildFds::Attached(&inherited_fds),
+            })
+            .await;
         #[cfg(unix)]
         drop(snapshot_file);
         let spawned = match spawned_result {
@@ -768,7 +769,10 @@ pub(crate) fn apply_exec_metadata(
         env.retain(|name, _| !name.eq_ignore_ascii_case(INKSTACK_THREAD_ID_ENV_VAR));
         match metadata.thread_id {
             Some(thread_id) => {
-                env.insert(INKSTACK_THREAD_ID_ENV_VAR.to_string(), thread_id.to_string());
+                env.insert(
+                    INKSTACK_THREAD_ID_ENV_VAR.to_string(),
+                    thread_id.to_string(),
+                );
             }
             None => {
                 env.remove(INKSTACK_THREAD_ID_ENV_VAR);

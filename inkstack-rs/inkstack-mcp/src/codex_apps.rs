@@ -10,7 +10,10 @@ mod file_params;
 pub use file_params::declared_openai_file_input_param_names;
 pub(crate) use file_params::prepare_openai_file_params_for_model;
 
-pub(crate) fn normalize_inkstack_apps_tool_title(connector_name: Option<&str>, value: &str) -> String {
+pub(crate) fn normalize_inkstack_apps_tool_title(
+    connector_name: Option<&str>,
+    value: &str,
+) -> String {
     let Some(connector_name) = connector_name
         .map(str::trim)
         .filter(|name| !name.is_empty())

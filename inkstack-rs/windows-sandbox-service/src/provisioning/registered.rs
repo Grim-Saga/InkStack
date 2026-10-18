@@ -39,7 +39,8 @@ pub(super) fn run(
     ) -> Result<InstallationRecord>,
 ) -> Result<SandboxProvisioningResponse> {
     // Keep admission, account provisioning and package registration in one transaction.
-    let _setup_lock = inkstack_windows_sandbox::acquire_sandbox_setup_lock(/*timeout_ms*/ 5_000)?;
+    let _setup_lock =
+        inkstack_windows_sandbox::acquire_sandbox_setup_lock(/*timeout_ms*/ 5_000)?;
     ensure!(
         inkstack_windows_sandbox::resolve_sid(inkstack_windows_sandbox::SANDBOX_USERS_GROUP)
             .is_ok_and(|current| current == sandbox_sid),

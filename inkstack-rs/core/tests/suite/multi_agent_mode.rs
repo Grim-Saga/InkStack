@@ -590,7 +590,12 @@ async fn leaving_ultra_after_cold_resume_emits_explicit_mode() -> Result<()> {
         .with_config(configure_ultra);
     let resumed = resume_builder.restart(&server, &initial).await?;
     drop(initial);
-    submit_turn(&resumed.inkstack, "after resume", Some(ReasoningEffort::High)).await?;
+    submit_turn(
+        &resumed.inkstack,
+        "after resume",
+        Some(ReasoningEffort::High),
+    )
+    .await?;
 
     let requests = responses.requests();
     assert_eq!(

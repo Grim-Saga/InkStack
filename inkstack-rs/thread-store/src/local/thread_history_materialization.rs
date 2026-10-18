@@ -120,7 +120,8 @@ fn read_projection_steps_sync(
     subagent_history_start_ordinal: Option<u64>,
     is_cancelled: impl Fn() -> bool,
 ) -> ThreadStoreResult<(Vec<RolloutProjectionStep>, u64)> {
-    let mut file = match inkstack_rollout::open_rollout_seekable_reader(rollout_path, &is_cancelled) {
+    let mut file = match inkstack_rollout::open_rollout_seekable_reader(rollout_path, &is_cancelled)
+    {
         Ok(file) => file,
         Err(err) if err.kind() == std::io::ErrorKind::NotFound && start_offset == 0 => {
             return Ok((Vec::new(), 0));

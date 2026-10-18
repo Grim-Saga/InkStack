@@ -581,7 +581,8 @@ async fn world_state_extension_metrics_follow_turn_model_switch() {
             .with_model(next_model.to_string(), &session.services.models_manager)
             .await,
     );
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.prompt_contributor(Arc::new(WorldStateMetricsRecorder));
     session.services.extensions = Arc::new(builder.build());
 
@@ -1954,21 +1955,22 @@ async fn reload_user_config_layer_refreshes_hooks() -> anyhow::Result<()> {
         inkstack_protocol::protocol::HookTrustStatus::Untrusted
     );
 
-    let trusted_user_config: inkstack_config::TomlValue = serde_json::from_value(serde_json::json!({
-        "hooks": {
-            "SessionStart": [{
-                "hooks": [{
-                    "type": "command",
-                    "command": "python3 /tmp/user.py",
+    let trusted_user_config: inkstack_config::TomlValue =
+        serde_json::from_value(serde_json::json!({
+            "hooks": {
+                "SessionStart": [{
+                    "hooks": [{
+                        "type": "command",
+                        "command": "python3 /tmp/user.py",
+                    }],
                 }],
-            }],
-            "state": {
-                hook_list.hooks[0].key.clone(): {
-                    "trusted_hash": hook_list.hooks[0].current_hash.clone(),
+                "state": {
+                    hook_list.hooks[0].key.clone(): {
+                        "trusted_hash": hook_list.hooks[0].current_hash.clone(),
+                    },
                 },
             },
-        },
-    }))?;
+        }))?;
     std::fs::write(&config_toml_path, toml::to_string(&trusted_user_config)?)?;
 
     session.reload_user_config_layer().await;
@@ -2017,21 +2019,22 @@ async fn refresh_runtime_config_refreshes_hooks() -> anyhow::Result<()> {
         inkstack_config::version_for_toml(&identity)
     };
     let hook_key = format!("{}:session_start:0:0", config_toml_path.display());
-    let trusted_user_config: inkstack_config::TomlValue = serde_json::from_value(serde_json::json!({
-        "hooks": {
-            "SessionStart": [{
-                "hooks": [{
-                    "type": "command",
-                    "command": "python3 /tmp/user.py",
+    let trusted_user_config: inkstack_config::TomlValue =
+        serde_json::from_value(serde_json::json!({
+            "hooks": {
+                "SessionStart": [{
+                    "hooks": [{
+                        "type": "command",
+                        "command": "python3 /tmp/user.py",
+                    }],
                 }],
-            }],
-            "state": {
-                hook_key: {
-                    "trusted_hash": trusted_hash,
+                "state": {
+                    hook_key: {
+                        "trusted_hash": trusted_hash,
+                    },
                 },
             },
-        },
-    }))?;
+        }))?;
     std::fs::write(&config_toml_path, toml::to_string(&trusted_user_config)?)?;
 
     let request = inkstack_hooks::SessionStartRequest {
@@ -3019,10 +3022,11 @@ async fn annotated_history_uses_explicit_model_without_a_step(
         else {
             unreachable!("fixture is a tool output");
         };
-        output.body = FunctionCallOutputBody::Text(inkstack_utils_output_truncation::truncate_text(
-            &text,
-            inkstack_utils_output_truncation::TruncationPolicy::Tokens(expected_budget),
-        ));
+        output.body =
+            FunctionCallOutputBody::Text(inkstack_utils_output_truncation::truncate_text(
+                &text,
+                inkstack_utils_output_truncation::TruncationPolicy::Tokens(expected_budget),
+            ));
     }
     assert_eq!(session.clone_history().await.annotated_items(), &expected);
 }
@@ -3586,7 +3590,8 @@ async fn record_token_usage_info_notifies_extension_contributors(
 
     let (mut session, turn_context) = make_session_and_context().await;
     let records = Arc::new(std::sync::Mutex::new(Vec::new()));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.token_usage_contributor(Arc::new(TokenUsageRecorder {
         records: Arc::clone(&records),
     }));
@@ -3738,7 +3743,8 @@ async fn turn_start_lifecycle_exposes_turn_metadata_and_token_baseline() {
 
     let (mut session, turn_context) = make_session_and_context().await;
     let records = Arc::new(std::sync::Mutex::new(Vec::new()));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.turn_lifecycle_contributor(Arc::new(TurnStartRecorder {
         records: Arc::clone(&records),
     }));
@@ -3848,7 +3854,8 @@ async fn turn_error_lifecycle_exposes_error_and_stores() {
 
     let (mut session, turn_context) = make_session_and_context().await;
     let records = Arc::new(std::sync::Mutex::new(Vec::new()));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.turn_lifecycle_contributor(Arc::new(TurnErrorRecorder {
         records: Arc::clone(&records),
     }));
@@ -3945,7 +3952,8 @@ async fn config_change_contributor_observes_effective_config_changes() {
 
     let (mut session, _turn_context) = make_session_and_context().await;
     let records = Arc::new(std::sync::Mutex::new(Vec::new()));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.config_contributor(Arc::new(ConfigRecorder {
         records: Arc::clone(&records),
     }));
@@ -4304,7 +4312,10 @@ async fn fork_startup_context_then_first_turn_diff_snapshot() -> anyhow::Result<
             },
         ]))
         .await?;
-    wait_for_event(&initial.inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&initial.inkstack, |ev| {
+        matches!(ev, EventMsg::TurnComplete(_))
+    })
+    .await;
     // Forking reads the persisted rollout JSONL, so force the completed source turn to disk
     // before snapshotting from it.
     initial.inkstack.ensure_rollout_materialized().await;
@@ -6771,7 +6782,8 @@ pub(crate) async fn make_session_and_context() -> (Session, TurnContext) {
     let config = build_test_config(inkstack_home.path()).await;
     let config = Arc::new(config);
     let thread_id = ThreadId::default();
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
     let models_manager = models_manager_with_provider(
         config.inkstack_home.to_path_buf(),
         auth_manager.clone(),
@@ -6880,7 +6892,9 @@ pub(crate) async fn make_session_and_context() -> (Session, TurnContext) {
         /*bundled_skills_enabled*/ true,
     ));
     let network_approval = Arc::new(NetworkApprovalService::default());
-    let mcp_runtime = Arc::new(inkstack_mcp::McpRuntime::empty(config.prefix_mcp_tool_names()));
+    let mcp_runtime = Arc::new(inkstack_mcp::McpRuntime::empty(
+        config.prefix_mcp_tool_names(),
+    ));
     let executed_tool_calls =
         crate::state::ExecutedToolCalls::new(&config.features, &InitialHistory::Forked(Vec::new()));
     let (hooks, async_hook_results) = Hooks::new(
@@ -7095,7 +7109,8 @@ async fn make_session_with_config_and_rx(
     let mut config = build_test_config(inkstack_home.path()).await;
     mutator(&mut config);
     let config = Arc::new(config);
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
     let models_manager = models_manager_with_provider(
         config.inkstack_home.to_path_buf(),
         auth_manager.clone(),
@@ -7230,7 +7245,8 @@ async fn make_session_with_history_source_and_agent_control_and_rx(
     let mut config = build_test_config(inkstack_home.path()).await;
     config.ephemeral = true;
     let config = Arc::new(config);
-    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
+    let auth_manager =
+        AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("Test API Key"));
     let models_manager = models_manager_with_provider(
         config.inkstack_home.to_path_buf(),
         auth_manager.clone(),
@@ -8637,7 +8653,8 @@ async fn spawn_task_turn_span_inherits_dispatch_trace_context() {
         .expect("turn task should capture the current span trace context");
     let submission_context =
         inkstack_otel::context_from_w3c_trace_context(&submission_trace).expect("submission");
-    let task_context = inkstack_otel::context_from_w3c_trace_context(&task_trace).expect("task trace");
+    let task_context =
+        inkstack_otel::context_from_w3c_trace_context(&task_trace).expect("task trace");
 
     assert_eq!(
         task_context.span().span_context().trace_id(),
@@ -8755,7 +8772,9 @@ async fn submission_loop_channel_close_runs_full_thread_teardown() {
         expected_thread_id: ThreadId,
     }
 
-    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config> for ThreadStopRecorder {
+    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config>
+        for ThreadStopRecorder
+    {
         fn on_thread_stop<'a>(
             &'a self,
             input: inkstack_extension_api::ThreadStopInput<'a>,
@@ -8814,7 +8833,8 @@ async fn submission_loop_channel_close_runs_full_thread_teardown() {
     session.services.thread_store = thread_store;
     session.services.live_thread = Some(live_thread);
     let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.thread_lifecycle_contributor(Arc::new(ThreadStopRecorder {
         calls: Arc::clone(&calls),
         expected_thread_id: session.thread_id,
@@ -8853,7 +8873,9 @@ async fn submission_loop_channel_close_aborts_active_turn_before_thread_stop_lif
         expected_turn_id: String,
     }
 
-    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config> for LifecycleRecorder {
+    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config>
+        for LifecycleRecorder
+    {
         fn on_thread_stop<'a>(
             &'a self,
             input: inkstack_extension_api::ThreadStopInput<'a>,
@@ -8898,7 +8920,8 @@ async fn submission_loop_channel_close_aborts_active_turn_before_thread_stop_lif
         expected_thread_id: session.thread_id,
         expected_turn_id: turn_context.sub_id.clone(),
     });
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.thread_lifecycle_contributor(recorder.clone());
     builder.turn_lifecycle_contributor(recorder);
     session.services.extensions = Arc::new(builder.build());
@@ -9039,7 +9062,8 @@ where
     let state_db = None;
     let config = Arc::new(config);
     let thread_id = ThreadId::default();
-    let auth_manager = AuthManager::from_auth_for_testing_with_home(auth, inkstack_home.to_path_buf());
+    let auth_manager =
+        AuthManager::from_auth_for_testing_with_home(auth, inkstack_home.to_path_buf());
     let models_manager = models_manager_with_provider(
         config.inkstack_home.to_path_buf(),
         auth_manager.clone(),
@@ -9147,7 +9171,9 @@ where
         /*bundled_skills_enabled*/ true,
     ));
     let network_approval = Arc::new(NetworkApprovalService::default());
-    let mcp_runtime = Arc::new(inkstack_mcp::McpRuntime::empty(config.prefix_mcp_tool_names()));
+    let mcp_runtime = Arc::new(inkstack_mcp::McpRuntime::empty(
+        config.prefix_mcp_tool_names(),
+    ));
     let executed_tool_calls =
         crate::state::ExecutedToolCalls::new(&config.features, &InitialHistory::Forked(Vec::new()));
     let (hooks, async_hook_results) = Hooks::new(
@@ -9684,7 +9710,10 @@ async fn mcp_elicitation_reviewer_uses_active_reviewer_and_latest_runtime_policy
                 meta: Some(rmcp::model::RequestMetaObject::from(
                     serde_json::Map::from_iter([
                         ("inkstack_approval_kind".to_string(), json!("mcp_tool_call")),
-                        ("inkstack_request_type".to_string(), json!("approval_request")),
+                        (
+                            "inkstack_request_type".to_string(),
+                            json!("approval_request"),
+                        ),
                         ("tool_name".to_string(), json!("access_browser_origin")),
                     ]),
                 )),
@@ -9987,14 +10016,15 @@ async fn capability_roots_require_turn_environment_selection() {
 #[tokio::test]
 async fn conflicting_ready_environment_root_ids_keep_first_location() {
     let (session, turn_context) = make_session_and_context().await;
-    let selected_root =
-        |environment_id: &str, path: &str| inkstack_protocol::capabilities::SelectedCapabilityRoot {
+    let selected_root = |environment_id: &str, path: &str| {
+        inkstack_protocol::capabilities::SelectedCapabilityRoot {
             id: "shared-root".to_string(),
             location: inkstack_protocol::capabilities::CapabilityRootLocation::Environment {
                 environment_id: environment_id.to_string(),
                 path: PathUri::parse(path).expect("root URI"),
             },
-        };
+        }
+    };
     let selected_roots = [
         selected_root("executor-a", "file:///plugins/a"),
         selected_root("executor-b", "file:///plugins/b"),
@@ -10734,7 +10764,11 @@ impl inkstack_extension_api::ContextContributor for PromptExtensionTestContribut
         _session_store: &'a inkstack_extension_api::ExtensionData,
         thread_store: &'a inkstack_extension_api::ExtensionData,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Vec<inkstack_extension_api::PromptFragment>> + Send + 'a>,
+        Box<
+            dyn std::future::Future<Output = Vec<inkstack_extension_api::PromptFragment>>
+                + Send
+                + 'a,
+        >,
     > {
         Box::pin(async move {
             thread_store
@@ -10743,7 +10777,9 @@ impl inkstack_extension_api::ContextContributor for PromptExtensionTestContribut
                 .then(|| {
                     inkstack_extension_api::PromptFragment::developer_policy(
                         "prompt extension enabled",
-                        inkstack_extension_api::ContentItemKind("test.prompt_extension".to_string()),
+                        inkstack_extension_api::ContentItemKind(
+                            "test.prompt_extension".to_string(),
+                        ),
                     )
                 })
                 .into_iter()
@@ -10764,7 +10800,11 @@ impl inkstack_extension_api::ContextContributor for TurnContextExtensionTestCont
         &'a self,
         input: inkstack_extension_api::TurnContextContributionInput<'a>,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Vec<inkstack_extension_api::PromptFragment>> + Send + 'a>,
+        Box<
+            dyn std::future::Future<Output = Vec<inkstack_extension_api::PromptFragment>>
+                + Send
+                + 'a,
+        >,
     > {
         Box::pin(async move {
             let Some(state) = input.turn_store.get::<TurnContextExtensionTestState>() else {
@@ -11393,10 +11433,11 @@ async fn build_initial_context_uses_retained_step_after_model_change() {
         let messages = model_info.model_messages.as_mut().unwrap();
         messages.instructions_template = Some("A instructions".to_string());
     });
-    session.state.lock().await.base_instructions_provenance =
-        Some(inkstack_protocol::models::BaseInstructionsProvenance::Model {
+    session.state.lock().await.base_instructions_provenance = Some(
+        inkstack_protocol::models::BaseInstructionsProvenance::Model {
             model: "base-model".to_string(),
-        });
+        },
+    );
     session
         .set_previous_turn_settings(Some(PreviousTurnSettings {
             model: "base-model".to_string(),
@@ -12208,7 +12249,9 @@ async fn interrupting_compaction_fallback_retains_last_known_step_context() {
 async fn extension_interrupt_emits_thread_idle() {
     struct ThreadIdleRecorder(async_channel::Sender<()>);
 
-    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config> for ThreadIdleRecorder {
+    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config>
+        for ThreadIdleRecorder
+    {
         fn on_thread_idle<'a>(
             &'a self,
             _input: inkstack_extension_api::ThreadIdleInput<'a>,
@@ -12221,7 +12264,8 @@ async fn extension_interrupt_emits_thread_idle() {
 
     let (mut session, turn_context) = make_session_and_context().await;
     let (idle_tx, idle_rx) = async_channel::bounded(1);
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.thread_lifecycle_contributor(Arc::new(ThreadIdleRecorder(idle_tx)));
     session.services.extensions = Arc::new(builder.build());
 
@@ -12643,7 +12687,9 @@ async fn task_finish_emits_thread_idle_lifecycle_after_active_turn_clears() {
         expected_thread_id: ThreadId,
     }
 
-    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config> for ThreadIdleRecorder {
+    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config>
+        for ThreadIdleRecorder
+    {
         fn on_thread_idle<'a>(
             &'a self,
             input: inkstack_extension_api::ThreadIdleInput<'a>,
@@ -12662,7 +12708,8 @@ async fn task_finish_emits_thread_idle_lifecycle_after_active_turn_clears() {
     let (mut session, turn_context) = make_session_and_context().await;
     let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
     let (idle_tx, idle_rx) = async_channel::bounded(1);
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.thread_lifecycle_contributor(Arc::new(ThreadIdleRecorder {
         calls: Arc::clone(&calls),
         idle_tx,
@@ -12689,7 +12736,9 @@ async fn thread_idle_lifecycle_waits_for_trigger_turn_mailbox_work() {
         calls: Arc<std::sync::atomic::AtomicUsize>,
     }
 
-    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config> for ThreadIdleRecorder {
+    impl inkstack_extension_api::ThreadLifecycleContributor<crate::config::Config>
+        for ThreadIdleRecorder
+    {
         fn on_thread_idle<'a>(
             &'a self,
             _input: inkstack_extension_api::ThreadIdleInput<'a>,
@@ -12702,7 +12751,8 @@ async fn thread_idle_lifecycle_waits_for_trigger_turn_mailbox_work() {
 
     let (mut session, _turn_context) = make_session_and_context().await;
     let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
-    let mut builder = inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
+    let mut builder =
+        inkstack_extension_api::ExtensionRegistryBuilder::<crate::config::Config>::new();
     builder.thread_lifecycle_contributor(Arc::new(ThreadIdleRecorder {
         calls: Arc::clone(&calls),
     }));
@@ -13087,7 +13137,9 @@ async fn tool_calls_reopen_mailbox_delivery_for_current_turn() {
     let mut ctx = HandleOutputCtx {
         sess: Arc::clone(&sess),
         step_context: StepContext::for_test(Arc::clone(&tc)),
-        turn_store: Arc::new(inkstack_extension_api::ExtensionData::new(tc.sub_id.clone())),
+        turn_store: Arc::new(inkstack_extension_api::ExtensionData::new(
+            tc.sub_id.clone(),
+        )),
         tool_runtime: test_tool_runtime(Arc::clone(&sess), Arc::clone(&tc)),
         cancellation_token: CancellationToken::new(),
     };

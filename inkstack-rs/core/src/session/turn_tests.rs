@@ -48,7 +48,9 @@ fn post_sampling_token_estimate_is_disabled_by_always_on_sinks() {
     let feedback = inkstack_feedback::InkStackFeedback::new();
     let subscriber = tracing_subscriber::registry()
         .with(feedback.logger_layer())
-        .with(tracing_subscriber::fmt::layer().with_filter(inkstack_state::log_db::default_filter()));
+        .with(
+            tracing_subscriber::fmt::layer().with_filter(inkstack_state::log_db::default_filter()),
+        );
 
     static METADATA: tracing::Metadata<'static> = tracing::metadata! {
         name: "post sampling token estimate filter probe",
@@ -96,17 +98,18 @@ async fn plan_mode_uses_contributed_turn_item_for_last_agent_message() {
 
 #[test]
 fn realtime_user_verification_notice_excludes_request_payload() {
-    let event = EventMsg::ElicitationRequest(inkstack_protocol::approvals::ElicitationRequestEvent {
-        turn_id: None,
-        server_name: "private-server-name".to_string(),
-        id: inkstack_protocol::mcp::RequestId::String("private-request-id".to_string()),
-        request: inkstack_protocol::approvals::ElicitationRequest::UserVerification {
-            meta: None,
-            title: "private-title".to_string(),
-            description: "private-description".to_string(),
-            challenge: "private-challenge".to_string(),
-        },
-    });
+    let event =
+        EventMsg::ElicitationRequest(inkstack_protocol::approvals::ElicitationRequestEvent {
+            turn_id: None,
+            server_name: "private-server-name".to_string(),
+            id: inkstack_protocol::mcp::RequestId::String("private-request-id".to_string()),
+            request: inkstack_protocol::approvals::ElicitationRequest::UserVerification {
+                meta: None,
+                title: "private-title".to_string(),
+                description: "private-description".to_string(),
+                challenge: "private-challenge".to_string(),
+            },
+        });
     assert_eq!(
         realtime_text_for_event(&event),
         Some(RealtimeEventText::Handoff(

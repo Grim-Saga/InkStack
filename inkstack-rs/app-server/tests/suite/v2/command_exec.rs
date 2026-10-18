@@ -212,7 +212,10 @@ async fn command_exec_apply_patch_preserves_line_endings_by_default() -> Result<
     let mut mcp = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())
         .without_auto_env()
-        .with_env_overrides(&[(INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR, Some("1"))])
+        .with_env_overrides(&[(
+            INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR,
+            Some("1"),
+        )])
         .build_initialized_with_timeout(DEFAULT_READ_TIMEOUT)
         .await?;
 

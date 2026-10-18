@@ -24,7 +24,8 @@ use tracing::instrument;
 use tracing::trace;
 
 const MULTIPART_BOUNDARY: &str = "inkstack-realtime-call-boundary";
-const MULTIPART_CONTENT_TYPE: &str = "multipart/form-data; boundary=inkstack-realtime-call-boundary";
+const MULTIPART_CONTENT_TYPE: &str =
+    "multipart/form-data; boundary=inkstack-realtime-call-boundary";
 
 pub struct RealtimeCallClient<T: HttpTransport> {
     session: EndpointSession<T>,

@@ -452,7 +452,10 @@ async fn conversation_start_audio_text_close_round_trip() -> Result<()> {
     ));
 
     test.inkstack.ensure_rollout_materialized().await;
-    let history = test.inkstack.load_history(/*include_archived*/ false).await?;
+    let history = test
+        .inkstack
+        .load_history(/*include_archived*/ false)
+        .await?;
     assert!(
         !history
             .items
@@ -872,7 +875,10 @@ async fn conversation_webrtc_frameless_chatgpt_sends_codex_headers_to_backend(
         test.thread_manager.start_thread(options).await?
     };
     let inkstack = &conversation.thread;
-    assert_eq!(inkstack.config_snapshot().await.thread_source, thread_source);
+    assert_eq!(
+        inkstack.config_snapshot().await.thread_source,
+        thread_source
+    );
     let requested_realtime_session_id = Uuid::new_v4().to_string();
     let voice_session_id = "voice-session-test".to_string();
 
@@ -2317,7 +2323,10 @@ async fn assert_transport_close_tail_flush(
     .await;
     assert_eq!(closed.reason.as_deref(), Some("transport_closed"));
     // Closed must be a history barrier, including when there is no active turn.
-    let history = test.inkstack.load_history(/*include_archived*/ false).await?;
+    let history = test
+        .inkstack
+        .load_history(/*include_archived*/ false)
+        .await?;
     let tails = history.items.iter().filter(|item| {
         matches!(item, RolloutItem::ResponseItem(ResponseItemEnvelope { item: ResponseItem::Message { role, content, .. }, .. })
             if role == "user" && content.iter().any(|item| matches!(item,
@@ -2391,7 +2400,8 @@ async fn conversation_start_preflight_failure_emits_realtime_error_only() -> Res
     skip_if_no_network!(Ok(()));
 
     let server = start_websocket_server(vec![]).await;
-    let mut builder = test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
+    let mut builder =
+        test_inkstack().with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
     let test = builder.build_with_websocket_server(&server).await?;
 
     test.inkstack
@@ -4765,7 +4775,10 @@ async fn inbound_handoff_request_starts_turn_and_promotes_its_artifact() -> Resu
         &api_server,
         responses::sse(vec![
             responses::ev_response_created("resp-1"),
-            responses::ev_assistant_message("msg-1", "::inkstack-realtime-inline{}\nShared artifact"),
+            responses::ev_assistant_message(
+                "msg-1",
+                "::inkstack-realtime-inline{}\nShared artifact",
+            ),
             responses::ev_completed("resp-1"),
         ]),
     )
@@ -5264,7 +5277,10 @@ async fn conversation_close_routes_only_remaining_transcript_tail_once() -> Resu
     .await;
     assert_eq!(closed.reason.as_deref(), Some("requested"));
 
-    let history = test.inkstack.load_history(/*include_archived*/ false).await?;
+    let history = test
+        .inkstack
+        .load_history(/*include_archived*/ false)
+        .await?;
     let tails = history.items.iter().filter(|item| {
         matches!(item, RolloutItem::ResponseItem(ResponseItemEnvelope { item: ResponseItem::Message { role, content, .. }, .. })
             if role == "user" && content.iter().any(|item| matches!(item,
@@ -5899,7 +5915,10 @@ async fn inbound_handoff_request_updates_realtime_state_during_active_turn(
     .await;
     assert_eq!(closed.reason.as_deref(), Some("requested"));
     if flush_transcript_tail_on_session_end {
-        let history = test.inkstack.load_history(/*include_archived*/ false).await?;
+        let history = test
+            .inkstack
+            .load_history(/*include_archived*/ false)
+            .await?;
         assert!(history.items.iter().any(|item| {
             matches!(item, RolloutItem::ResponseItem(ResponseItemEnvelope {
                 item: ResponseItem::Message { role, content, .. }, ..

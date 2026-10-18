@@ -3412,12 +3412,14 @@ async fn turn_start_explicit_local_environment_updates_legacy_cwd_between_turns(
                 runtime_workspace_roots: None,
                 approval_policy: Some(inkstack_app_server_protocol::AskForApproval::Never),
                 approvals_reviewer: None,
-                sandbox_policy: Some(inkstack_app_server_protocol::SandboxPolicy::WorkspaceWrite {
-                    writable_roots: vec![first_writable_root],
-                    network_access: false,
-                    exclude_tmpdir_env_var: true,
-                    exclude_slash_tmp: true,
-                }),
+                sandbox_policy: Some(
+                    inkstack_app_server_protocol::SandboxPolicy::WorkspaceWrite {
+                        writable_roots: vec![first_writable_root],
+                        network_access: false,
+                        exclude_tmpdir_env_var: true,
+                        exclude_slash_tmp: true,
+                    },
+                ),
                 permissions: None,
                 model: Some("mock-model".to_string()),
                 effort: Some(ReasoningEffort::Medium),

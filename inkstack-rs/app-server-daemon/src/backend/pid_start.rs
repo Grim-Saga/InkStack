@@ -137,7 +137,8 @@ impl PidBackend {
                 .parent()
                 .and_then(std::path::Path::parent)
                 .context("daemon pid path has no InkStack home")?;
-            let recovery_file = inkstack_app_server_transport::daemon_recovery_file_path(inkstack_home);
+            let recovery_file =
+                inkstack_app_server_transport::daemon_recovery_file_path(inkstack_home);
             match fs::remove_file(&recovery_file).await {
                 Ok(()) => {}
                 Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
@@ -189,7 +190,10 @@ impl PidBackend {
             }
             match self.command_kind {
                 PidCommandKind::AppServer { .. } => {
-                    command.env(inkstack_app_server_transport::DAEMON_SHUTDOWN_SOCKET_ENV, "1");
+                    command.env(
+                        inkstack_app_server_transport::DAEMON_SHUTDOWN_SOCKET_ENV,
+                        "1",
+                    );
                 }
                 PidCommandKind::UpdateLoop { .. } => {
                     let shutdown_file = self.pid_file.with_extension("shutdown");

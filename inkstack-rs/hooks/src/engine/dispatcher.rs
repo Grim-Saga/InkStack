@@ -326,7 +326,9 @@ pub(crate) fn hook_source_label(source: inkstack_protocol::protocol::HookSource)
         inkstack_protocol::protocol::HookSource::LegacyManagedConfigFile => {
             "legacy_managed_config_file"
         }
-        inkstack_protocol::protocol::HookSource::LegacyManagedConfigMdm => "legacy_managed_config_mdm",
+        inkstack_protocol::protocol::HookSource::LegacyManagedConfigMdm => {
+            "legacy_managed_config_mdm"
+        }
         inkstack_protocol::protocol::HookSource::Unknown => "unknown",
     }
 }

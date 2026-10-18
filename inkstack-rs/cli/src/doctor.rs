@@ -1275,8 +1275,8 @@ fn auth_check(config: &Config) -> DoctorCheck {
             let mut check =
                 DoctorCheck::new("auth.credentials", "auth", status, summary).details(details);
             if status == CheckStatus::Fail {
-                check =
-                    check.remediation("Run inkstack login again or provide a supported auth env var.");
+                check = check
+                    .remediation("Run inkstack login again or provide a supported auth env var.");
             }
             check
         }
@@ -2166,15 +2166,15 @@ async fn sqlite_integrity_detail(
         return CheckStatus::Ok;
     }
 
-    let (rows, timed_out) = match inkstack_state::sqlite_integrity_check(sqlite, path, deadline).await
-    {
-        Ok(inkstack_state::SqliteIntegrityCheck::Complete(rows)) => (rows, false),
-        Ok(inkstack_state::SqliteIntegrityCheck::TimedOut(rows)) => (rows, true),
-        Err(err) => {
-            details.push(format!("{label} integrity: {err}"));
-            return CheckStatus::Fail;
-        }
-    };
+    let (rows, timed_out) =
+        match inkstack_state::sqlite_integrity_check(sqlite, path, deadline).await {
+            Ok(inkstack_state::SqliteIntegrityCheck::Complete(rows)) => (rows, false),
+            Ok(inkstack_state::SqliteIntegrityCheck::TimedOut(rows)) => (rows, true),
+            Err(err) => {
+                details.push(format!("{label} integrity: {err}"));
+                return CheckStatus::Fail;
+            }
+        };
     if timed_out {
         details.push(format!(
             "{label} integrity: incomplete (1 second time limit)"

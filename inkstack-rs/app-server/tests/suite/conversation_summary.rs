@@ -208,8 +208,8 @@ async fn get_conversation_summary_by_thread_id_reads_pathless_store_thread() -> 
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn get_conversation_summary_by_relative_rollout_path_resolves_from_inkstack_home() -> Result<()>
-{
+async fn get_conversation_summary_by_relative_rollout_path_resolves_from_inkstack_home()
+-> Result<()> {
     let inkstack_home = TempDir::new()?;
     let conversation_id = create_fake_rollout(
         inkstack_home.path(),
@@ -221,7 +221,9 @@ async fn get_conversation_summary_by_relative_rollout_path_resolves_from_inkstac
     )?;
     let thread_id = ThreadId::from_string(&conversation_id)?;
     let rollout_path = rollout_path(inkstack_home.path(), FILENAME_TS, &conversation_id);
-    let relative_path = rollout_path.strip_prefix(inkstack_home.path())?.to_path_buf();
+    let relative_path = rollout_path
+        .strip_prefix(inkstack_home.path())?
+        .to_path_buf();
     let expected = expected_summary(thread_id, normalized_canonical_path(rollout_path)?);
 
     let mut mcp = TestAppServer::builder()

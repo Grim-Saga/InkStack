@@ -100,12 +100,13 @@ fn changing_retained_context_and_attestations_preserves_history_before_the_curre
                     RetainedInputSource::Local(Some(generation + 1)),
                 );
             }
-            let reviews =
-                PreviousReviews::try_from_fragments(vec![inkstack_guardian_context::PreviousReview {
+            let reviews = PreviousReviews::try_from_fragments(vec![
+                inkstack_guardian_context::PreviousReview {
                     id: inkstack_protocol::ResponseItemId::new("review"),
                     fragment: format!("Host-attested decision {generation}: denied."),
-                }])
-                .unwrap();
+                },
+            ])
+            .unwrap();
             let tool = TrustedTool {
                 server: format!("server-{generation}"),
                 connector_id: None,

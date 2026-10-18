@@ -118,7 +118,8 @@ fn env_overlay_for_exec_server_keeps_runtime_changes_only() {
                 "current-profile".to_string(),
             ),
             (
-                inkstack_apply_patch::INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR.to_string(),
+                inkstack_apply_patch::INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR
+                    .to_string(),
                 "1".to_string(),
             ),
             (
@@ -163,7 +164,8 @@ fn exec_env_policy_excludes_non_inheritable_and_runtime_variables() {
             exclude: vec![
                 INKSTACK_PERMISSION_PROFILE_ENV_VAR.to_string(),
                 INKSTACK_VERSION_ENV_VAR.to_string(),
-                inkstack_apply_patch::INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR.to_string(),
+                inkstack_apply_patch::INKSTACK_APPLY_PATCH_PRESERVE_LINE_ENDINGS_ENV_VAR
+                    .to_string(),
                 PLUGIN_METRICS_OUTPUT_ENV_VAR.to_string(),
             ],
             r#set: HashMap::from([("KEEP".to_string(), "value".to_string())]),

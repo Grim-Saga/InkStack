@@ -371,7 +371,11 @@ impl ExternalAgentSessionImporter {
     ) -> Result<Option<PendingSessionImport>, SessionImportStepFailure> {
         let inkstack_home = self.inkstack_home.clone();
         tokio::task::spawn_blocking(move || {
-            prepare_validated_session_import_with_metadata_mode(&inkstack_home, session, metadata_mode)
+            prepare_validated_session_import_with_metadata_mode(
+                &inkstack_home,
+                session,
+                metadata_mode,
+            )
         })
         .await
         .map_err(|err| {

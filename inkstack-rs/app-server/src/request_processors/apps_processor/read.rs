@@ -34,10 +34,10 @@ impl AppsRequestProcessor {
             }
             None => None,
         };
-        if !config
-            .features
-            .apps_enabled_for_auth(auth.as_ref().is_some_and(InkStackAuth::uses_inkstack_backend))
-        {
+        if !config.features.apps_enabled_for_auth(
+            auth.as_ref()
+                .is_some_and(InkStackAuth::uses_inkstack_backend),
+        ) {
             let response = AppsReadResponse {
                 apps: Vec::new(),
                 missing_app_ids: app_ids,

@@ -418,7 +418,8 @@ async fn exec_metadata_overrides_policy_and_cached_snapshot(
         ]),
         include_only: Vec::new(),
     };
-    let thread_id = inkstack_protocol::ThreadId::from_string("019d25f0-6728-7ce2-908f-c3c187323e5b")?;
+    let thread_id =
+        inkstack_protocol::ThreadId::from_string("019d25f0-6728-7ce2-908f-c3c187323e5b")?;
     let later_thread_id =
         inkstack_protocol::ThreadId::from_string("019d25f0-6728-7ce2-908f-c3c187323e5c")?;
 
@@ -996,7 +997,8 @@ async fn remote_sandboxed_process_preserves_custom_arg0() -> Result<()> {
 
 async fn assert_exec_process_starts_and_exits(use_remote: bool) -> Result<()> {
     let context = create_process_context(use_remote).await?;
-    let thread_id = inkstack_protocol::ThreadId::from_string("019d25f0-6728-7ce2-908f-c3c187323e5b")?;
+    let thread_id =
+        inkstack_protocol::ThreadId::from_string("019d25f0-6728-7ce2-908f-c3c187323e5b")?;
     let call_id = "call-λ-'\";$()";
     #[cfg(unix)]
     let argv = vec![

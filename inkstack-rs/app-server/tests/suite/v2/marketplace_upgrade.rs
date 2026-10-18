@@ -118,7 +118,10 @@ fn marketplace_install_root(inkstack_home: &Path) -> std::path::PathBuf {
     inkstack_home.join(INSTALLED_MARKETPLACES_DIR)
 }
 
-fn expected_installed_root(inkstack_home: &Path, marketplace_name: &str) -> Result<AbsolutePathBuf> {
+fn expected_installed_root(
+    inkstack_home: &Path,
+    marketplace_name: &str,
+) -> Result<AbsolutePathBuf> {
     AbsolutePathBuf::try_from(
         marketplace_install_root(&inkstack_home.canonicalize()?).join(marketplace_name),
     )
@@ -265,7 +268,13 @@ async fn automatic_upgrade_isolates_git_while_explicit_install_preserves_configu
             inkstack_home.path(),
             &["config", "--add", &rewrite_key, untrusted_source],
         )?;
-        assert!(run_git(inkstack_home.path(), &["ls-remote", untrusted_source, "HEAD"]).is_err());
+        assert!(
+            run_git(
+                inkstack_home.path(),
+                &["ls-remote", untrusted_source, "HEAD"]
+            )
+            .is_err()
+        );
     }
 
     let manual_plugin_alias = "https://manual.example/plugin.git";

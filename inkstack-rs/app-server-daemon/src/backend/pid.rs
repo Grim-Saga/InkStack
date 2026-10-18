@@ -108,7 +108,11 @@ impl PidBackend {
         }
     }
 
-    pub(crate) fn new(inkstack_bin: PathBuf, pid_file: PathBuf, remote_control_enabled: bool) -> Self {
+    pub(crate) fn new(
+        inkstack_bin: PathBuf,
+        pid_file: PathBuf,
+        remote_control_enabled: bool,
+    ) -> Self {
         let lock_file = pid_file.with_extension("pid.lock");
         Self {
             feature_overrides: BTreeMap::new(),
@@ -203,7 +207,9 @@ impl PidBackend {
                             .and_then(Path::parent)
                             .context("daemon pid path has no InkStack home")?;
                         let socket_path =
-                            inkstack_app_server_transport::app_server_control_socket_path(inkstack_home)?;
+                            inkstack_app_server_transport::app_server_control_socket_path(
+                                inkstack_home,
+                            )?;
                         if let Err(err) =
                             crate::client::request_shutdown(socket_path.as_path(), pid).await
                         {

@@ -113,7 +113,11 @@ async fn project_markers_and_local_layers_prevent_projectless_classification() -
         (".git", "", "nested"),
         (".git", "project_root_markers = []", "nested"),
         (".inkstack", "", ""),
-        (".inkstack", "project_root_markers = ['.inkstack']", "nested"),
+        (
+            ".inkstack",
+            "project_root_markers = ['.inkstack']",
+            "nested",
+        ),
         (
             ".company-root",
             "project_root_markers = ['.company-root']",

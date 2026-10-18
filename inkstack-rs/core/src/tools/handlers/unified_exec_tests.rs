@@ -410,7 +410,8 @@ async fn exec_command_reuses_foreign_windows_grant() {
         else {
             panic!("primary environment should be ready");
         };
-        environment.selection.environment_id = inkstack_exec_server::REMOTE_ENVIRONMENT_ID.to_string();
+        environment.selection.environment_id =
+            inkstack_exec_server::REMOTE_ENVIRONMENT_ID.to_string();
         environment.selection.cwd = cwd.clone();
         environment.selection.workspace_roots = vec![cwd.clone()];
         environment.config_mut().workspace_roots = vec![cwd];

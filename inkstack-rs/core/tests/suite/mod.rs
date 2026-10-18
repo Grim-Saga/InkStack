@@ -68,8 +68,6 @@ mod cloud_config;
 mod code_mode;
 mod code_mode_elicitation;
 mod code_mode_model_messages;
-mod inkstack_apps_protocol;
-mod inkstack_delegate;
 mod collaboration_instructions;
 mod compact;
 mod compact_remote;
@@ -95,6 +93,8 @@ mod guardian_authorization_refresh;
 mod guardian_cached_score;
 #[path = "guardian_checkpoint_migration_tests.rs"]
 mod guardian_checkpoint_migration;
+mod inkstack_apps_protocol;
+mod inkstack_delegate;
 // Uses the same command-approval harness as guardian_review below.
 mod canonical_plugin_connectors;
 mod gateway_auth;

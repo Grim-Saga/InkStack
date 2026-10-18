@@ -39,7 +39,9 @@ impl BearerTokenRefresher {
                     None => true,
                 };
                 if should_use_cached_token {
-                    return Ok(InkStackAuth::from_api_key(cached_token.access_token.as_str()));
+                    return Ok(InkStackAuth::from_api_key(
+                        cached_token.access_token.as_str(),
+                    ));
                 }
             }
 

@@ -240,7 +240,11 @@ pub(crate) fn path_digest(path: &Path) -> [u8; 32] {
 }
 
 fn managed_inkstack_file_name() -> &'static str {
-    if cfg!(windows) { "inkstack.exe" } else { "inkstack" }
+    if cfg!(windows) {
+        "inkstack.exe"
+    } else {
+        "inkstack"
+    }
 }
 
 fn parse_inkstack_version(output: &str) -> Result<String> {

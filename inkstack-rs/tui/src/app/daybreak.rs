@@ -33,19 +33,21 @@ impl App {
         {
             Ok(thread) if !thread.ephemeral => {
                 let request_id = app_server.next_request_id();
-                let response: Result<inkstack_app_server_protocol::ThreadMetadataUpdateResponse, _> =
-                    app_server
-                        .request_handle()
-                        .request_typed(ClientRequest::ThreadMetadataUpdate {
-                            request_id,
-                            params: inkstack_app_server_protocol::ThreadMetadataUpdateParams {
-                                thread_id: thread_id.to_string(),
-                                daybreak_enabled: Some(enabled),
-                                project_id: None,
-                                git_info: None,
-                            },
-                        })
-                        .await;
+                let response: Result<
+                    inkstack_app_server_protocol::ThreadMetadataUpdateResponse,
+                    _,
+                > = app_server
+                    .request_handle()
+                    .request_typed(ClientRequest::ThreadMetadataUpdate {
+                        request_id,
+                        params: inkstack_app_server_protocol::ThreadMetadataUpdateParams {
+                            thread_id: thread_id.to_string(),
+                            daybreak_enabled: Some(enabled),
+                            project_id: None,
+                            git_info: None,
+                        },
+                    })
+                    .await;
                 if let Err(error) = response {
                     self.chat_widget.add_error_message(format!(
                         "Failed to save Daybreak for this thread: {error}"

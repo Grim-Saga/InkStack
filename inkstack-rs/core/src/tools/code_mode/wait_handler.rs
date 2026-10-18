@@ -159,7 +159,10 @@ impl CodeModeWaitHandler {
                         .services
                         .executed_tool_calls
                         .register_cell(runtime_cell_id, &call_id);
-                    if !matches!(response, inkstack_code_mode::RuntimeResponse::Yielded { .. }) {
+                    if !matches!(
+                        response,
+                        inkstack_code_mode::RuntimeResponse::Yielded { .. }
+                    ) {
                         exec.session
                             .services
                             .rollout_thread_trace

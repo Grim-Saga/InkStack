@@ -66,7 +66,8 @@ fn copies_only_selected_projects_and_recopies_changed_content() {
     fs::remove_file(&project_a_topic).expect("remove project A topic");
     let updated_files = discover_external_memory_files(&source_home).expect("rediscover memories");
     assert_eq!(
-        projects_needing_import(&inkstack_home, &updated_files).expect("detect project file changes"),
+        projects_needing_import(&inkstack_home, &updated_files)
+            .expect("detect project file changes"),
         BTreeSet::from(["project-a".to_string(), "project-b".to_string()])
     );
     fs::write(project_a_memory.join("updated.md"), b"updated memory")

@@ -386,9 +386,9 @@ async fn oauth_registration_redirects_never_forward_resource_only_headers() -> R
 
 #[tokio::test]
 async fn same_origin_redirects_preserve_timeout_and_response_body_limits() -> Result<()> {
-    let http_client: Arc<dyn inkstack_exec_server::HttpClient> = Arc::new(RouteAwareHttpClient::new(
-        HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),
-    ));
+    let http_client: Arc<dyn inkstack_exec_server::HttpClient> = Arc::new(
+        RouteAwareHttpClient::new(HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault)),
+    );
     crate::oauth::test_support::warm_http_client(http_client.as_ref()).await?;
     for oversized_redirect_body in [false, true] {
         let server = MockServer::start().await;

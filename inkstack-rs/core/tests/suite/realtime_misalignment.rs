@@ -116,7 +116,8 @@ async fn misalignment_retires_late_voice_handoff_before_it_starts_a_turn() -> Re
 
     wait_for_event_match(&test.inkstack, |event| match event {
         EventMsg::Error(error)
-            if error.inkstack_error_info == Some(InkStackErrorInfo::MisalignmentPolicyViolation) =>
+            if error.inkstack_error_info
+                == Some(InkStackErrorInfo::MisalignmentPolicyViolation) =>
         {
             Some(())
         }

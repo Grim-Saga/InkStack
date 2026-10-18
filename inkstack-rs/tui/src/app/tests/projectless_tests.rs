@@ -151,11 +151,9 @@ sandbox = "unelevated"
                     /*limit*/ 1,
                 )
                 .await?;
-            if page
-                .data
-                .first()
-                .is_some_and(|turn| turn.status == inkstack_app_server_protocol::TurnStatus::Completed)
-            {
+            if page.data.first().is_some_and(|turn| {
+                turn.status == inkstack_app_server_protocol::TurnStatus::Completed
+            }) {
                 return Ok::<_, color_eyre::Report>(());
             }
             tokio::time::sleep(Duration::from_millis(/*millis*/ 10)).await;

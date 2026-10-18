@@ -15,9 +15,12 @@ async fn lifecycle_metadata_uses_local_prompt_history() -> Result<()> {
         .build()
         .await?;
     let local_settings = LocalSettings::from(&local_config);
-    let history_config =
-        HistoryConfig::new(local_settings.inkstack_home.clone(), &local_settings.history);
-    inkstack_message_history::append_entry("local prompt", ThreadId::new(), &history_config).await?;
+    let history_config = HistoryConfig::new(
+        local_settings.inkstack_home.clone(),
+        &local_settings.history,
+    );
+    inkstack_message_history::append_entry("local prompt", ThreadId::new(), &history_config)
+        .await?;
     let (log_id, entry_count) = inkstack_message_history::history_metadata(&history_config).await;
     let expected = Some(MessageHistoryMetadata {
         log_id,

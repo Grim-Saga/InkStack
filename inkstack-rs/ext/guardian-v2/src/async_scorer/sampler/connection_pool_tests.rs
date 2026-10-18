@@ -201,11 +201,13 @@ async fn cold_pool_uses_http_during_open_timeout_then_recovers_after_cooldown() 
         let mut config = sampler_config(base_url.clone());
         config.provider = create_model_provider(
             ModelProviderInfo::create_openai_provider(Some(base_url)),
-            Some(AuthManager::from_auth_for_testing(if uses_inkstack_backend {
-                InkStackAuth::create_dummy_chatgpt_auth_for_testing()
-            } else {
-                InkStackAuth::from_api_key("test-api-key")
-            })),
+            Some(AuthManager::from_auth_for_testing(
+                if uses_inkstack_backend {
+                    InkStackAuth::create_dummy_chatgpt_auth_for_testing()
+                } else {
+                    InkStackAuth::from_api_key("test-api-key")
+                },
+            )),
         );
         config.service_tier = Some("priority".to_owned());
         let sampler = LunaSampler::new(config);

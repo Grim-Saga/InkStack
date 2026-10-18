@@ -1105,7 +1105,10 @@ impl ThreadHistoryBuilder {
         self.upsert_item_in_current_turn(item);
     }
 
-    fn handle_collab_close_end(&mut self, payload: &inkstack_protocol::protocol::CollabCloseEndEvent) {
+    fn handle_collab_close_end(
+        &mut self,
+        payload: &inkstack_protocol::protocol::CollabCloseEndEvent,
+    ) {
         let status = match &payload.status {
             AgentStatus::Errored(_) | AgentStatus::NotFound => CollabAgentToolCallStatus::Failed,
             _ => CollabAgentToolCallStatus::Completed,
@@ -1636,9 +1639,9 @@ fn convert_dynamic_tool_content_items(
         .iter()
         .cloned()
         .map(|item| match item {
-            inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputText { text } => {
-                DynamicToolCallOutputContentItem::InputText { text }
-            }
+            inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputText {
+                text,
+            } => DynamicToolCallOutputContentItem::InputText { text },
             inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputImage {
                 image_url,
             } => DynamicToolCallOutputContentItem::InputImage { image_url },
@@ -3577,7 +3580,9 @@ mod tests {
                 completed_at_ms: Some(1_042),
                 status: GuardianAssessmentStatus::Denied,
                 risk_level: Some(inkstack_protocol::protocol::GuardianRiskLevel::High),
-                user_authorization: Some(inkstack_protocol::protocol::GuardianUserAuthorization::Low),
+                user_authorization: Some(
+                    inkstack_protocol::protocol::GuardianUserAuthorization::Low,
+                ),
                 rationale: Some("Would delete user data.".into()),
                 decision_source: Some(
                     inkstack_protocol::protocol::GuardianAssessmentDecisionSource::Agent,
@@ -5021,7 +5026,9 @@ mod tests {
                 error: Some(TurnError {
                     misalignment: None,
                     message: "Selected model is at capacity. Please try a different model.".into(),
-                    inkstack_error_info: Some(crate::protocol::v2::InkStackErrorInfo::ServerOverloaded),
+                    inkstack_error_info: Some(
+                        crate::protocol::v2::InkStackErrorInfo::ServerOverloaded
+                    ),
                     additional_details: None,
                 }),
                 started_at: Some(10),

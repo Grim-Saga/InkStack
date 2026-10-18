@@ -34,9 +34,9 @@ pub mod process;
 pub mod responses;
 pub mod startup;
 pub mod streaming_sse;
+mod test_environment;
 pub mod test_inkstack;
 pub mod test_inkstack_exec;
-mod test_environment;
 pub mod tracing;
 
 pub(crate) use test_environment::TestEnvironment;
@@ -234,7 +234,8 @@ allow_local_binding = true
 fn default_test_overrides() -> ConfigOverrides {
     ConfigOverrides {
         inkstack_linux_sandbox_exe: Some(
-            find_inkstack_linux_sandbox_exe().expect("should find binary for inkstack-linux-sandbox"),
+            find_inkstack_linux_sandbox_exe()
+                .expect("should find binary for inkstack-linux-sandbox"),
         ),
         ..ConfigOverrides::default()
     }
@@ -274,7 +275,10 @@ where
 }
 
 /// Waits for a configured MCP server to finish startup and requires it to be ready.
-pub async fn wait_for_mcp_server(inkstack: &InkStackThread, server_name: &str) -> anyhow::Result<()> {
+pub async fn wait_for_mcp_server(
+    inkstack: &InkStackThread,
+    server_name: &str,
+) -> anyhow::Result<()> {
     use inkstack_protocol::protocol::EventMsg;
 
     // Wait for the startup summary regardless of outcome, then interpret the
@@ -390,10 +394,13 @@ where
     use tokio::time::timeout;
     loop {
         // Allow a bit more time to accommodate async startup work (e.g. config IO, tool discovery)
-        let ev = timeout(wait_time.max(Duration::from_secs(10)), inkstack.next_event())
-            .await
-            .expect("timeout waiting for event")
-            .expect("stream ended unexpectedly");
+        let ev = timeout(
+            wait_time.max(Duration::from_secs(10)),
+            inkstack.next_event(),
+        )
+        .await
+        .expect("timeout waiting for event")
+        .expect("stream ended unexpectedly");
         if predicate(&ev.msg) {
             return ev.msg;
         }
@@ -409,7 +416,8 @@ pub fn sandbox_network_env_var() -> &'static str {
 }
 
 pub fn format_with_current_shell(command: &str) -> Vec<String> {
-    inkstack_core::shell::default_user_shell().derive_exec_args(command, /*use_login_shell*/ true)
+    inkstack_core::shell::default_user_shell()
+        .derive_exec_args(command, /*use_login_shell*/ true)
 }
 
 pub fn format_with_current_shell_display(command: &str) -> String {
@@ -429,7 +437,8 @@ pub fn format_with_current_shell_display_non_login(command: &str) -> String {
 }
 
 pub fn stdio_server_bin() -> Result<String, CargoBinError> {
-    inkstack_utils_cargo_bin::cargo_bin("test_stdio_server").map(|p| p.to_string_lossy().to_string())
+    inkstack_utils_cargo_bin::cargo_bin("test_stdio_server")
+        .map(|p| p.to_string_lossy().to_string())
 }
 
 pub mod fs_wait {

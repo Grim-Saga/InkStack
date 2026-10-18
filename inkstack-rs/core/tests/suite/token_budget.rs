@@ -163,7 +163,9 @@ fn write_token_budget_compact_hooks(home: &Path) {
     std::fs::write(home.join("hooks.json"), hooks.to_string()).expect("write hooks.json");
 }
 
-async fn assert_context_compaction_item_lifecycle(inkstack: &std::sync::Arc<inkstack_core::InkStackThread>) {
+async fn assert_context_compaction_item_lifecycle(
+    inkstack: &std::sync::Arc<inkstack_core::InkStackThread>,
+) {
     let mut saw_compaction_started = false;
     let mut saw_compaction_completed = false;
 

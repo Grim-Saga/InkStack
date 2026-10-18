@@ -1733,17 +1733,19 @@ fn drop_last_n_user_turns_preserves_prefix() {
         };
         history.record_items([&message], TruncationPolicy::Tokens(10_000));
         if id == "restriction" {
-            history.record_retained_context(&inkstack_history::RetainedContextEvent::VerifiedAnswer {
-                answer: inkstack_history::VerifiedAnswer {
-                    turn_id: "shared-turn".to_owned(),
-                    call_id: "ask".to_owned(),
-                    questions: vec![inkstack_history::VerifiedQuestionAnswer {
-                        question: "Publish?".to_owned(),
-                        answer: "Only privately.".to_owned(),
-                    }],
+            history.record_retained_context(
+                &inkstack_history::RetainedContextEvent::VerifiedAnswer {
+                    answer: inkstack_history::VerifiedAnswer {
+                        turn_id: "shared-turn".to_owned(),
+                        call_id: "ask".to_owned(),
+                        questions: vec![inkstack_history::VerifiedQuestionAnswer {
+                            question: "Publish?".to_owned(),
+                            answer: "Only privately.".to_owned(),
+                        }],
+                    },
+                    acceptance_order: None,
                 },
-                acceptance_order: None,
-            });
+            );
             expected = Some(history.retained_context().clone());
         }
     }

@@ -5,7 +5,13 @@ use base64::Engine;
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use pretty_assertions::assert_eq;
 
-fn chatgpt_auth(email: &str, user: &str, account: &str, plan: &str, signature: &str) -> InkStackAuth {
+fn chatgpt_auth(
+    email: &str,
+    user: &str,
+    account: &str,
+    plan: &str,
+    signature: &str,
+) -> InkStackAuth {
     let claims = serde_json::json!({
         "email": email,
         "https://api.openai.com/auth": {"chatgpt_user_id": user}

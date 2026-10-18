@@ -1169,7 +1169,13 @@ async fn thread_provider_composes_and_clears_only_its_instructions() -> Result<(
     .await;
     let fixture = ThreadInstructionsFixture::new(&server).await?;
     let sources = vec![
-        PathUri::from_abs_path(&fixture.test.config.inkstack_home.join(GLOBAL_AGENTS_FILENAME)),
+        PathUri::from_abs_path(
+            &fixture
+                .test
+                .config
+                .inkstack_home
+                .join(GLOBAL_AGENTS_FILENAME),
+        ),
         fixture.test.workspace_path_uri(GLOBAL_AGENTS_FILENAME)?,
     ];
     assert_eq!(fixture.thread.instruction_sources().await, sources);
@@ -1328,7 +1334,8 @@ async fn isolated_guardian_keeps_applied_thread_instructions() -> Result<()> {
             config.permissions.approval_policy = inkstack_core::config::Constrained::allow_any(
                 inkstack_protocol::protocol::AskForApproval::OnRequest,
             );
-            config.approvals_reviewer = inkstack_protocol::config_types::ApprovalsReviewer::AutoReview;
+            config.approvals_reviewer =
+                inkstack_protocol::config_types::ApprovalsReviewer::AutoReview;
         })
         .build_with_auto_env(&server)
         .await?;

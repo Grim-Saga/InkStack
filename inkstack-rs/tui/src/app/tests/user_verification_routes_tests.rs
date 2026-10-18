@@ -239,19 +239,21 @@ async fn inactive_thread_user_verification_preserves_foreground_stream() -> Resu
         /*replay_kind*/ None,
     );
     app.chat_widget.handle_server_notification(
-        ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: foreground_thread_id.to_string(),
-            turn_id: "turn-foreground".to_string(),
-            completed_at_ms: 0,
-            item: ThreadItem::AgentMessage {
-                id: "message-foreground".to_string(),
-                text: "The foreground answer continues.".to_string(),
-                phase: None,
-                memory_citation: None,
-                delivery: None,
-                questions: None,
+        ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: foreground_thread_id.to_string(),
+                turn_id: "turn-foreground".to_string(),
+                completed_at_ms: 0,
+                item: ThreadItem::AgentMessage {
+                    id: "message-foreground".to_string(),
+                    text: "The foreground answer continues.".to_string(),
+                    phase: None,
+                    memory_citation: None,
+                    delivery: None,
+                    questions: None,
+                },
             },
-        }),
+        ),
         /*replay_kind*/ None,
     );
 

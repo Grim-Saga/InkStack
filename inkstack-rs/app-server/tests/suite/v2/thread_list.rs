@@ -759,7 +759,12 @@ async fn thread_list_respects_cwd_filters() -> Result<()> {
     fs::create_dir_all(&first_target_cwd)?;
     fs::create_dir_all(&second_target_cwd)?;
     set_rollout_cwd(
-        rollout_path(inkstack_home.path(), "2025-01-02T10-00-00", &first_filtered_id).as_path(),
+        rollout_path(
+            inkstack_home.path(),
+            "2025-01-02T10-00-00",
+            &first_filtered_id,
+        )
+        .as_path(),
         &first_target_cwd,
     )?;
     set_rollout_cwd(
@@ -2334,7 +2339,11 @@ async fn thread_list_sanitizes_git_info_from_existing_rollouts() -> Result<()> {
         Some("mock_provider"),
         Some(git_info),
     )?;
-    let path = rollout_path(inkstack_home.path(), "2025-02-01T09-00-00", &conversation_id);
+    let path = rollout_path(
+        inkstack_home.path(),
+        "2025-02-01T09-00-00",
+        &conversation_id,
+    );
     let rollout = fs::read_to_string(&path)?;
     fs::write(
         path,

@@ -374,7 +374,8 @@ async fn backfill_sessions_resumes_from_watermark_and_marks_complete() {
     )
     .await
     .expect("initialize runtime");
-    let first_watermark = backfill_watermark_for_path(inkstack_home.as_path(), first_path.as_path());
+    let first_watermark =
+        backfill_watermark_for_path(inkstack_home.as_path(), first_path.as_path());
     runtime.mark_backfill_running().await.expect("mark running");
     runtime
         .checkpoint_backfill(first_watermark.as_str())

@@ -347,7 +347,10 @@ async fn async_interrupt_hook_runs_without_delaying_turn_aborted() -> Result<()>
     )
     .await
     .context("async interrupt hook should finish after the turn abort")?;
-    assert_eq!(read_interrupt_hook_inputs(test.inkstack_home_path())?.len(), 1);
+    assert_eq!(
+        read_interrupt_hook_inputs(test.inkstack_home_path())?.len(),
+        1
+    );
 
     Ok(())
 }
@@ -414,7 +417,10 @@ async fn self_aborted_turn_runs_interrupt_hook_before_turn_aborted() -> Result<(
         _ => None,
     })
     .await;
-    assert_eq!(read_interrupt_hook_inputs(test.inkstack_home_path())?.len(), 1);
+    assert_eq!(
+        read_interrupt_hook_inputs(test.inkstack_home_path())?.len(),
+        1
+    );
 
     Ok(())
 }

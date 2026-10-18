@@ -123,10 +123,10 @@ pub async fn list_cached_accessible_connectors_from_mcp_tools(
             .await
             .ok()?;
     let auth = auth_manager.auth().await;
-    if !config
-        .features
-        .apps_enabled_for_auth(auth.as_ref().is_some_and(InkStackAuth::uses_inkstack_backend))
-    {
+    if !config.features.apps_enabled_for_auth(
+        auth.as_ref()
+            .is_some_and(InkStackAuth::uses_inkstack_backend),
+    ) {
         return Some(Vec::new());
     }
     let cache_key = accessible_connectors_cache_key(config, auth.as_ref());
@@ -213,10 +213,10 @@ pub async fn list_accessible_connectors_from_mcp_tools_with_mcp_manager(
     let auth_manager =
         AuthManager::shared_from_config(config, /*enable_openai_api_key_env*/ false).await?;
     let auth = auth_manager.auth().await;
-    if !config
-        .features
-        .apps_enabled_for_auth(auth.as_ref().is_some_and(InkStackAuth::uses_inkstack_backend))
-    {
+    if !config.features.apps_enabled_for_auth(
+        auth.as_ref()
+            .is_some_and(InkStackAuth::uses_inkstack_backend),
+    ) {
         return Ok(AccessibleConnectorsStatus {
             connectors: Vec::new(),
             inkstack_apps_ready: true,

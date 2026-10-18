@@ -874,7 +874,8 @@ mod tests {
                                 Some(vec![absolute_path(write_path)]),
                             )),
                         },
-                        scope: inkstack_protocol::request_permissions::PermissionGrantScope::Session,
+                        scope:
+                            inkstack_protocol::request_permissions::PermissionGrantScope::Session,
                         strict_auto_review: false,
                     },
                 },
@@ -1008,7 +1009,8 @@ mod tests {
             pending.note_server_request(&ServerRequest::ChatgptAuthTokensRefresh {
                 request_id: AppServerRequestId::Integer(100),
                 params: inkstack_app_server_protocol::ChatgptAuthTokensRefreshParams {
-                    reason: inkstack_app_server_protocol::ChatgptAuthTokensRefreshReason::Unauthorized,
+                    reason:
+                        inkstack_app_server_protocol::ChatgptAuthTokensRefreshReason::Unauthorized,
                     previous_account_id: Some("workspace-1".to_string()),
                 },
             }),

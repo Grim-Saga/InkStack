@@ -95,22 +95,23 @@ impl ThreadLifecycleContributor<Config> for GuardianExtension {
                                 options.config.model_provider.clone(),
                                 /*auth_manager*/ None,
                             );
-                            options.thread_extension_init.insert(InkStackResponsesHeaders {
-                                model: provider.approval_review_preferred_model().to_owned(),
-                                headers: http::HeaderMap::from_iter([(
-                                    http::HeaderName::from_static("x-codex-guardian"),
-                                    http::HeaderValue::from_static("reviewer"),
-                                )]),
-                            });
+                            options
+                                .thread_extension_init
+                                .insert(InkStackResponsesHeaders {
+                                    model: provider.approval_review_preferred_model().to_owned(),
+                                    headers: http::HeaderMap::from_iter([(
+                                        http::HeaderName::from_static("x-codex-guardian"),
+                                        http::HeaderValue::from_static("reviewer"),
+                                    )]),
+                                });
                             options
                                 .thread_extension_init
                                 .insert(SessionIsolation::Isolated);
-                            let mut tool_policy = inkstack_guardian_reviewer::reviewer_tool_policy();
-                            if options
-                                .config
-                                .features
-                                .enabled(inkstack_features::Feature::GuardianConversationHistoryTools)
-                            {
+                            let mut tool_policy =
+                                inkstack_guardian_reviewer::reviewer_tool_policy();
+                            if options.config.features.enabled(
+                                inkstack_features::Feature::GuardianConversationHistoryTools,
+                            ) {
                                 let parent = manager
                                     .get_thread(ThreadId::from_string(&parent_thread_id)?)
                                     .await?;

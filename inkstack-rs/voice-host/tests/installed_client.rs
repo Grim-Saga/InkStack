@@ -87,7 +87,11 @@ fn install_helper(root: &Path) -> Result<InkStackPackageLayout> {
     fs::create_dir_all(&bin)?;
     fs::create_dir_all(&helper_dir)?;
     fs::write(root.join("inkstack-package.json"), "{}")?;
-    let app = bin.join(if cfg!(windows) { "inkstack.exe" } else { "inkstack" });
+    let app = bin.join(if cfg!(windows) {
+        "inkstack.exe"
+    } else {
+        "inkstack"
+    });
     fs::write(&app, [])?;
     let source = cargo_bin("inkstack-voice-host")?;
     let helper = helper_dir.join(source.file_name().context("helper binary file name")?);
@@ -160,7 +164,10 @@ async fn installed_client_accepts_non_utf8_package_path() -> Result<()> {
     let app = bin.join("inkstack");
     fs::write(&app, [])?;
     let source = cargo_bin("inkstack-voice-host")?;
-    inkstack_utils_cargo_bin::copy_executable(&source, &helper_dir.join(source.file_name().unwrap()))?;
+    inkstack_utils_cargo_bin::copy_executable(
+        &source,
+        &helper_dir.join(source.file_name().unwrap()),
+    )?;
     install_startup_libraries(helper_dir.parent().unwrap())?;
     let package = InstallContext::from_exe(
         /*is_macos*/ cfg!(target_os = "macos"),

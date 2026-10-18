@@ -44,7 +44,10 @@ where
         }
         TestBinaryDispatchMode::Skip => None,
         TestBinaryDispatchMode::InstallAliases => {
-            let inkstack_home = match tempfile::Builder::new().prefix(inkstack_home_prefix).tempdir() {
+            let inkstack_home = match tempfile::Builder::new()
+                .prefix(inkstack_home_prefix)
+                .tempdir()
+            {
                 Ok(inkstack_home) => inkstack_home,
                 Err(error) => panic!("failed to create test INKSTACK_HOME: {error}"),
             };

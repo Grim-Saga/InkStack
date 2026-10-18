@@ -2226,28 +2226,30 @@ async fn collab_receiver_notification_does_not_cache_not_found_thread() {
         ThreadId::from_string("00000000-0000-0000-0000-000000000124").expect("valid thread id");
 
     app.handle_thread_event_now(ThreadBufferedEvent::Notification(Box::new(
-        ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: ThreadId::new().to_string(),
-            turn_id: "turn-1".to_string(),
-            completed_at_ms: 0,
-            item: ThreadItem::CollabAgentToolCall {
-                id: "send-1".to_string(),
-                tool: inkstack_app_server_protocol::CollabAgentTool::SendInput,
-                status: inkstack_app_server_protocol::CollabAgentToolCallStatus::Failed,
-                sender_thread_id: ThreadId::new().to_string(),
-                receiver_thread_ids: vec![receiver_thread_id.to_string()],
-                prompt: Some("hello".to_string()),
-                model: None,
-                reasoning_effort: None,
-                agents_states: HashMap::from([(
-                    receiver_thread_id.to_string(),
-                    inkstack_app_server_protocol::CollabAgentState {
-                        status: inkstack_app_server_protocol::CollabAgentStatus::NotFound,
-                        message: None,
-                    },
-                )]),
+        ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: ThreadId::new().to_string(),
+                turn_id: "turn-1".to_string(),
+                completed_at_ms: 0,
+                item: ThreadItem::CollabAgentToolCall {
+                    id: "send-1".to_string(),
+                    tool: inkstack_app_server_protocol::CollabAgentTool::SendInput,
+                    status: inkstack_app_server_protocol::CollabAgentToolCallStatus::Failed,
+                    sender_thread_id: ThreadId::new().to_string(),
+                    receiver_thread_ids: vec![receiver_thread_id.to_string()],
+                    prompt: Some("hello".to_string()),
+                    model: None,
+                    reasoning_effort: None,
+                    agents_states: HashMap::from([(
+                        receiver_thread_id.to_string(),
+                        inkstack_app_server_protocol::CollabAgentState {
+                            status: inkstack_app_server_protocol::CollabAgentStatus::NotFound,
+                            message: None,
+                        },
+                    )]),
+                },
             },
-        }),
+        ),
     )));
 
     assert_eq!(app.agent_navigation.get(&receiver_thread_id), None);
@@ -3377,7 +3379,8 @@ fn update_memory_settings_updates_current_thread_memory_mode() -> Result<()> {
         let (mut app, _app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
         let inkstack_home = tempdir()?;
         app.config.inkstack_home = inkstack_home.path().to_path_buf().abs();
-        app.config.sqlite = inkstack_state::SqliteConfig::new_for_testing(inkstack_home.path().abs());
+        app.config.sqlite =
+            inkstack_state::SqliteConfig::new_for_testing(inkstack_home.path().abs());
         // Seed the previous setting so this test exercises the thread-mode update path.
         app.config.memories.generate_memories = true;
 
@@ -3417,7 +3420,8 @@ async fn reset_memories_clears_local_memory_directories() -> Result<()> {
         let (mut app, _app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
         let inkstack_home = tempdir()?;
         app.config.inkstack_home = inkstack_home.path().to_path_buf().abs();
-        app.config.sqlite = inkstack_state::SqliteConfig::new_for_testing(inkstack_home.path().abs());
+        app.config.sqlite =
+            inkstack_state::SqliteConfig::new_for_testing(inkstack_home.path().abs());
 
         let memory_root = inkstack_home.path().join("memories");
         let extensions_root = memory_root.join("extensions");
@@ -4607,19 +4611,21 @@ async fn active_thread_file_change_approval_recovers_buffered_changes() {
     assert!(!app.chat_widget.has_active_view());
     assert!(app.startup_pending_protected_request);
     app.chat_widget.handle_server_notification(
-        ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: thread_id.to_string(),
-            turn_id: "turn-active-approval".to_string(),
-            completed_at_ms: 0,
-            item: ThreadItem::AgentMessage {
-                id: "agent-1".to_string(),
-                text: "streaming".to_string(),
-                phase: None,
-                memory_citation: None,
-                delivery: None,
-                questions: None,
+        ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: thread_id.to_string(),
+                turn_id: "turn-active-approval".to_string(),
+                completed_at_ms: 0,
+                item: ThreadItem::AgentMessage {
+                    id: "agent-1".to_string(),
+                    text: "streaming".to_string(),
+                    phase: None,
+                    memory_citation: None,
+                    delivery: None,
+                    questions: None,
+                },
             },
-        }),
+        ),
         /*replay_kind*/ None,
     );
 
@@ -6673,7 +6679,11 @@ async fn set_thread_goal_draft_materializes_long_objective_and_confirms_before_p
     ));
     let unix_path = AppServerPath::from_app_server("/tmp/inkstack\\").join("a");
     assert_eq!(unix_path.as_str(), "/tmp/inkstack\\/a");
-    let attachments_dir = app.chat_widget.config_ref().inkstack_home.join("attachments");
+    let attachments_dir = app
+        .chat_widget
+        .config_ref()
+        .inkstack_home
+        .join("attachments");
     let attachment_count = std::fs::read_dir(&attachments_dir)?.count();
     let placeholder = "[Pasted Content 5 chars]";
     let paste_draft = crate::goal_files::GoalDraft {
@@ -7138,17 +7148,19 @@ async fn copy_picker_opening_preserves_terminal_scrollback_without_reflow() {
         crate::transcript_mode::TranscriptMode::Terminal;
     let response = "Existing response\n\n```rust\nkeep_scrollback();\n```";
     app.chat_widget.handle_server_notification(
-        ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: String::new(),
-            turn_id: "turn-1".to_string(),
-            completed_at_ms: 0,
-            item: serde_json::from_value(serde_json::json!({
-                "type": "agentMessage",
-                "id": "message-1",
-                "text": response,
-            }))
-            .expect("valid completed agent message"),
-        }),
+        ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: String::new(),
+                turn_id: "turn-1".to_string(),
+                completed_at_ms: 0,
+                item: serde_json::from_value(serde_json::json!({
+                    "type": "agentMessage",
+                    "id": "message-1",
+                    "text": response,
+                }))
+                .expect("valid completed agent message"),
+            },
+        ),
         /*replay_kind*/ None,
     );
     while app_event_rx.try_recv().is_ok() {}
@@ -8626,8 +8638,11 @@ async fn prompt_edit_reverts_earlier_and_first_visible_prompts_in_place_scenario
         /*git_info*/ None,
     )
     .expect("materialized rollout should be created");
-    let source_path =
-        app_test_support::rollout_path(config.inkstack_home.as_path(), filename_ts, &source_thread_id);
+    let source_path = app_test_support::rollout_path(
+        config.inkstack_home.as_path(),
+        filename_ts,
+        &source_thread_id,
+    );
     let session_meta = std::fs::read_to_string(&source_path)?
         .lines()
         .next()
@@ -9836,7 +9851,8 @@ async fn selecting_cyber_model_respects_auto_review_requirements() {
             allowed_approval_policies: Some(vec![AskForApproval::UnlessTrusted.to_core()]),
             ..Default::default()
         };
-        let mut requirements_with_sources = inkstack_config::ConfigRequirementsWithSources::default();
+        let mut requirements_with_sources =
+            inkstack_config::ConfigRequirementsWithSources::default();
         requirements_with_sources.merge_unset_fields(
             inkstack_config::RequirementSource::Unknown,
             requirements_toml.clone(),

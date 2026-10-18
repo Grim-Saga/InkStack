@@ -97,7 +97,10 @@ pub(super) fn ensure_inkstack_app_runtime_paths_readable(
         }
     }
     if let Some(local_app_data) = local_app_data {
-        let runtime_root = local_app_data.join("OpenAI").join("InkStack").join("runtimes");
+        let runtime_root = local_app_data
+            .join("OpenAI")
+            .join("InkStack")
+            .join("runtimes");
         if let Err(err) = ensure_runtime_tree_readable(&runtime_root, sandbox_group_psid) {
             let message = format!("runtime read/execute validation failed: {err:#}");
             super::log_line(log, &message)?;

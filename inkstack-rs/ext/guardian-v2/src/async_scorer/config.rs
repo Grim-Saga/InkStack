@@ -84,7 +84,11 @@ impl GuardianV2Config {
         let mut resolved = Self::from_overrides(configured.clone())?;
         // Config.features can be changed after loading, including for reviewer threads.
         let legacy = FeatureToml::Config(GuardianV2ConfigToml {
-            enabled: Some(config.features.enabled(inkstack_features::Feature::GuardianV2)),
+            enabled: Some(
+                config
+                    .features
+                    .enabled(inkstack_features::Feature::GuardianV2),
+            ),
             ..configured
         });
         resolved.policy =

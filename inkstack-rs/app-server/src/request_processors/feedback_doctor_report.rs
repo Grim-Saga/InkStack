@@ -220,7 +220,10 @@ mod tests {
         );
         assert_eq!(
             command.get_envs().collect::<Vec<_>>(),
-            [("INKSTACK_HOME".as_ref(), Some(inkstack_home.path().as_os_str()))]
+            [(
+                "INKSTACK_HOME".as_ref(),
+                Some(inkstack_home.path().as_os_str())
+            )]
         );
     }
 

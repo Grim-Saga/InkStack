@@ -119,8 +119,9 @@ async fn marks_encrypted_history_and_notes_arguments_without_changing_the_json_b
             .await;
     }
 
-    let auth_manager =
-        AuthManager::from_auth_for_testing(InkStackAuth::Headers(AuthHeaders::new(HeaderMap::new())));
+    let auth_manager = AuthManager::from_auth_for_testing(InkStackAuth::Headers(AuthHeaders::new(
+        HeaderMap::new(),
+    )));
     let backend = HistoryNotesBackend::new(
         create_model_provider(
             ModelProviderInfo::create_openai_provider(Some(format!(

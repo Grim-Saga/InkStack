@@ -99,8 +99,8 @@ fn config_layer_stack_with_requirements(
     .expect("requirements should be present");
     let requirements_toml = with_sources.clone().into_toml();
     let requirements = ConfigRequirements::try_from(with_sources).expect("normalize requirements");
-    let config_file =
-        AbsolutePathBuf::try_from(inkstack_home.join(CONFIG_TOML_FILE)).expect("absolute config path");
+    let config_file = AbsolutePathBuf::try_from(inkstack_home.join(CONFIG_TOML_FILE))
+        .expect("absolute config path");
     ConfigLayerStack::new(
         vec![ConfigLayerEntry::new(
             ConfigLayerSource::User {
@@ -840,9 +840,13 @@ async fn load_plugins_from_config(
 ) -> PluginLoadOutcome {
     write_file(&inkstack_home.join(CONFIG_TOML_FILE), config_toml);
     let config = load_config(inkstack_home, inkstack_home).await;
-    test_plugins_manager_with_options(inkstack_home.to_path_buf(), Some(Product::InkStack), auth_mode)
-        .plugins_for_config(&config)
-        .await
+    test_plugins_manager_with_options(
+        inkstack_home.to_path_buf(),
+        Some(Product::InkStack),
+        auth_mode,
+    )
+    .plugins_for_config(&config)
+    .await
 }
 
 async fn load_config(inkstack_home: &Path, cwd: &Path) -> PluginsConfigInput {
@@ -3142,7 +3146,8 @@ async fn plugin_defaults_resolve_remote_enablement_and_separate_cache_entries() 
 
     let mut disabled_plugin = remote_installed_plugin("sample");
     disabled_plugin.enabled = false;
-    disabled_plugin.availability = inkstack_app_server_protocol::PluginAvailability::DisabledByAdmin;
+    disabled_plugin.availability =
+        inkstack_app_server_protocol::PluginAvailability::DisabledByAdmin;
     manager.write_remote_installed_plugins_cache(vec![disabled_plugin]);
     write_file(
         &config_path,
@@ -3853,7 +3858,11 @@ async fn install_plugin_supports_git_subdir_marketplace_sources() {
             auth_policy: MarketplacePluginAuthPolicy::OnInstall,
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
 }
 
 #[tokio::test]
@@ -3907,7 +3916,11 @@ async fn install_plugin_supports_relative_git_subdir_marketplace_sources() {
             auth_policy: MarketplacePluginAuthPolicy::OnInstall,
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
 }
 
 #[tokio::test]
@@ -7115,7 +7128,8 @@ async fn load_plugins_uses_project_config_files() {
     let stack = ConfigLayerStack::new(
         vec![ConfigLayerEntry::new(
             ConfigLayerSource::Project {
-                dot_inkstack_folder: AbsolutePathBuf::try_from(project_root.join(".inkstack")).unwrap(),
+                dot_inkstack_folder: AbsolutePathBuf::try_from(project_root.join(".inkstack"))
+                    .unwrap(),
             },
             toml::from_str(&plugin_config_toml(
                 /*enabled*/ true, /*plugins_feature_enabled*/ true,
@@ -7556,7 +7570,11 @@ plugins = true
 remote_plugin = true
 "#,
     );
-    write_cached_plugin(inkstack_home.path(), REMOTE_GLOBAL_MARKETPLACE_NAME, "linear");
+    write_cached_plugin(
+        inkstack_home.path(),
+        REMOTE_GLOBAL_MARKETPLACE_NAME,
+        "linear",
+    );
     write_cached_plugin(
         inkstack_home.path(),
         REMOTE_WORKSPACE_SHARED_WITH_ME_MARKETPLACE_NAME,

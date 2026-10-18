@@ -451,7 +451,8 @@ async fn run_resume_picker_with_launch_context(
     let runtime_keymap = picker_runtime_keymap(local_settings)?;
     let options = SessionPickerRunOptions {
         use_theme_colors: local_settings.tui.status_line_use_colors,
-        copy_on_select: local_settings.copy_on_select(&inkstack_terminal_detection::terminal_info()),
+        copy_on_select: local_settings
+            .copy_on_select(&inkstack_terminal_detection::terminal_info()),
         copy_on_select_clear_selection: local_settings.tui.copy_on_select_clear_selection,
         mouse_scroll_speed: local_settings.tui.mouse_scroll_speed.unwrap_or(1.0),
         show_all,
@@ -512,7 +513,8 @@ pub async fn run_fork_picker_with_app_server(
     let runtime_keymap = picker_runtime_keymap(local_settings)?;
     let options = SessionPickerRunOptions {
         use_theme_colors: local_settings.tui.status_line_use_colors,
-        copy_on_select: local_settings.copy_on_select(&inkstack_terminal_detection::terminal_info()),
+        copy_on_select: local_settings
+            .copy_on_select(&inkstack_terminal_detection::terminal_info()),
         copy_on_select_clear_selection: local_settings.tui.copy_on_select_clear_selection,
         mouse_scroll_speed: local_settings.tui.mouse_scroll_speed.unwrap_or(1.0),
         show_all,
@@ -4267,7 +4269,8 @@ mod tests {
 
     #[test]
     fn footer_cwd_truncates_to_responsive_column() {
-        let cwd = "~/code/inkstack.owner-extremely-long-worktree-name-that-needs-truncating/inkstack-rs";
+        let cwd =
+            "~/code/inkstack.owner-extremely-long-worktree-name-that-needs-truncating/inkstack-rs";
         let branch = "owner/branch";
         let footer = render_footer_lines(
             ThreadSortKey::UpdatedAt,

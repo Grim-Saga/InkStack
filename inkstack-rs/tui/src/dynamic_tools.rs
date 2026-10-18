@@ -240,7 +240,8 @@ pub(crate) fn tool_specs() -> Vec<DynamicToolSpec> {
 
     vec![DynamicToolSpec::Namespace(DynamicToolNamespaceSpec {
         name: NAMESPACE.to_string(),
-        description: "Manage InkStack tasks available through the connected app server.".to_string(),
+        description: "Manage InkStack tasks available through the connected app server."
+            .to_string(),
         tools: definitions
             .into_iter()
             .map(|(name, description, properties, required)| {
@@ -648,7 +649,9 @@ async fn execute_inner(
                 };
                 turns
                     .into_iter()
-                    .find(|turn| turn.status == inkstack_app_server_protocol::TurnStatus::InProgress)
+                    .find(|turn| {
+                        turn.status == inkstack_app_server_protocol::TurnStatus::InProgress
+                    })
                     .map(|turn| turn.id)
             } else {
                 None

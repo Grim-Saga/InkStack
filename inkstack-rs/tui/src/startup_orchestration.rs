@@ -560,12 +560,15 @@ pub(super) async fn run_main_inner(
             .run_until(async {
                 // Daemon startup needs no terminal input. Keep the composer visible and
                 // responsive while it checks the running server or prepares an installation.
-                let result = inkstack_app_server_daemon::start_with_features(&daemon_features).await;
+                let result =
+                    inkstack_app_server_daemon::start_with_features(&daemon_features).await;
                 daemon_telemetry::record_start(&config, &result).await;
                 match result {
                     Ok(output) => Ok(Some(output)),
                     #[cfg(windows)]
-                    Err(err) if err.is::<inkstack_app_server_daemon::DetachedLaunchRestricted>() => {
+                    Err(err)
+                        if err.is::<inkstack_app_server_daemon::DetachedLaunchRestricted>() =>
+                    {
                         Ok(None)
                     }
                     Err(err) => Err(std::io::Error::other(format!(
@@ -622,7 +625,10 @@ pub(super) async fn run_main_inner(
         });
     #[cfg(target_os = "macos")]
     let local_runtime_paths = local_runtime_paths.with_allowed_symlinked_inkstack_home(
-        inkstack_config::allowed_symlinked_inkstack_home(&config.config_layer_stack, &config.inkstack_home),
+        inkstack_config::allowed_symlinked_inkstack_home(
+            &config.config_layer_stack,
+            &config.inkstack_home,
+        ),
     );
     let environment_manager = Arc::new(
         prepared_environment_manager

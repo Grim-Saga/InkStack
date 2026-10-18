@@ -86,7 +86,8 @@ async fn dual_write_prepares_both_roots_without_importing_old_notes() -> anyhow:
     tokio::fs::write(old_notes.join("old.md"), "old memory").await?;
     let mut memories = startup_test_memories_config();
     memories.dual_write = true;
-    let test = build_test_inkstack_with_memories_config(&server, Arc::clone(&home), memories).await?;
+    let test =
+        build_test_inkstack_with_memories_config(&server, Arc::clone(&home), memories).await?;
     trigger_memories_startup(&test).await;
     wait_for_dir(&home.path().join("memories/extensions/ad_hoc")).await?;
     wait_for_dir(&home.path().join("memories_v2/extensions/ad_hoc")).await?;
@@ -632,7 +633,9 @@ async fn memories_startup_phase1_uses_live_thread_service_tier_and_detached_meta
         &test.inkstack,
         inkstack_protocol::protocol::ThreadSettingsOverrides {
             service_tier: Some(Some(ServiceTier::Fast.request_value().to_string())),
-            permission_profile: Some(inkstack_protocol::models::PermissionProfile::workspace_write()),
+            permission_profile: Some(
+                inkstack_protocol::models::PermissionProfile::workspace_write(),
+            ),
             ..Default::default()
         },
     )
@@ -803,7 +806,8 @@ async fn run_memory_phase_one_model_request_test(
     memories: MemoriesConfig,
 ) -> anyhow::Result<ResponsesRequest> {
     let version = memories.version;
-    let test = build_test_inkstack_with_memories_config(server, Arc::clone(&home), memories).await?;
+    let test =
+        build_test_inkstack_with_memories_config(server, Arc::clone(&home), memories).await?;
     let provider = Arc::new(MockMemoryModelProvider::new(
         test.config.model_provider.clone(),
         Some(test.thread_manager.auth_manager()),
@@ -1046,7 +1050,8 @@ async fn run_memory_phase_two_model_request_test(
                 /*max_running_jobs*/ 1,
             )
             .await?;
-        let inkstack_state::Stage1JobClaimOutcome::Claimed { ownership_token } = phase1_claim else {
+        let inkstack_state::Stage1JobClaimOutcome::Claimed { ownership_token } = phase1_claim
+        else {
             panic!("claim v2 source")
         };
         store
@@ -1178,7 +1183,10 @@ async fn trigger_memories_startup(test: &TestInkStack) {
 async fn memory_startup_context_with_provider(
     test: &TestInkStack,
     provider: SharedModelProvider,
-) -> (Arc<MemoryStartupContext>, Arc<inkstack_core::config::Config>) {
+) -> (
+    Arc<MemoryStartupContext>,
+    Arc<inkstack_core::config::Config>,
+) {
     let config_snapshot = test.inkstack.config_snapshot().await;
     let mut config = test.config.clone();
     config
@@ -1509,7 +1517,10 @@ async fn read_rollout_summary_bodies(memory_root: &Path) -> anyhow::Result<Vec<S
 
 async fn shutdown_test_inkstack(test: &TestInkStack) -> anyhow::Result<()> {
     test.inkstack.submit(Op::Shutdown {}).await?;
-    wait_for_event(&test.inkstack, |ev| matches!(ev, EventMsg::ShutdownComplete)).await;
+    wait_for_event(&test.inkstack, |ev| {
+        matches!(ev, EventMsg::ShutdownComplete)
+    })
+    .await;
     Ok(())
 }
 

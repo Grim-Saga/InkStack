@@ -45,7 +45,8 @@ async fn fork_before_first_turn_preserves_model_selected_multi_agent_version(
         .disable_feature(Feature::MultiAgentV2)
         .write(inkstack_home.path())?;
     let config = load_default_config_for_test(&inkstack_home).await;
-    let mut model = inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
+    let mut model =
+        inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
     model.multi_agent_version = Some(MultiAgentVersion::V2);
     write_models_cache_with_models(inkstack_home.path(), vec![model]).await?;
     let mut mcp = TestAppServer::builder()

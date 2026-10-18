@@ -57,7 +57,8 @@ fn remove_marketplace_sync(
 
     // Removing a user override must not delete a snapshot still referenced by
     // another enabled layer, including a lower-precedence layer it shadows.
-    let user_config_file = AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home);
+    let user_config_file =
+        AbsolutePathBuf::resolve_path_against_base(CONFIG_TOML_FILE, inkstack_home);
     if let Some(layer) = config_layer_stack.layers_high_to_low().find(|layer| {
         !matches!(
             &layer.name,
@@ -183,7 +184,8 @@ mod tests {
             Some(AbsolutePathBuf::try_from(installed_root.clone()).unwrap())
         );
         let config =
-            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE)).unwrap();
+            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE))
+                .unwrap();
         assert!(!config.contains("[marketplaces.debug]"));
         assert!(!installed_root.exists());
     }
@@ -295,7 +297,8 @@ mod tests {
         );
         assert!(installed_root.exists());
         let config =
-            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE)).unwrap();
+            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE))
+                .unwrap();
         assert!(config.contains("[marketplaces.debug]"));
     }
 
@@ -364,7 +367,8 @@ mod tests {
         );
         assert!(!installed_root.exists());
         let config =
-            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE)).unwrap();
+            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE))
+                .unwrap();
         assert!(!config.contains("[marketplaces.debug]"));
     }
 
@@ -397,7 +401,8 @@ marketplaces = { debug = { source_type = "git", source = "https://github.com/own
         );
         assert!(!installed_root.exists());
         let config =
-            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE)).unwrap();
+            fs::read_to_string(inkstack_home.path().join(inkstack_config::CONFIG_TOML_FILE))
+                .unwrap();
         assert!(!config.contains("debug"));
     }
 }

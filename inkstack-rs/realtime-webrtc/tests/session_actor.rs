@@ -189,7 +189,8 @@ async fn device_discovery_does_not_start_capture() -> Result<()> {
         .package_layout
         .as_ref()
         .unwrap();
-    let mut host = inkstack_realtime_webrtc::VoiceHost::connect(package, common::BUILD_COMMIT).await?;
+    let mut host =
+        inkstack_realtime_webrtc::VoiceHost::connect(package, common::BUILD_COMMIT).await?;
     assert_eq!(
         host.list_devices(AudioDeviceKind::Input).await?,
         vec![inkstack_realtime_webrtc::AudioDevice {

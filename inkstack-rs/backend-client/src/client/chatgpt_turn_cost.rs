@@ -49,7 +49,10 @@ impl Client {
     ) -> Result<Vec<ChatgptThreadTurnCosts>, RequestError> {
         let url = match self.path_style {
             PathStyle::InkStackApi => {
-                format!("{}/api/inkstack/usage/thread-estimates/query", self.base_url)
+                format!(
+                    "{}/api/inkstack/usage/thread-estimates/query",
+                    self.base_url
+                )
             }
             PathStyle::ChatGptApi => {
                 format!("{}/wham/usage/thread-estimates/query", self.base_url)

@@ -483,7 +483,8 @@ impl BedrockState {
             }
             BedrockView::EnvironmentInstructions => {
                 lines.push(
-                    "  Configure AWS credentials in your environment, then restart InkStack.".into(),
+                    "  Configure AWS credentials in your environment, then restart InkStack."
+                        .into(),
                 );
                 lines.push("".into());
                 lines.push(Line::from(vec![

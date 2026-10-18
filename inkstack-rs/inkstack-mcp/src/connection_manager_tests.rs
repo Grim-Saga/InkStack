@@ -853,7 +853,9 @@ fn create_test_manager_with_failed_apps_startup(
             inkstack_apps_tools_cache_context: Some(cache_context),
             tool_catalog_cache_context: None,
             startup_complete: Arc::new(std::sync::atomic::AtomicBool::new(true)),
-            startup_reconnect: Some(Arc::new(InkStackAppsStartupReconnect::new(reconnect_factory))),
+            startup_reconnect: Some(Arc::new(InkStackAppsStartupReconnect::new(
+                reconnect_factory,
+            ))),
             cancel_token: CancellationToken::new(),
         },
     );
@@ -2442,7 +2444,8 @@ async fn hard_refresh_keeps_client_catalog_local_when_shared_cache_loses_race() 
         Some("shared-account".to_string()),
         Some("shared-user".to_string()),
     );
-    let cache_context_a = shared_cache.context(inkstack_home.path().to_path_buf(), cache_key.clone());
+    let cache_context_a =
+        shared_cache.context(inkstack_home.path().to_path_buf(), cache_key.clone());
     let cache_context_b = shared_cache.context(inkstack_home.path().to_path_buf(), cache_key);
     let list_started = Arc::new(Notify::new());
     let release_list = Arc::new(Notify::new());
@@ -2468,7 +2471,9 @@ async fn hard_refresh_keeps_client_catalog_local_when_shared_cache_loses_race() 
             .await
     });
     list_started.notified().await;
-    let tools_b = manager_b.refresh_inkstack_apps_tools_for_discovery().await?;
+    let tools_b = manager_b
+        .refresh_inkstack_apps_tools_for_discovery()
+        .await?;
     release_list.notify_one();
     let tools_a = refresh_a.await??;
 
@@ -2527,7 +2532,9 @@ async fn hard_refresh_keeps_client_catalog_local_when_shared_cache_loses_race() 
             .await
     });
     list_started.notified().await;
-    manager_b.refresh_inkstack_apps_tools_for_discovery().await?;
+    manager_b
+        .refresh_inkstack_apps_tools_for_discovery()
+        .await?;
     release_list.notify_one();
     let snapshot_a = refresh_a.await??;
     assert_eq!(
@@ -2559,7 +2566,9 @@ async fn hard_refresh_keeps_client_catalog_local_when_shared_cache_loses_race() 
         .tool_filter
         .disabled
         .insert("b_only".to_string());
-    let snapshot_b = manager_b.refresh_inkstack_apps_client_catalog(&config).await?;
+    let snapshot_b = manager_b
+        .refresh_inkstack_apps_client_catalog(&config)
+        .await?;
     assert_eq!(
         (
             snapshot_b
@@ -3564,7 +3573,9 @@ async fn capture_binding_resolves_concurrently_and_rechecks_cached_clients() {
     .await
     .expect("both uncached servers should start before either is released");
 
-    release_apps.send(()).expect("release InkStack Apps startup");
+    release_apps
+        .send(())
+        .expect("release InkStack Apps startup");
     assert!(startup.await.expect("InkStack Apps startup task"));
     release_first.send(()).expect("release first server");
     release_second.send(()).expect("release second server");
@@ -4304,7 +4315,10 @@ async fn tool_lists_do_not_block_and_share_inkstack_apps_startup_reconnect() {
         .shared()
     });
     let mut manager = create_test_manager_with_failed_apps_startup(
-        vec![create_test_tool(INKSTACK_APPS_MCP_SERVER_NAME, "drive_search")],
+        vec![create_test_tool(
+            INKSTACK_APPS_MCP_SERVER_NAME,
+            "drive_search",
+        )],
         reconnect_factory,
     );
     manager.set_test_server_metadata(
@@ -4659,7 +4673,9 @@ async fn executor_owned_chatgpt_mcp_accepts_only_safe_explicit_authorization() -
         assert!(
             chatgpt_auth_provider_for_server(
                 remote_server,
-                Some(inkstack_model_provider::auth_provider_from_auth(&hosted_auth)),
+                Some(inkstack_model_provider::auth_provider_from_auth(
+                    &hosted_auth
+                )),
             )
             .is_none(),
             "{case}: executor-owned servers must never receive hosted actor credentials"
@@ -5940,7 +5956,10 @@ fn connection_identity_tracks_only_oauth_credentials_when_oauth_is_active() {
 #[test]
 fn connection_identity_uses_effective_authorization_headers() {
     let runtime_context = reusable_server_runtime_context();
-    let missing_env_var = format!("INKSTACK_TEST_UNSET_MCP_AUTHORIZATION_{}", std::process::id());
+    let missing_env_var = format!(
+        "INKSTACK_TEST_UNSET_MCP_AUTHORIZATION_{}",
+        std::process::id()
+    );
     assert!(std::env::var_os(&missing_env_var).is_none());
 
     for (static_header, environment_header, has_authorization) in [

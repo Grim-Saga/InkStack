@@ -192,7 +192,11 @@ pub(crate) fn build_async_http_client(
     Ok(crate::network_policy::RuntimeHttpClient {
         client: inkstack_http_client::HttpClientBuilder::new()
             .without_request_logging()
-            .build_with_tls(factory, inkstack_http_client::ClientRouteClass::Other, config),
+            .build_with_tls(
+                factory,
+                inkstack_http_client::ClientRouteClass::Other,
+                config,
+            ),
         timeout: resolve_otlp_timeout(timeout_var),
         runtime: tokio::runtime::Handle::try_current()?,
     })

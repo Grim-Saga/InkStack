@@ -73,7 +73,8 @@ impl LocalAgentControl {
                 AgentInfo::Loaded { agent, config }
             }
             Err(err)
-                if known_agent && matches!(err.details(), InkStackErrorDetails::ThreadNotFound(_)) =>
+                if known_agent
+                    && matches!(err.details(), InkStackErrorDetails::ThreadNotFound(_)) =>
             {
                 if let Some(agent_graph_store) = state.agent_graph_store()
                     && let Err(err) = agent_graph_store
@@ -96,7 +97,8 @@ impl LocalAgentControl {
                 if known_agent
                     && matches!(
                         err.details(),
-                        InkStackErrorDetails::ThreadNotFound(_) | InkStackErrorDetails::InternalAgentDied
+                        InkStackErrorDetails::ThreadNotFound(_)
+                            | InkStackErrorDetails::InternalAgentDied
                     ) =>
             {
                 Ok(snapshot)
@@ -115,7 +117,8 @@ impl LocalAgentControl {
                 Err(err)
                     if matches!(
                         err.details(),
-                        InkStackErrorDetails::ThreadNotFound(_) | InkStackErrorDetails::InternalAgentDied
+                        InkStackErrorDetails::ThreadNotFound(_)
+                            | InkStackErrorDetails::InternalAgentDied
                     ) => {}
                 Err(err) => return Err(err),
             }

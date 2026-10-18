@@ -94,7 +94,10 @@ async fn archive_thread_with_paths(
             continue;
         }
         let canonical_rollout_path = scoped_rollout_path(
-            store.config.inkstack_home.join(inkstack_rollout::SESSIONS_SUBDIR),
+            store
+                .config
+                .inkstack_home
+                .join(inkstack_rollout::SESSIONS_SUBDIR),
             rollout_path.as_path(),
             "sessions",
         )?;

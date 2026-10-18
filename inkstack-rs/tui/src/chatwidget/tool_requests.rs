@@ -189,7 +189,10 @@ impl ChatWidget {
                     }
                     GuardianAssessmentAction::RequestPermissions { reason, .. } => {
                         history_cell::new_guardian_timed_out_action_request(
-                            permission_request_summary("inkstack could request permissions", reason),
+                            permission_request_summary(
+                                "inkstack could request permissions",
+                                reason,
+                            ),
                         )
                     }
                     GuardianAssessmentAction::Command { .. } => unreachable!(),

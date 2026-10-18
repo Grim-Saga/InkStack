@@ -265,8 +265,9 @@ impl SkillsThreadState {
             .skills_extension_state
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let cache_key = mcp_resources
-            .map(|client| client.auth_cache_key_for_server(inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME));
+        let cache_key = mcp_resources.map(|client| {
+            client.auth_cache_key_for_server(inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME)
+        });
         if let Some(cache) = state
             .cloud_cache
             .as_ref()

@@ -68,7 +68,11 @@ fn install_copies_plugin_into_default_marketplace() {
             installed_path: AbsolutePathBuf::try_from(installed_path.clone()).unwrap(),
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
     assert!(installed_path.join("skills/SKILL.md").is_file());
 }
 
@@ -109,7 +113,11 @@ fn install_accepts_manifest_mcp_server_objects() {
             installed_path: AbsolutePathBuf::try_from(installed_path.clone()).unwrap(),
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
 }
 
 #[cfg(unix)]
@@ -275,7 +283,11 @@ fn install_with_version_uses_requested_cache_version() {
             installed_path: AbsolutePathBuf::try_from(installed_path.clone()).unwrap(),
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
 }
 
 #[test]
@@ -413,7 +425,11 @@ fn install_prefers_on_disk_manifest_version_over_fallback() {
             installed_path: AbsolutePathBuf::try_from(installed_path.clone()).unwrap(),
         }
     );
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
 }
 
 #[test]

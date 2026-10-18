@@ -293,7 +293,11 @@ async fn plugin_install_writes_remote_plugin_to_cloud_and_cache() -> Result<()> 
         /*expected_count*/ 1,
     )
     .await?;
-    assert!(installed_path.join(".inkstack-plugin/plugin.json").is_file());
+    assert!(
+        installed_path
+            .join(".inkstack-plugin/plugin.json")
+            .is_file()
+    );
     let installed_plugin_manifest: serde_json::Value = serde_json::from_str(
         &std::fs::read_to_string(installed_path.join(".inkstack-plugin/plugin.json"))?,
     )?;
@@ -538,7 +542,10 @@ async fn plugin_install_rejects_invalid_remote_release_version() -> Result<()> {
 #[tokio::test]
 async fn plugin_install_rejects_invalid_remote_plugin_name() -> Result<()> {
     let inkstack_home = TempDir::new()?;
-    write_remote_plugin_catalog_config(inkstack_home.path(), "https://example.invalid/backend-api/")?;
+    write_remote_plugin_catalog_config(
+        inkstack_home.path(),
+        "https://example.invalid/backend-api/",
+    )?;
     let mut mcp = TestAppServer::builder()
         .with_inkstack_home(inkstack_home.path())
         .build_initialized_with_timeout(DEFAULT_TIMEOUT)
@@ -587,7 +594,8 @@ async fn plugin_install_tracks_analytics_when_remote_detail_fetch_fails() -> Res
     assert_eq!(err.error.code, -32600);
     assert!(err.error.message.contains("failed with status 404"));
 
-    let payload = wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
+    let payload =
+        wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -659,7 +667,8 @@ async fn plugin_install_tracks_analytics_when_remote_install_is_rate_limited() -
         /*expected_count*/ 1,
     )
     .await?;
-    let payload = wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
+    let payload =
+        wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -734,7 +743,8 @@ async fn plugin_install_rejects_remote_plugin_disabled_by_admin_before_download(
             .join("plugins/cache/openai-curated-remote/linear")
             .exists()
     );
-    let payload = wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
+    let payload =
+        wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -783,7 +793,8 @@ async fn plugin_install_rejects_remote_plugin_not_available() -> Result<()> {
         /*expected_count*/ 0,
     )
     .await?;
-    let payload = wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
+    let payload =
+        wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -873,7 +884,8 @@ async fn plugin_install_tracks_analytics_when_marketplace_file_cannot_be_read() 
     );
 
     let payload =
-        wait_for_plugin_analytics_payload(&analytics_server, "inkstack_plugin_install_failed").await?;
+        wait_for_plugin_analytics_payload(&analytics_server, "inkstack_plugin_install_failed")
+            .await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -1097,7 +1109,8 @@ async fn plugin_install_failure_tracks_analytics_event() -> Result<()> {
     assert_eq!(err.error.code, -32600);
 
     let payload =
-        wait_for_plugin_analytics_payload(&analytics_server, "inkstack_plugin_install_failed").await?;
+        wait_for_plugin_analytics_payload(&analytics_server, "inkstack_plugin_install_failed")
+            .await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -1232,7 +1245,8 @@ async fn plugin_install_preserves_status_when_remote_bundle_error_body_is_too_la
         /*expected_count*/ 0,
     )
     .await?;
-    let payload = wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
+    let payload =
+        wait_for_plugin_analytics_payload(&server, "inkstack_plugin_install_failed").await?;
     let event_params = &payload["events"][0]["event_params"];
     assert_eq!(
         payload["events"][0]["event_type"],
@@ -2921,7 +2935,10 @@ plugins = true
     )
 }
 
-fn configure_remote_plugin_test(inkstack_home: &std::path::Path, server: &MockServer) -> Result<()> {
+fn configure_remote_plugin_test(
+    inkstack_home: &std::path::Path,
+    server: &MockServer,
+) -> Result<()> {
     write_remote_plugin_catalog_config(inkstack_home, &format!("{}/backend-api/", server.uri()))?;
     write_chatgpt_auth(
         inkstack_home,

@@ -61,8 +61,8 @@ fn config_layer_stack_with_user_config(
     .expect("compose requirements")
     .expect("requirements should be present");
     let requirements_toml = with_sources.clone().into_toml();
-    let requirements =
-        inkstack_config::ConfigRequirements::try_from(with_sources).expect("normalize requirements");
+    let requirements = inkstack_config::ConfigRequirements::try_from(with_sources)
+        .expect("normalize requirements");
     let layers = user_config
         .map(|(contents, file)| {
             vec![ConfigLayerEntry::new(
@@ -348,7 +348,8 @@ source = "https://github.com/example/blocked.git"
         )),
     );
     let marketplace_path = AbsolutePathBuf::try_from(
-        marketplace_install_root(inkstack_home.path()).join("debug/.agents/plugins/marketplace.json"),
+        marketplace_install_root(inkstack_home.path())
+            .join("debug/.agents/plugins/marketplace.json"),
     )
     .expect("absolute marketplace path");
 
@@ -437,7 +438,12 @@ url = "https://github.com/openai/plugins.git"
         ] {
             assert!(
                 MarketplacePolicy::from_requirements(config.requirements())
-                    .validate_install(config, inkstack_home.path(), &repository_manifest, marketplace)
+                    .validate_install(
+                        config,
+                        inkstack_home.path(),
+                        &repository_manifest,
+                        marketplace
+                    )
                     .is_err()
             );
         }

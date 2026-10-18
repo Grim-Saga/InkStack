@@ -533,7 +533,11 @@ async fn v2_residency_reload_preserves_inherited_environment_and_tools(
         )
         .await?;
         assert_eq!(
-            test.inkstack.config_snapshot().await.environments.environments,
+            test.inkstack
+                .config_snapshot()
+                .await
+                .environments
+                .environments,
             vec![parent_environment]
         );
         let result = test
@@ -678,7 +682,12 @@ async fn tree_shutdown_waits_for_children_without_affecting_other_roots() -> Res
         .start_thread(StartThreadOptions::new(test.config.clone()))
         .await?;
 
-    assert!(test.inkstack.wait_until_terminated().now_or_never().is_none());
+    assert!(
+        test.inkstack
+            .wait_until_terminated()
+            .now_or_never()
+            .is_none()
+    );
     let shutdown = test
         .thread_manager
         .request_agent_tree_shutdown(worker_id)
@@ -708,7 +717,12 @@ async fn tree_shutdown_waits_for_children_without_affecting_other_roots() -> Res
         .expect("tree shutdown should succeed");
     // Legacy waiters observe the same successful completion after a detailed wait.
     shutdown.wait().await?;
-    assert!(test.inkstack.wait_until_terminated().now_or_never().is_some());
+    assert!(
+        test.inkstack
+            .wait_until_terminated()
+            .now_or_never()
+            .is_some()
+    );
     assert!(worker.wait_until_terminated().now_or_never().is_some());
     assert!(
         internal

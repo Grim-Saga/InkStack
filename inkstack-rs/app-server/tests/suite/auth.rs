@@ -63,7 +63,10 @@ shell_snapshot = false
     )
 }
 
-fn create_config_toml_forced_login(inkstack_home: &Path, forced_method: &str) -> std::io::Result<()> {
+fn create_config_toml_forced_login(
+    inkstack_home: &Path,
+    forced_method: &str,
+) -> std::io::Result<()> {
     let config_toml = inkstack_home.join("config.toml");
     let contents = format!(
         r#"

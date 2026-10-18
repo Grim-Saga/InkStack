@@ -360,7 +360,8 @@ fn registered_non_tty_cmd_forwards_env_output_and_exit() {
         crate::registered_core_requested(),
         "registered Core opt-in is required"
     );
-    let inkstack_home = PathBuf::from(std::env::var_os("INKSTACK_HOME").expect("fixture INKSTACK_HOME"));
+    let inkstack_home =
+        PathBuf::from(std::env::var_os("INKSTACK_HOME").expect("fixture INKSTACK_HOME"));
     assert!(
         crate::app_package::registered_setup_is_ready(&inkstack_home)
             .expect("validate the installed package and service receipt"),
@@ -369,7 +370,10 @@ fn registered_non_tty_cmd_forwards_env_output_and_exit() {
     let cwd = tempfile::tempdir().expect("isolated command workspace");
     current_thread_runtime().block_on(async {
         let mut env_map: HashMap<String, String> = std::env::vars().collect();
-        env_map.insert("INKSTACK_REGISTERED_TEST".into(), "REGISTERED-ENV-OK".into());
+        env_map.insert(
+            "INKSTACK_REGISTERED_TEST".into(),
+            "REGISTERED-ENV-OK".into(),
+        );
         let spawned = spawn_windows_sandbox_session_elevated_for_permission_profile(
             &PermissionProfile::workspace_write(),
             workspace_roots_for(cwd.path()).as_slice(),
@@ -671,7 +675,10 @@ fn legacy_capture_emits_output_and_preserves_descendant_after_normal_exit() {
     let _guard = legacy_process_test_guard();
     let cwd = sandbox_cwd();
     let inkstack_home = sandbox_home("legacy-capture-pwsh");
-    println!("capture pwsh inkstack_home={}", inkstack_home.path().display());
+    println!(
+        "capture pwsh inkstack_home={}",
+        inkstack_home.path().display()
+    );
     let ready_marker = inkstack_home.path().join("descendant-started");
     let release_marker = inkstack_home.path().join("release-descendant");
     let survival_marker = inkstack_home.path().join("descendant-survived");
@@ -687,7 +694,12 @@ fn legacy_capture_emits_output_and_preserves_descendant_after_normal_exit() {
     );
     let parent_command = format!(
         "{ASSERT_NO_CONSOLE} Write-Output LEGACY-CAPTURE-DIRECT; {}",
-        start_powershell_child(&pwsh, inkstack_home.path(), &descendant_command, &parent_tail,),
+        start_powershell_child(
+            &pwsh,
+            inkstack_home.path(),
+            &descendant_command,
+            &parent_tail,
+        ),
     );
     let permission_profile = PermissionProfile::workspace_write();
     let result = run_windows_sandbox_capture(
@@ -821,9 +833,12 @@ fn legacy_workspace_write_delete_is_limited_to_writable_roots() {
         )
         .await
         .expect("spawn legacy delete session");
-        let (stdout, exit_code) =
-            collect_stdout_and_exit(spawned, inkstack_home.path(), Duration::from_secs(/*secs*/ 10))
-                .await;
+        let (stdout, exit_code) = collect_stdout_and_exit(
+            spawned,
+            inkstack_home.path(),
+            Duration::from_secs(/*secs*/ 10),
+        )
+        .await;
         let stdout = String::from_utf8_lossy(&stdout);
 
         assert_eq!(

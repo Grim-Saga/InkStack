@@ -98,7 +98,9 @@ async fn real_imds_credentials_stop_after_policy_revocation() -> Result<(), Box<
     assert!(
         matches!(
             &denied,
-            Err(Policy(inkstack_http_client::NetworkPolicyDenied::Destination))
+            Err(Policy(
+                inkstack_http_client::NetworkPolicyDenied::Destination
+            ))
         ),
         "{denied:?}"
     );
@@ -196,7 +198,9 @@ async fn allowlisted_static_keys_send_sigv4_and_denied_destination_sends_nothing
     );
     assert!(matches!(
         context.sign(request).await,
-        Err(Policy(inkstack_http_client::NetworkPolicyDenied::Destination))
+        Err(Policy(
+            inkstack_http_client::NetworkPolicyDenied::Destination
+        ))
     ));
     assert!(
         timeout(
@@ -447,7 +451,9 @@ fn sdk_profile_probe() -> Result<(), Box<dyn Error>> {
             assert!(
                 matches!(
                     signed,
-                    Err(Policy(inkstack_http_client::NetworkPolicyDenied::Destination))
+                    Err(Policy(
+                        inkstack_http_client::NetworkPolicyDenied::Destination
+                    ))
                 ),
                 "{signed:?}"
             );

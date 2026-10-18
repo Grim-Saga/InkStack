@@ -940,7 +940,9 @@ async fn standalone_fork_retains_inherited_user_instructions(
     assert_eq!(
         (answers.fragments, answers.complete),
         (
-            vec![inkstack_guardian_context::GuardianRootMessage::IncompleteVerifiedAnswers.render()],
+            vec![
+                inkstack_guardian_context::GuardianRootMessage::IncompleteVerifiedAnswers.render()
+            ],
             false
         ),
     );
@@ -958,7 +960,10 @@ async fn standalone_fork_retains_inherited_user_instructions(
         vec![
             (inherited_text, !compacted),
             (
-                inkstack_guardian_context::truncate_text(&local_instruction, /*max_tokens*/ 900),
+                inkstack_guardian_context::truncate_text(
+                    &local_instruction,
+                    /*max_tokens*/ 900
+                ),
                 !compacted,
             ),
         ],

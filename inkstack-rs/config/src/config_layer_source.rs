@@ -18,7 +18,9 @@ pub enum ConfigLayerSource {
         profile: Option<String>,
     },
     /// Configuration loaded from a project's `.inkstack` directory.
-    Project { dot_inkstack_folder: AbsolutePathBuf },
+    Project {
+        dot_inkstack_folder: AbsolutePathBuf,
+    },
     /// Overrides supplied for the current session.
     SessionFlags,
     /// Legacy managed configuration loaded from a file.
@@ -92,7 +94,9 @@ pub fn format_config_layer_source(source: &ConfigLayerSource, config_toml_file: 
         ConfigLayerSource::User { file, .. } => {
             format!("user ({})", file.as_path().display())
         }
-        ConfigLayerSource::Project { dot_inkstack_folder } => {
+        ConfigLayerSource::Project {
+            dot_inkstack_folder,
+        } => {
             format!(
                 "project ({}/{config_toml_file})",
                 dot_inkstack_folder.as_path().display()

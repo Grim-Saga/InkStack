@@ -80,7 +80,10 @@ impl ExternalAuth for AuthAfterRouting {
         })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         ExternalAuth::resolve(self)
     }
 }

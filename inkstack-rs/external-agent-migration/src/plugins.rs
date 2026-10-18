@@ -159,7 +159,8 @@ impl ExternalAgentConfigService {
                     ref_name: import_source.ref_name,
                     sparse_paths: Vec::new(),
                 };
-                match add_marketplace(self.inkstack_home.clone(), requirements.clone(), request).await
+                match add_marketplace(self.inkstack_home.clone(), requirements.clone(), request)
+                    .await
                 {
                     Ok(add_marketplace_outcome) => {
                         let Some(marketplace_path) = find_marketplace_manifest_path(

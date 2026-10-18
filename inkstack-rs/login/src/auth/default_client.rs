@@ -40,7 +40,8 @@ use crate::outbound_proxy::AuthRouteConfig;
 /// Parenthesis will be added by InkStack. This should only specify what goes inside of the parenthesis.
 pub static USER_AGENT_SUFFIX: LazyLock<Mutex<Option<String>>> = LazyLock::new(|| Mutex::new(None));
 pub const DEFAULT_ORIGINATOR: &str = "inkstack_cli_rs";
-pub const INKSTACK_INTERNAL_ORIGINATOR_OVERRIDE_ENV_VAR: &str = "INKSTACK_INTERNAL_ORIGINATOR_OVERRIDE";
+pub const INKSTACK_INTERNAL_ORIGINATOR_OVERRIDE_ENV_VAR: &str =
+    "INKSTACK_INTERNAL_ORIGINATOR_OVERRIDE";
 pub use inkstack_model_provider_info::RESIDENCY_HEADER_NAME;
 pub use inkstack_model_provider_info::ResidencyRequirement;
 pub use inkstack_model_provider_info::read_managed_residency_requirement as read_default_client_residency_requirement;

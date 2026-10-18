@@ -127,10 +127,11 @@ fn invalid_response_becomes_remote_control_jsonrpc_error() {
     use std::os::unix::ffi::OsStringExt;
     use std::path::PathBuf;
 
-    let inkstack_home = AbsolutePathBuf::from_absolute_path(PathBuf::from(OsString::from_vec(vec![
-        b'/', b'b', b'a', b'd', 0xff,
-    ])))
-    .expect("non-UTF-8 Unix paths are valid absolute paths");
+    let inkstack_home =
+        AbsolutePathBuf::from_absolute_path(PathBuf::from(OsString::from_vec(vec![
+            b'/', b'b', b'a', b'd', 0xff,
+        ])))
+        .expect("non-UTF-8 Unix paths are valid absolute paths");
     let envelope = ServerEnvelope {
         event: ServerEvent::ServerMessage {
             message: Box::new(OutgoingMessage::Response(OutgoingResponse {

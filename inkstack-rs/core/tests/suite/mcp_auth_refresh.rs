@@ -40,7 +40,10 @@ impl ExternalAuth for StaticExternalAuth {
         Box::pin(async { Ok(self.0.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async { Ok(self.0.clone()) })
     }
 }
@@ -105,7 +108,9 @@ async fn hosted_plugin_runtime_ps_mcp_tool_calls_use_current_auth_manager_token(
         ),
         inkstack_apps_tools_cache: InkStackAppsToolsCache::default(),
         tool_catalog_cache: McpToolCatalogCache::default(),
-        inkstack_apps_tools_cache_key: inkstack_mcp::inkstack_apps_tools_cache_key(Some(&expected_auth)),
+        inkstack_apps_tools_cache_key: inkstack_mcp::inkstack_apps_tools_cache_key(Some(
+            &expected_auth,
+        )),
         client_mcp_extensions: ClientMcpExtensions::default(),
         auth: Some(expected_auth.clone()),
         auth_manager: Some(Arc::clone(&auth_manager)),

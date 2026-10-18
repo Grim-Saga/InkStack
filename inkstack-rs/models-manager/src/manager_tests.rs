@@ -336,7 +336,10 @@ where
     F: FnOnce(&mut ModelsCacheEntry),
 {
     let client_version = crate::client_version_to_whole();
-    let cache = FileModelsCache::new(inkstack_home.join(MODEL_CACHE_FILE), DEFAULT_MODEL_CACHE_TTL);
+    let cache = FileModelsCache::new(
+        inkstack_home.join(MODEL_CACHE_FILE),
+        DEFAULT_MODEL_CACHE_TTL,
+    );
     let mut entry = cache
         .load(&client_version)
         .await
@@ -571,9 +574,9 @@ async fn injected_cache_ttl_refresh_preserves_cached_payload() {
     let manager = OpenAiModelsManager::new_with_cache(
         cache.clone(),
         TestModelsEndpoint::new(Vec::new()),
-        Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-            "test-api-key",
-        ))),
+        Some(AuthManager::from_auth_for_testing(
+            InkStackAuth::from_api_key("test-api-key"),
+        )),
     );
     manager.set_api_key_model_discovery_enabled(/*enabled*/ true);
 
@@ -1059,9 +1062,9 @@ async fn refresh_available_models_keeps_merging_for_custom_api_auth() {
     let manager = openai_manager_for_tests_with_auth(
         inkstack_home.path().to_path_buf(),
         endpoint.clone(),
-        Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-            "test-api-key",
-        ))),
+        Some(AuthManager::from_auth_for_testing(
+            InkStackAuth::from_api_key("test-api-key"),
+        )),
     );
     let mut expected = load_remote_models_from_file().expect("bundled models should parse");
     expected.extend(remote_models);

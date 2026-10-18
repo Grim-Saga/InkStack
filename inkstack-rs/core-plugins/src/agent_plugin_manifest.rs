@@ -182,7 +182,12 @@ pub(super) fn parse_agent_plugin_manifest_uri(
     )?;
 
     if let Some(extension) = inkstack_extension.as_deref() {
-        apply_inkstack_agent_plugin_extension(&mut resolved, plugin_root, manifest_path, extension)?;
+        apply_inkstack_agent_plugin_extension(
+            &mut resolved,
+            plugin_root,
+            manifest_path,
+            extension,
+        )?;
         resolved.paths.onboarding_skill = onboarding_skill;
     } else if let Some((overlay_path, overlay_contents)) = overlay {
         apply_inkstack_agent_plugin_extension(

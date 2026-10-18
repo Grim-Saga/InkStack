@@ -431,7 +431,8 @@ async fn guardian_history_uses_deltas_between_eviction_batches(
         }
     }))?;
     test.inkstack =
-        super::guardian_checkpoint_migration::resume(&test, &test.inkstack, vec![checkpoint]).await?;
+        super::guardian_checkpoint_migration::resume(&test, &test.inkstack, vec![checkpoint])
+            .await?;
 
     let mut responses = Vec::new();
     for index in 0..3 {

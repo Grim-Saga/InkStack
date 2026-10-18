@@ -884,7 +884,9 @@ fn append_daemon_socket_masks(
             let destination = destination
                 .to_str()
                 .ok_or_else(|| {
-                    InkStackErr::Fatal("app-server socket mask path must be valid UTF-8".to_string())
+                    InkStackErr::Fatal(
+                        "app-server socket mask path must be valid UTF-8".to_string(),
+                    )
                 })?
                 .to_string();
             args.extend([

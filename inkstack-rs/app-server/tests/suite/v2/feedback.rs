@@ -205,7 +205,10 @@ async fn feedback_upload_recovers_persisted_evidence_and_reports_sqlite_failures
     });
     for (id, record) in [
         (thread_id, review.clone()),
-        (inkstack_protocol::ThreadId::new(), json!({"unrelated": true})),
+        (
+            inkstack_protocol::ThreadId::new(),
+            json!({"unrelated": true}),
+        ),
     ] {
         let rollout_path = home.path().join(format!("{id}.jsonl"));
         std::fs::write(&rollout_path, "")?;

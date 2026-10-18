@@ -32,7 +32,10 @@ impl ExternalAuth for ExternalCredentials {
         Box::pin(async { Ok(self.auth.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async {
             self.refreshes.fetch_add(/*val*/ 1, Ordering::SeqCst);
             match self.outcome {

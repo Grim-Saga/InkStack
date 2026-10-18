@@ -2079,7 +2079,10 @@ impl TestAppServerBuilder {
                         INKSTACK_EXEC_SERVER_NOISE_ENVIRONMENT_ID_ENV_VAR.to_string(),
                         None,
                     ),
-                    (INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN_ENV_VAR.to_string(), None),
+                    (
+                        INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN_ENV_VAR.to_string(),
+                        None,
+                    ),
                     (
                         INKSTACK_EXEC_SERVER_NOISE_CHATGPT_ACCOUNT_ID_ENV_VAR.to_string(),
                         None,

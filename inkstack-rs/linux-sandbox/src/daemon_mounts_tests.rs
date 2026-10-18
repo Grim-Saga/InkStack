@@ -164,8 +164,13 @@ fn unrelated_namespace_mount_does_not_hide_a_socket_alias() {
                    3 1 0:1 /tmp/inkstack-daemon-1000 /alias rw - ext4 disk rw\n";
     for mount_id in [Some("1"), None] {
         assert_eq!(
-            check_mounts(Path::new("/tmp/inkstack-daemon-1000"), "0:1", mount_id, mounts)
-                .map_err(|error| error.kind()),
+            check_mounts(
+                Path::new("/tmp/inkstack-daemon-1000"),
+                "0:1",
+                mount_id,
+                mounts
+            )
+            .map_err(|error| error.kind()),
             Err(io::ErrorKind::PermissionDenied),
             "mount_id: {mount_id:?}"
         );

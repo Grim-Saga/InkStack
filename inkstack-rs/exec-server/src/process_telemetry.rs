@@ -31,10 +31,15 @@ pub(crate) enum ProcessTelemetryEvent {
 impl ProcessTelemetry {
     pub(crate) fn log(&self, event: ProcessTelemetryEvent, sandbox: SandboxType) {
         let (event_name, exit_code, termination_requested, reason) = match event {
-            ProcessTelemetryEvent::Start => ("inkstack.exec_server.process_start", None, None, None),
-            ProcessTelemetryEvent::SpawnFailed => {
-                ("inkstack.exec_server.process_spawn_failed", None, None, None)
+            ProcessTelemetryEvent::Start => {
+                ("inkstack.exec_server.process_start", None, None, None)
             }
+            ProcessTelemetryEvent::SpawnFailed => (
+                "inkstack.exec_server.process_spawn_failed",
+                None,
+                None,
+                None,
+            ),
             ProcessTelemetryEvent::SandboxDenied => (
                 "inkstack.exec_server.sandbox_denied",
                 None,

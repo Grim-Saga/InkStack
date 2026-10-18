@@ -112,7 +112,9 @@ fn build_session_telemetry(
 ) -> SessionTelemetry {
     let auth = auth_manager.auth_cached();
     let auth = auth.as_ref();
-    let auth_mode = auth.map(InkStackAuth::auth_mode).map(TelemetryAuthMode::from);
+    let auth_mode = auth
+        .map(InkStackAuth::auth_mode)
+        .map(TelemetryAuthMode::from);
     let account_id = auth.and_then(InkStackAuth::get_account_id);
     let account_email = auth.and_then(InkStackAuth::get_account_email);
     let auth_env_telemetry = collect_auth_env_telemetry(
@@ -377,7 +379,8 @@ impl MemoryStartupContext {
                 ResponseEvent::OutputTextDelta(delta) => result.push_str(&delta),
                 ResponseEvent::OutputItemDone(item) => {
                     if result.is_empty()
-                        && let inkstack_protocol::models::ResponseItem::Message { content, .. } = item
+                        && let inkstack_protocol::models::ResponseItem::Message { content, .. } =
+                            item
                         && let Some(text) = content_items_to_text(&content)
                     {
                         result.push_str(&text);

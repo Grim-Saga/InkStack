@@ -955,7 +955,8 @@ async fn guardian_v2_routes_scoped_tool_approvals(
     mock_config.write(inkstack_home.path())?;
     if node_repl_review_required {
         let config = load_default_config_for_test(&inkstack_home).await;
-        let mut model_info = inkstack_core::test_support::construct_model_info_offline(MODEL, &config);
+        let mut model_info =
+            inkstack_core::test_support::construct_model_info_offline(MODEL, &config);
         model_info.node_repl_auto_review_required = true;
         write_models_cache_with_models(inkstack_home.path(), vec![model_info]).await?;
     }
@@ -1557,7 +1558,8 @@ async fn guardian_v2_routes_scoped_tool_approvals(
                 .filter_map(|item| item["id"].as_str())
                 .filter(|id| id.starts_with("luna-score-message-"))
                 .collect::<Vec<_>>();
-            if classifier_mode == inkstack_protocol::openai_models::AsyncClassifierMode::Conversation
+            if classifier_mode
+                == inkstack_protocol::openai_models::AsyncClassifierMode::Conversation
                 && !fail_after_classification
                 && let Some(latest) = retained_ids.last()
             {

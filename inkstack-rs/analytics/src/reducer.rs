@@ -990,18 +990,19 @@ impl AnalyticsReducer {
                     },
                 );
                 base.cell_id = cell_id;
-                let event = TrackEventRequest::DynamicToolCall(InkStackDynamicToolCallEventRequest {
-                    event_type: "inkstack_dynamic_tool_call_event",
-                    event_params: InkStackDynamicToolCallEventParams {
-                        base,
-                        dynamic_tool_name: tool_name,
-                        success: Some(success),
-                        output_content_item_count: None,
-                        output_text_item_count: None,
-                        output_image_item_count: None,
-                        output_audio_item_count: None,
-                    },
-                });
+                let event =
+                    TrackEventRequest::DynamicToolCall(InkStackDynamicToolCallEventRequest {
+                        event_type: "inkstack_dynamic_tool_call_event",
+                        event_params: InkStackDynamicToolCallEventParams {
+                            base,
+                            dynamic_tool_name: tool_name,
+                            success: Some(success),
+                            output_content_item_count: None,
+                            output_text_item_count: None,
+                            output_image_item_count: None,
+                            output_audio_item_count: None,
+                        },
+                    });
                 let counts = &mut self.turns.entry(turn_id.clone()).or_default().tool_counts;
                 counts.total += 1;
                 counts.dynamic_tool_call += 1;
@@ -1510,10 +1511,12 @@ impl AnalyticsReducer {
 
     fn ingest_plugin_used(&mut self, input: PluginUsedInput, out: &mut Vec<TrackEventRequest>) {
         let PluginUsedInput { tracking, plugin } = input;
-        out.push(TrackEventRequest::PluginUsed(InkStackPluginUsedEventRequest {
-            event_type: "inkstack_plugin_used",
-            event_params: inkstack_plugin_used_metadata(&tracking, plugin),
-        }));
+        out.push(TrackEventRequest::PluginUsed(
+            InkStackPluginUsedEventRequest {
+                event_type: "inkstack_plugin_used",
+                event_params: inkstack_plugin_used_metadata(&tracking, plugin),
+            },
+        ));
     }
 
     fn ingest_plugin_install_requested(
@@ -2340,7 +2343,11 @@ impl AnalyticsReducer {
         ));
     }
 
-    fn ingest_compaction(&mut self, input: InkStackCompactionEvent, out: &mut Vec<TrackEventRequest>) {
+    fn ingest_compaction(
+        &mut self,
+        input: InkStackCompactionEvent,
+        out: &mut Vec<TrackEventRequest>,
+    ) {
         let Some((connection_state, thread_state, thread_metadata)) =
             self.thread_context_or_warn(AnalyticsDropSite::compaction(&input))
         else {
@@ -2433,18 +2440,20 @@ impl AnalyticsReducer {
         else {
             return;
         };
-        out.push(TrackEventRequest::Goal(Box::new(InkStackGoalEventRequest {
-            event_type: "inkstack_goal_event",
-            event_params: inkstack_goal_event_params(
-                input,
-                thread_metadata.session_id.clone(),
-                thread_state.app_server_client(connection_state),
-                connection_state.runtime.clone(),
-                thread_metadata.thread_source.clone(),
-                thread_metadata.subagent_source.clone(),
-                thread_metadata.parent_thread_id.clone(),
-            ),
-        })));
+        out.push(TrackEventRequest::Goal(Box::new(
+            InkStackGoalEventRequest {
+                event_type: "inkstack_goal_event",
+                event_params: inkstack_goal_event_params(
+                    input,
+                    thread_metadata.session_id.clone(),
+                    thread_state.app_server_client(connection_state),
+                    connection_state.runtime.clone(),
+                    thread_metadata.thread_source.clone(),
+                    thread_metadata.subagent_source.clone(),
+                    thread_metadata.parent_thread_id.clone(),
+                ),
+            },
+        )));
     }
 
     fn ingest_guardian_review_completed(
@@ -2535,24 +2544,26 @@ impl AnalyticsReducer {
             warn_missing_analytics_context(&drop_site, MissingAnalyticsContext::ThreadMetadata);
             return;
         };
-        out.push(TrackEventRequest::TurnSteer(InkStackTurnSteerEventRequest {
-            event_type: "inkstack_turn_steer_event",
-            event_params: InkStackTurnSteerEventParams {
-                thread_id: pending_request.thread_id,
-                session_id: thread_metadata.session_id.clone(),
-                expected_turn_id: Some(pending_request.expected_turn_id),
-                accepted_turn_id,
-                app_server_client: thread_state.app_server_client(connection_state),
-                runtime: connection_state.runtime.clone(),
-                thread_source: thread_metadata.thread_source.clone(),
-                subagent_source: thread_metadata.subagent_source.clone(),
-                parent_thread_id: thread_metadata.parent_thread_id.clone(),
-                num_input_images: pending_request.num_input_images,
-                result,
-                rejection_reason,
-                created_at: pending_request.created_at,
+        out.push(TrackEventRequest::TurnSteer(
+            InkStackTurnSteerEventRequest {
+                event_type: "inkstack_turn_steer_event",
+                event_params: InkStackTurnSteerEventParams {
+                    thread_id: pending_request.thread_id,
+                    session_id: thread_metadata.session_id.clone(),
+                    expected_turn_id: Some(pending_request.expected_turn_id),
+                    accepted_turn_id,
+                    app_server_client: thread_state.app_server_client(connection_state),
+                    runtime: connection_state.runtime.clone(),
+                    thread_source: thread_metadata.thread_source.clone(),
+                    subagent_source: thread_metadata.subagent_source.clone(),
+                    parent_thread_id: thread_metadata.parent_thread_id.clone(),
+                    num_input_images: pending_request.num_input_images,
+                    result,
+                    rejection_reason,
+                    created_at: pending_request.created_at,
+                },
             },
-        }));
+        ));
     }
 
     fn emit_review_event(
@@ -2974,17 +2985,19 @@ fn tool_item_event(input: ToolItemEventInput<'_>) -> Option<TrackEventRequest> {
                     review_summary,
                 },
             );
-            Some(TrackEventRequest::FileChange(InkStackFileChangeEventRequest {
-                event_type: "inkstack_file_change_event",
-                event_params: InkStackFileChangeEventParams {
-                    base,
-                    file_change_count: usize_to_u64(changes.len()),
-                    file_add_count: counts.add,
-                    file_update_count: counts.update,
-                    file_delete_count: counts.delete,
-                    file_move_count: counts.move_,
+            Some(TrackEventRequest::FileChange(
+                InkStackFileChangeEventRequest {
+                    event_type: "inkstack_file_change_event",
+                    event_params: InkStackFileChangeEventParams {
+                        base,
+                        file_change_count: usize_to_u64(changes.len()),
+                        file_add_count: counts.add,
+                        file_update_count: counts.update,
+                        file_delete_count: counts.delete,
+                        file_move_count: counts.move_,
+                    },
                 },
-            }))
+            ))
         }
         ThreadItem::McpToolCall {
             id,
@@ -3169,15 +3182,17 @@ fn tool_item_event(input: ToolItemEventInput<'_>) -> Option<TrackEventRequest> {
                     review_summary,
                 },
             );
-            Some(TrackEventRequest::WebSearch(InkStackWebSearchEventRequest {
-                event_type: "inkstack_web_search_event",
-                event_params: InkStackWebSearchEventParams {
-                    base,
-                    web_search_action: item.action.as_ref().map(web_search_action_kind),
-                    query_present: !item.query.trim().is_empty(),
-                    query_count: web_search_query_count(&item.query, item.action.as_ref()),
+            Some(TrackEventRequest::WebSearch(
+                InkStackWebSearchEventRequest {
+                    event_type: "inkstack_web_search_event",
+                    event_params: InkStackWebSearchEventParams {
+                        base,
+                        web_search_action: item.action.as_ref().map(web_search_action_kind),
+                        query_present: !item.query.trim().is_empty(),
+                        query_count: web_search_query_count(&item.query, item.action.as_ref()),
+                    },
                 },
-            }))
+            ))
         }
         ThreadItem::ImageGeneration(item) => {
             let (terminal_status, failure_kind) = image_generation_outcome(item.status.as_str());
@@ -3631,7 +3646,9 @@ struct FileChangeCounts {
     move_: u64,
 }
 
-fn file_change_counts(changes: &[inkstack_app_server_protocol::FileUpdateChange]) -> FileChangeCounts {
+fn file_change_counts(
+    changes: &[inkstack_app_server_protocol::FileUpdateChange],
+) -> FileChangeCounts {
     let mut counts = FileChangeCounts::default();
     for change in changes {
         match &change.kind {
@@ -3830,7 +3847,8 @@ fn inkstack_turn_event_params(
         turn_error: completed.turn_error,
         inkstack_error_kind: inkstack_error.map(|error| error.kind),
         inkstack_error_http_status_code: inkstack_error.and_then(|error| error.http_status_code),
-        usage_limit_window_minutes: inkstack_error.and_then(|error| error.usage_limit_window_minutes),
+        usage_limit_window_minutes: inkstack_error
+            .and_then(|error| error.usage_limit_window_minutes),
         steer_count: Some(turn_state.steer_count),
         total_tool_call_count: Some(turn_state.tool_counts.total),
         shell_command_count: Some(turn_state.tool_counts.shell_command),

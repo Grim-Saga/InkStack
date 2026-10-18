@@ -144,7 +144,8 @@ pub struct SandboxTransformRequest<'a> {
 pub struct SandboxDirectSpawnTransformRequest<'a> {
     pub transform: SandboxTransformRequest<'a>,
     pub workspace_roots: &'a [AbsolutePathBuf],
-    pub windows_sandbox_proxy_settings_mode: inkstack_windows_sandbox::WindowsSandboxProxySettingsMode,
+    pub windows_sandbox_proxy_settings_mode:
+        inkstack_windows_sandbox::WindowsSandboxProxySettingsMode,
 }
 
 // TODO(anp): Revisit this preparation type once this module's PathUri migration is complete.
@@ -573,7 +574,8 @@ impl SandboxManager {
         if request.transform.sandbox == SandboxType::WindowsRestrictedToken {
             let inkstack_home = inkstack_utils_home_dir::find_inkstack_home()
                 .map_err(|err| SandboxTransformError::WindowsSandboxPreparation(err.to_string()))?;
-            return self.transform_for_direct_spawn_with_inkstack_home(request, inkstack_home.as_path());
+            return self
+                .transform_for_direct_spawn_with_inkstack_home(request, inkstack_home.as_path());
         }
         self.transform(request.transform)
     }

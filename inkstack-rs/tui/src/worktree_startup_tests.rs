@@ -76,10 +76,9 @@ async fn refreshed_bundle_rechecks_source_during_config_reload() -> anyhow::Resu
     }
     let mut loader_overrides = LoaderOverrides::without_managed_config_for_tests();
     loader_overrides.ignore_user_config = true;
-    let manager = inkstack_worktree::WorktreeManager::new(inkstack_worktree::WorktreeSettings::for_cli(
-        dir.path(),
-        /*desktop*/ None,
-    )?);
+    let manager = inkstack_worktree::WorktreeManager::new(
+        inkstack_worktree::WorktreeSettings::for_cli(dir.path(), /*desktop*/ None)?,
+    );
     let checkout = inkstack_worktree::ManagedWorktree {
         root: destination.clone(),
         cwd: destination.clone(),

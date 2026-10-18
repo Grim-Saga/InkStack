@@ -68,7 +68,8 @@ struct MissingCellCodeModeSessionProvider;
 impl inkstack_code_mode::CodeModeSessionProvider for MissingCellCodeModeSessionProvider {
     fn create_session(&self) -> inkstack_code_mode::CodeModeSessionProviderFuture<'_> {
         Box::pin(async {
-            Ok(Arc::new(MissingCellCodeModeSession) as Arc<dyn inkstack_code_mode::CodeModeSession>)
+            Ok(Arc::new(MissingCellCodeModeSession)
+                as Arc<dyn inkstack_code_mode::CodeModeSession>)
         })
     }
 }

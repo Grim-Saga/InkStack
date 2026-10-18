@@ -510,7 +510,8 @@ async fn tool_start_receives_frozen_host_plugin_root() -> Result<()> {
 
     let server = responses::start_mock_server().await;
     let inkstack_home = Arc::new(tempfile::tempdir()?);
-    let plugin_root = super::plugins::write_sample_plugin_manifest_and_config(inkstack_home.as_ref());
+    let plugin_root =
+        super::plugins::write_sample_plugin_manifest_and_config(inkstack_home.as_ref());
     let test_env = test_env().await?;
     let server_config = json!({
         "command": super::rmcp_client::remote_aware_stdio_server_bin()?,

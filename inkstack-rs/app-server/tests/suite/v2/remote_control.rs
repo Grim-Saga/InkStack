@@ -1433,7 +1433,9 @@ struct HttpRequest {
     reader: BufReader<TcpStream>,
 }
 
-async fn configured_remote_control_listener(inkstack_home: &std::path::Path) -> Result<TcpListener> {
+async fn configured_remote_control_listener(
+    inkstack_home: &std::path::Path,
+) -> Result<TcpListener> {
     let listener = TcpListener::bind("127.0.0.1:0").await?;
     let remote_control_url = format!("http://{}/backend-api/", listener.local_addr()?);
     let catalog_path = inkstack_home.join("models.json");

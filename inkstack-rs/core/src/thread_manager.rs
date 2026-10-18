@@ -140,8 +140,9 @@ static FORCE_TEST_THREAD_MANAGER_BEHAVIOR: AtomicBool = AtomicBool::new(false);
 type CapturedOps = Vec<(ThreadId, Op)>;
 type SharedCapturedOps = Arc<std::sync::Mutex<CapturedOps>>;
 pub(crate) type ThreadIdGenerator = Arc<dyn Fn() -> ThreadId + Send + Sync>;
-type AgentControlFactory =
-    Arc<dyn Fn(ThreadId) -> BoxFuture<'static, InkStackResult<Arc<dyn AgentControl>>> + Send + Sync>;
+type AgentControlFactory = Arc<
+    dyn Fn(ThreadId) -> BoxFuture<'static, InkStackResult<Arc<dyn AgentControl>>> + Send + Sync,
+>;
 
 // `Op` is intentionally not `Clone`. Thread-manager tests only snapshot the
 // small subset of ops they inspect.
@@ -714,7 +715,9 @@ impl ThreadManager {
             inkstack_home.clone(),
             Arc::new(EnvironmentManager::default_for_tests()),
         );
-        manager._test_inkstack_home_guard = Some(TempInkStackHomeGuard { path: inkstack_home });
+        manager._test_inkstack_home_guard = Some(TempInkStackHomeGuard {
+            path: inkstack_home,
+        });
         manager
     }
 
@@ -745,10 +748,11 @@ impl ThreadManager {
         set_thread_manager_test_mode_for_tests(/*enabled*/ true);
         let auth_manager = AuthManager::from_auth_for_testing(auth);
         let installation_id = uuid::Uuid::new_v4().to_string();
-        let absolute_inkstack_home = match AbsolutePathBuf::from_absolute_path_checked(&inkstack_home) {
-            Ok(inkstack_home) => inkstack_home,
-            Err(err) => panic!("test inkstack_home should be absolute: {err}"),
-        };
+        let absolute_inkstack_home =
+            match AbsolutePathBuf::from_absolute_path_checked(&inkstack_home) {
+                Ok(inkstack_home) => inkstack_home,
+                Err(err) => panic!("test inkstack_home should be absolute: {err}"),
+            };
         let (thread_created_tx, _) = broadcast::channel(THREAD_CREATED_CHANNEL_CAPACITY);
         let restriction_product = SessionSource::Exec.restriction_product();
         let skills_service = Arc::new(HostSkillsService::new_with_restriction_product(
@@ -1742,7 +1746,10 @@ impl ThreadManagerState {
     }
 
     /// Fetch a thread by ID or return ThreadNotFound.
-    pub(crate) async fn get_thread(&self, thread_id: ThreadId) -> InkStackResult<Arc<InkStackThread>> {
+    pub(crate) async fn get_thread(
+        &self,
+        thread_id: ThreadId,
+    ) -> InkStackResult<Arc<InkStackThread>> {
         let threads = self.threads.read().await;
         match threads.get(&thread_id) {
             Some(thread) if !thread.session_source.is_internal() => Ok(thread.clone()),

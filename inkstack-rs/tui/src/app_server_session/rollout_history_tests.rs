@@ -82,8 +82,9 @@ async fn remote_resume_restores_saved_server_profile_without_permission_override
         .await?;
     tokio::time::timeout(std::time::Duration::from_secs(5), async {
         loop {
-            if let Some(inkstack_app_server_client::AppServerEvent::ServerNotification(notification)) =
-                server.next_event().await
+            if let Some(inkstack_app_server_client::AppServerEvent::ServerNotification(
+                notification,
+            )) = server.next_event().await
                 && let inkstack_app_server_protocol::ServerNotification::ThreadSettingsUpdated(
                     settings,
                 ) = *notification
@@ -372,7 +373,8 @@ async fn cached_legacy_resume_revalidates_history_across_migration_settings() ->
             // Resume must acquire its guard before waiting for metadata revalidation.
             assert!(resume.as_mut().now_or_never().is_none());
             assert!(
-                inkstack_rollout::try_acquire_rollout_maintenance_lock(inkstack_home.path())?.is_none()
+                inkstack_rollout::try_acquire_rollout_maintenance_lock(inkstack_home.path())?
+                    .is_none()
             );
             resume.await?
         };

@@ -99,7 +99,10 @@ impl<'call> ToolExecutor<ExtensionToolCall<'call>> for ExtensionEchoExecutor {
         })
     }
 
-    fn handle<'a>(&'a self, call: ExtensionToolCall<'call>) -> inkstack_tools::ToolExecutorFuture<'a>
+    fn handle<'a>(
+        &'a self,
+        call: ExtensionToolCall<'call>,
+    ) -> inkstack_tools::ToolExecutorFuture<'a>
     where
         'call: 'a,
     {

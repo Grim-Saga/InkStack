@@ -1247,8 +1247,9 @@ impl AccountRequestProcessor {
                 Self::detailed_rate_limit_reset_credits(&client).await
             }
         },);
-        let response = response
-            .map_err(|err| internal_error(format!("failed to fetch inkstack rate limits: {err}")))?;
+        let response = response.map_err(|err| {
+            internal_error(format!("failed to fetch inkstack rate limits: {err}"))
+        })?;
         if response.rate_limits.is_empty() {
             return Err(internal_error(
                 "failed to fetch inkstack rate limits: no snapshots returned",

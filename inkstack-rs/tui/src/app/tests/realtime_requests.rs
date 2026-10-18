@@ -1622,8 +1622,12 @@ async fn delegated_final_speech_reaches_app_server_once_and_stale_speech_is_reje
     );
     assert!(ops.try_recv().is_err());
     let mut tui = crate::tui::test_support::make_test_tui()?;
-    Box::pin(app.handle_event(&mut tui, &mut app_server, AppEvent::InkStackOp(speech.clone())))
-        .await?;
+    Box::pin(app.handle_event(
+        &mut tui,
+        &mut app_server,
+        AppEvent::InkStackOp(speech.clone()),
+    ))
+    .await?;
     assert!(!app.chat_widget.has_pending_realtime_speech(delivery_id));
     assert_eq!(
         recorded_params(&requests, "thread/realtime/appendSpeech"),

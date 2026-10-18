@@ -40,7 +40,10 @@ use unicode_width::UnicodeWidthStr;
 
 pub(crate) const EFFECTS_VIEW_ID: &str = "config-effects";
 
-pub(crate) fn effects(tui: &inkstack_config::types::Tui, keymap: &ListKeymap) -> SelectionViewParams {
+pub(crate) fn effects(
+    tui: &inkstack_config::types::Tui,
+    keymap: &ListKeymap,
+) -> SelectionViewParams {
     effects_with_toggle_states(tui, keymap, &[])
 }
 

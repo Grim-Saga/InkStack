@@ -60,7 +60,8 @@ impl ThreadManagerState {
             let _residency_guard = residency_guard;
             thread.ensure_rollout_materialized().await;
             if let Err(err) = thread.shutdown_and_wait().await {
-                teardown.record_shutdown_failure("stop_resident", InkStackErrKind::from(&err).into());
+                teardown
+                    .record_shutdown_failure("stop_resident", InkStackErrKind::from(&err).into());
                 teardown.complete();
                 return Err(err);
             }

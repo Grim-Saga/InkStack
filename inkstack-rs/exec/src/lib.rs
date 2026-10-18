@@ -261,7 +261,10 @@ fn exec_stderr_env_filter() -> EnvFilter {
 
 pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
     if let Err(err) = set_default_originator("inkstack_exec".to_string()) {
-        tracing::warn!(?err, "Failed to set inkstack exec originator override {err:?}");
+        tracing::warn!(
+            ?err,
+            "Failed to set inkstack exec originator override {err:?}"
+        );
     }
 
     let Cli {
@@ -284,7 +287,9 @@ pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result
     if cyber_access_program.is_some() {
         match command.as_ref() {
             Some(ExecCommand::Review(_)) => {
-                anyhow::bail!("--cyber-access-program is not supported with `inkstack exec review`");
+                anyhow::bail!(
+                    "--cyber-access-program is not supported with `inkstack exec review`"
+                );
             }
             Some(ExecCommand::Fork(args)) if args.prompt.is_none() && prompt.is_none() => {
                 anyhow::bail!("Forking with --cyber-access-program requires a prompt");
@@ -706,7 +711,10 @@ pub async fn run_main(cli: Cli, arg0_paths: Arg0DispatchPaths) -> anyhow::Result
     )?;
     #[cfg(target_os = "macos")]
     let local_runtime_paths = local_runtime_paths.with_allowed_symlinked_inkstack_home(
-        inkstack_config::allowed_symlinked_inkstack_home(&config.config_layer_stack, &config.inkstack_home),
+        inkstack_config::allowed_symlinked_inkstack_home(
+            &config.config_layer_stack,
+            &config.inkstack_home,
+        ),
     );
     let state_db = inkstack_core::init_state_db(&config).await;
     let environment_manager = if run_loader_overrides.ignore_user_config {
@@ -1782,7 +1790,8 @@ fn should_backfill_turn_completed_items(
         return false;
     };
 
-    !thread_ephemeral && payload.turn.items_view != inkstack_app_server_protocol::TurnItemsView::Full
+    !thread_ephemeral
+        && payload.turn.items_view != inkstack_app_server_protocol::TurnItemsView::Full
 }
 
 fn turn_items_for_thread(

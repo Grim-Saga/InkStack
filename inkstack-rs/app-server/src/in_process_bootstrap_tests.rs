@@ -34,7 +34,10 @@ impl ExternalAuth for BootstrapExternalAuth {
         Box::pin(async { Ok(self.0.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         self.resolve()
     }
 }
@@ -82,7 +85,8 @@ async fn bootstrap_discovery_survives_identity_installation_but_account_access_i
                 },
             }))?),
         );
-        let auth = InkStackAuth::from_external_chatgpt_tokens(&token, identity, Some("enterprise"))?;
+        let auth =
+            InkStackAuth::from_external_chatgpt_tokens(&token, identity, Some("enterprise"))?;
         manager
             .set_external_auth(Arc::new(BootstrapExternalAuth(auth)))
             .await?;

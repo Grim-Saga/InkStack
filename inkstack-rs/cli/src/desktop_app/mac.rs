@@ -156,7 +156,9 @@ fn inkstack_new_thread_url(workspace: &Path) -> String {
     format!("inkstack://threads/new?{query}")
 }
 
-async fn download_and_install_inkstack_to_user_applications(dmg_url: &str) -> anyhow::Result<PathBuf> {
+async fn download_and_install_inkstack_to_user_applications(
+    dmg_url: &str,
+) -> anyhow::Result<PathBuf> {
     let temp_dir = Builder::new()
         .prefix("inkstack-app-installer-")
         .tempdir()
@@ -492,8 +494,10 @@ mod tests {
 
     #[test]
     fn inkstack_new_thread_url_encodes_workspace_path() {
-        let url = url::Url::parse(&inkstack_new_thread_url(Path::new("/tmp/inkstack workspace/#1")))
-            .expect("deep link should parse");
+        let url = url::Url::parse(&inkstack_new_thread_url(Path::new(
+            "/tmp/inkstack workspace/#1",
+        )))
+        .expect("deep link should parse");
 
         assert_eq!(
             (

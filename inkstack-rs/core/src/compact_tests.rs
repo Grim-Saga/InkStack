@@ -597,7 +597,10 @@ fn build_token_limited_compacted_history_truncates_overlong_user_messages(
     };
     assert_eq!(summary_text, "SUMMARY");
     assert_eq!(history[0].id(), original.id());
-    assert_eq!(history[0].metadata, Some(InkStackHarnessMetadata::default()));
+    assert_eq!(
+        history[0].metadata,
+        Some(InkStackHarnessMetadata::default())
+    );
     assert_eq!(history[1].metadata, None);
 }
 

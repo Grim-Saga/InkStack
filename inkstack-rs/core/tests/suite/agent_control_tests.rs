@@ -92,12 +92,20 @@ impl AgentControl for TestAgentControl {
         request: SpawnRequest,
     ) -> BoxFuture<'_, InkStackResult<(LiveAgent, ThreadConfigSnapshot)>> {
         assert_eq!(request.caller, self.thread_id);
-        Box::pin(async { Err(InkStackErr::InvalidRequest("host spawn rejection".to_string())) })
+        Box::pin(async {
+            Err(InkStackErr::InvalidRequest(
+                "host spawn rejection".to_string(),
+            ))
+        })
     }
 
     fn send(&self, request: SendRequest) -> BoxFuture<'_, InkStackResult<DeliveryReceipt>> {
         assert_eq!(request.caller, self.thread_id);
-        Box::pin(async { Err(InkStackErr::InvalidRequest("host send rejection".to_string())) })
+        Box::pin(async {
+            Err(InkStackErr::InvalidRequest(
+                "host send rejection".to_string(),
+            ))
+        })
     }
 
     fn take_mailbox(
@@ -143,7 +151,11 @@ impl AgentControl for TestAgentControl {
         _path_prefix: Option<&'a str>,
     ) -> BoxFuture<'a, InkStackResult<Vec<LiveAgent>>> {
         assert_eq!(caller, self.thread_id);
-        Box::pin(async { Err(InkStackErr::InvalidRequest("host list rejection".to_string())) })
+        Box::pin(async {
+            Err(InkStackErr::InvalidRequest(
+                "host list rejection".to_string(),
+            ))
+        })
     }
 
     fn child_agent_paths(&self, _parent: ThreadId) -> BoxFuture<'_, Vec<AgentPath>> {
@@ -442,7 +454,10 @@ async fn host_factory_follows_thread_lifecycle() -> anyhow::Result<()> {
     );
     test.inkstack.ensure_rollout_materialized().await;
     test.inkstack.flush_rollout().await?;
-    let saved = test.inkstack.load_history(/*include_archived*/ false).await?;
+    let saved = test
+        .inkstack
+        .load_history(/*include_archived*/ false)
+        .await?;
     let history = InitialHistory::Resumed(ResumedHistory {
         history_revision: None,
         conversation_id: root_id,

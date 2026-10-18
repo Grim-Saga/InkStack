@@ -442,7 +442,10 @@ async fn turn_start_sends_nested_subagent_lineage_after_cold_thread_resume_v2() 
             .count()
     };
     assert_eq!(
-        (count("codex_turn_event"), count("inkstack_web_search_event")),
+        (
+            count("codex_turn_event"),
+            count("inkstack_web_search_event")
+        ),
         (1, 1)
     );
 

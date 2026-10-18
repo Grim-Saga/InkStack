@@ -56,7 +56,9 @@ async fn yielded_skill_read_keeps_originating_turn_metadata() -> Result<()> {
             config.features.enable(Feature::CodeMode).unwrap();
             config.features.enable(Feature::CodeModeHost).unwrap();
         })
-        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?);
+        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-code-mode-host",
+        )?);
     let test = builder.build_with_auto_env(&server).await?;
     // A cannot read its skill until B has become the active turn.
     let read_after_barrier = format!(

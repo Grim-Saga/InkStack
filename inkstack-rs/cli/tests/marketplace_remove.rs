@@ -35,7 +35,11 @@ fn write_installed_marketplace(inkstack_home: &Path, marketplace_name: &str) -> 
 #[tokio::test]
 async fn marketplace_remove_deletes_config_and_installed_root() -> Result<()> {
     let inkstack_home = TempDir::new()?;
-    record_user_marketplace(inkstack_home.path(), "debug", &configured_marketplace_update())?;
+    record_user_marketplace(
+        inkstack_home.path(),
+        "debug",
+        &configured_marketplace_update(),
+    )?;
     write_installed_marketplace(inkstack_home.path(), "debug")?;
 
     inkstack_command(inkstack_home.path())?
@@ -58,7 +62,11 @@ async fn marketplace_remove_deletes_config_and_installed_root() -> Result<()> {
 #[tokio::test]
 async fn marketplace_remove_json_prints_remove_outcome() -> Result<()> {
     let inkstack_home = TempDir::new()?;
-    record_user_marketplace(inkstack_home.path(), "debug", &configured_marketplace_update())?;
+    record_user_marketplace(
+        inkstack_home.path(),
+        "debug",
+        &configured_marketplace_update(),
+    )?;
     write_installed_marketplace(inkstack_home.path(), "debug")?;
     let installed_root = marketplace_install_root(inkstack_home.path()).join("debug");
     let normalized_installed_root = canonicalize_existing_preserving_symlinks(&installed_root)?;
@@ -99,7 +107,11 @@ async fn marketplace_remove_rejects_unknown_marketplace() -> Result<()> {
 #[tokio::test]
 async fn marketplace_remove_preserves_marketplace_referenced_by_session_config() -> Result<()> {
     let inkstack_home = TempDir::new()?;
-    record_user_marketplace(inkstack_home.path(), "debug", &configured_marketplace_update())?;
+    record_user_marketplace(
+        inkstack_home.path(),
+        "debug",
+        &configured_marketplace_update(),
+    )?;
     write_installed_marketplace(inkstack_home.path(), "debug")?;
     let config_path = inkstack_home.path().join("config.toml");
     let config = std::fs::read_to_string(&config_path)?;

@@ -205,9 +205,15 @@ async fn copy_paste_local_image_persists_rollout_request_shape() -> anyhow::Resu
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
     inkstack.submit(Op::Shutdown).await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
 
     let rollout_path = inkstack.rollout_path().expect("rollout path");
     let rollout_text = read_rollout_text(&rollout_path).await?;
@@ -305,9 +311,15 @@ async fn drag_drop_image_persists_rollout_request_shape() -> anyhow::Result<()> 
         )
         .await?;
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
     inkstack.submit(Op::Shutdown).await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
 
     let rollout_path = inkstack.rollout_path().expect("rollout path");
     let rollout_text = read_rollout_text(&rollout_path).await?;

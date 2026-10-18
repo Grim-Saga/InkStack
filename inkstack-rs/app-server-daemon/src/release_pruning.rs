@@ -212,7 +212,10 @@ pub(crate) async fn prune(daemon: &Daemon, root: &Path, settings: &DaemonSetting
             .and_then(|s| s.strip_suffix(&format!("-{}", manifest.target)));
         if !(name == format!("{}-{}", manifest.version, manifest.target)
             || local.is_some_and(|digest| blake3::Hash::from_hex(digest).is_ok()))
-            || !matches!(manifest.entrypoint.as_str(), "bin/inkstack" | "bin/inkstack.exe")
+            || !matches!(
+                manifest.entrypoint.as_str(),
+                "bin/inkstack" | "bin/inkstack.exe"
+            )
         {
             continue;
         }

@@ -247,7 +247,10 @@ pub(super) async fn build_test_processor(
         config.inkstack_home.to_path_buf(),
         Vec::new(),
         LoaderOverrides::with_managed_config_path_for_tests(
-            config.inkstack_home.join("managed_config.toml").to_path_buf(),
+            config
+                .inkstack_home
+                .join("managed_config.toml")
+                .to_path_buf(),
         ),
         /*strict_config*/ false,
         CloudConfigBundleLoader::default(),

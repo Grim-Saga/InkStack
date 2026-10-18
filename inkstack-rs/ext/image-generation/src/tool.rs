@@ -171,12 +171,20 @@ impl ImageGenerationTool {
         let result = match request {
             ImageRequest::Generate(request) => {
                 self.backend
-                    .generate(request, &call.turn_id, call.inkstack_turn_metadata.as_deref())
+                    .generate(
+                        request,
+                        &call.turn_id,
+                        call.inkstack_turn_metadata.as_deref(),
+                    )
                     .await
             }
             ImageRequest::Edit(request) => {
                 self.backend
-                    .edit(request, &call.turn_id, call.inkstack_turn_metadata.as_deref())
+                    .edit(
+                        request,
+                        &call.turn_id,
+                        call.inkstack_turn_metadata.as_deref(),
+                    )
                     .await
             }
         }

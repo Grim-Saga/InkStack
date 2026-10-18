@@ -217,8 +217,10 @@ async fn agent_identity_jwt_uses_explicit_staging_endpoint_overrides() -> anyhow
     )
     .await;
     let authapi_base_url = format!("{}/api/accounts/", authapi_server.uri());
-    let _authapi_guard =
-        EnvVarGuard::set("INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL", &authapi_base_url);
+    let _authapi_guard = EnvVarGuard::set(
+        "INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL",
+        &authapi_base_url,
+    );
     let jwks_base_url = format!("{}/api/inkstack/", jwks_server.uri());
     let _jwks_guard = EnvVarGuard::set("INKSTACK_AGENT_IDENTITY_JWKS_BASE_URL", &jwks_base_url);
 
@@ -259,8 +261,10 @@ async fn agent_identity_jwt_supports_existing_staging_launcher() -> anyhow::Resu
     )
     .await;
     let authapi_base_url = format!("{}/api/accounts", authapi_server.uri());
-    let _authapi_guard =
-        EnvVarGuard::set("INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL", &authapi_base_url);
+    let _authapi_guard = EnvVarGuard::set(
+        "INKSTACK_AGENT_IDENTITY_AUTHAPI_BASE_URL",
+        &authapi_base_url,
+    );
     let jwks_base_url = format!("{}/api/inkstack", jwks_server.uri());
     let _jwks_guard = EnvVarGuard::set("INKSTACK_AGENT_IDENTITY_JWKS_BASE_URL", &jwks_base_url);
 
@@ -1356,7 +1360,10 @@ impl ExternalAuth for StaticExternalAuth {
         Box::pin(async { Ok(self.0.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async { Ok(self.0.clone()) })
     }
 }
@@ -1371,7 +1378,10 @@ impl ExternalAuth for RefreshingExternalAuth {
         Box::pin(async { Ok(self.initial.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async { Ok(self.refreshed.clone()) })
     }
 }
@@ -1408,7 +1418,10 @@ impl ExternalAuth for FailingExternalAuth {
         })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async { Err(std::io::Error::other("external auth failed")) })
     }
 
@@ -1591,9 +1604,12 @@ async fn workload_identity_auth_is_immutable_and_process_local() {
         chatgpt_account_id: Some("workspace-one".to_string()),
     })
     .expect("fake access token");
-    let auth =
-        InkStackAuth::from_external_chatgpt_tokens(&access_token, "workspace-one", Some("enterprise"))
-            .expect("external ChatGPT auth");
+    let auth = InkStackAuth::from_external_chatgpt_tokens(
+        &access_token,
+        "workspace-one",
+        Some("enterprise"),
+    )
+    .expect("external ChatGPT auth");
 
     manager
         .install_external_auth(Arc::new(StaticExternalAuth(auth.clone())))
@@ -2299,10 +2315,9 @@ async fn env_api_key_does_not_overwrite_stored_credentials() {
     assert_eq!(auth.api_key(), Some("sk-env"));
 
     let auth_path = get_auth_file(inkstack_home.path());
-    let reloaded: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(&auth_path).expect("read stored auth file"),
-    )
-    .expect("parse stored auth file");
+    let reloaded: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&auth_path).expect("read stored auth file"))
+            .expect("parse stored auth file");
     assert_eq!(reloaded["OPENAI_API_KEY"], "sk-stored");
     drop(stored);
 }
@@ -2805,8 +2820,8 @@ async fn enforce_login_restrictions_blocks_env_api_key_when_chatgpt_required() {
 }
 
 fn agent_identity_record(account_id: &str) -> AgentIdentityAuthRecord {
-    let key_material =
-        inkstack_agent_identity::generate_agent_key_material().expect("generate agent key material");
+    let key_material = inkstack_agent_identity::generate_agent_key_material()
+        .expect("generate agent key material");
     AgentIdentityAuthRecord {
         agent_runtime_id: "agent-runtime-id".to_string(),
         agent_private_key: key_material.private_key_pkcs8_base64,

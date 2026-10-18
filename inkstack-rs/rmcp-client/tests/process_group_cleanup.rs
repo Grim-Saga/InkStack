@@ -27,7 +27,8 @@ fn stdio_server_bin() -> Result<std::path::PathBuf> {
 fn init_params() -> InitializeRequestParams {
     InitializeRequestParams::new(
         ClientCapabilities::default(),
-        Implementation::new("inkstack-test", "0.0.0-test").with_title("InkStack rmcp shutdown test"),
+        Implementation::new("inkstack-test", "0.0.0-test")
+            .with_title("InkStack rmcp shutdown test"),
     )
     .with_protocol_version(ProtocolVersion::V_2025_06_18)
 }

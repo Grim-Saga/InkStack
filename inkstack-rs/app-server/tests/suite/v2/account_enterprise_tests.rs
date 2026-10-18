@@ -109,7 +109,10 @@ client_id = "enterprise-client""#
     // Keep the real platform keyring out of this API test. Enterprise cleanup
     // failure must still permit revocation and removal of the selected account.
     if !policy_load_failure {
-        std::fs::write(inkstack_home.path().join("mcp-oauth-locks"), "not a directory")?;
+        std::fs::write(
+            inkstack_home.path().join("mcp-oauth-locks"),
+            "not a directory",
+        )?;
     }
     let refresh_url = format!("{}/oauth/token", server.uri());
     let mut app = TestAppServer::builder()

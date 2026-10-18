@@ -64,7 +64,11 @@ use std::sync::Arc;
 use test_case::test_case;
 use wiremock::MockServer;
 
-fn read_only_user_turn(test: &TestInkStack, items: Vec<UserInput>, model: String) -> TurnInputRequest {
+fn read_only_user_turn(
+    test: &TestInkStack,
+    items: Vec<UserInput>,
+    model: String,
+) -> TurnInputRequest {
     let (sandbox_policy, permission_profile) =
         turn_permission_fields(PermissionProfile::read_only(), test.cwd_path());
     TurnInputRequest::user_input(items).with_thread_settings(ThreadSettingsOverrides {
@@ -183,8 +187,8 @@ async fn first_turn_model_change_appends_model_instructions_developer_message(
     let server = MockServer::start().await;
     let resp_mock = mount_sse_once(&server, sse_completed("resp-1")).await;
 
-    let mut builder =
-        test_inkstack().with_model_info_override("gpt-5.6-terra", configure_model_switching_fixture);
+    let mut builder = test_inkstack()
+        .with_model_info_override("gpt-5.6-terra", configure_model_switching_fixture);
     let test = builder.build_with_auto_env(&server).await?;
     let next_model = "gpt-5.5";
 
@@ -304,8 +308,8 @@ async fn model_change_appends_model_instructions_developer_message() -> Result<(
     )
     .await;
 
-    let mut builder =
-        test_inkstack().with_model_info_override("gpt-5.6-terra", configure_model_switching_fixture);
+    let mut builder = test_inkstack()
+        .with_model_info_override("gpt-5.6-terra", configure_model_switching_fixture);
     let test = builder.build(&server).await?;
     let next_model = "gpt-5.5";
 
@@ -434,7 +438,12 @@ async fn model_change_respects_personality_opt_out_updates(
     )
     .await?;
 
-    submit_model_turn(&test.inkstack, next_model, ThreadSettingsOverrides::default()).await?;
+    submit_model_turn(
+        &test.inkstack,
+        next_model,
+        ThreadSettingsOverrides::default(),
+    )
+    .await?;
 
     let requests = resp_mock.requests();
     assert_eq!(requests.len(), 2, "expected two model requests");

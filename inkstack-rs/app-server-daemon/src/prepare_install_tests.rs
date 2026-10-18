@@ -30,16 +30,23 @@ fn package(root: &Path, version: &str) -> PathBuf {
         std::fs::create_dir_all(root.join(dir)).expect("package directory");
     }
     let bin = root.join("bin/inkstack");
-    inkstack_utils_cargo_bin::write_executable(&bin, &format!("#!/bin/sh\necho 'inkstack {version}'\n"))
-        .expect("inkstack executable");
+    inkstack_utils_cargo_bin::write_executable(
+        &bin,
+        &format!("#!/bin/sh\necho 'inkstack {version}'\n"),
+    )
+    .expect("inkstack executable");
     for file in ["bin/inkstack-code-mode-host", "inkstack-path/rg"] {
         inkstack_utils_cargo_bin::write_executable(&root.join(file), "runtime")
             .expect("executable helper");
     }
-    std::fs::write(root.join("inkstack-resources/nested/runtime"), b"runtime").expect("package file");
+    std::fs::write(root.join("inkstack-resources/nested/runtime"), b"runtime")
+        .expect("package file");
     if cfg!(target_os = "linux") {
-        inkstack_utils_cargo_bin::write_executable(&root.join("inkstack-resources/bwrap"), "runtime")
-            .expect("executable bwrap");
+        inkstack_utils_cargo_bin::write_executable(
+            &root.join("inkstack-resources/bwrap"),
+            "runtime",
+        )
+        .expect("executable bwrap");
     }
     std::fs::write(
         root.join("inkstack-package.json"),
@@ -408,7 +415,10 @@ async fn explicit_selection_requires_unchanged_cli_and_pins_all_versions() {
                 std::fs::read(selected.join("bin/inkstack")).unwrap(),
                 std::fs::read(&bin).unwrap()
             );
-            assert_eq!(std::fs::read(previous.join("bin/inkstack")).unwrap(), before);
+            assert_eq!(
+                std::fs::read(previous.join("bin/inkstack")).unwrap(),
+                before
+            );
             // Different resources, even at the same version: retain last two selections.
             for entry in std::fs::read_dir(root.join("releases")).unwrap() {
                 let path = entry.unwrap().path().canonicalize().unwrap();

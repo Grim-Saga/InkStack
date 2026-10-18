@@ -38,7 +38,10 @@ enum BoardClock {
 }
 
 impl inkstack_core::TimeProvider for BoardClock {
-    fn current_time(&self, _thread_id: inkstack_protocol::ThreadId) -> inkstack_core::TimeFuture<'_> {
+    fn current_time(
+        &self,
+        _thread_id: inkstack_protocol::ThreadId,
+    ) -> inkstack_core::TimeFuture<'_> {
         Box::pin(async move {
             match self {
                 Self::Available => Ok(chrono::DateTime::parse_from_rfc3339(
@@ -1042,7 +1045,10 @@ async fn inkstack_instances_share_board_with_fixed_access() -> anyhow::Result<()
     let guardian_board =
         LocalBoard::new(SqliteConfig::new_for_testing(alias.try_into()?), board_id);
     let mut extensions = ExtensionRegistryBuilder::new();
-    inkstack_core::install_agent_message_board(&mut extensions, Arc::downgrade(&test.thread_manager));
+    inkstack_core::install_agent_message_board(
+        &mut extensions,
+        Arc::downgrade(&test.thread_manager),
+    );
     let extensions = Arc::new(extensions.build());
     let mut instances = Vec::new();
     for (index, (connection, source)) in [

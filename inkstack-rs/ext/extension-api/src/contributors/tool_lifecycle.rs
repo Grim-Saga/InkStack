@@ -136,7 +136,8 @@ pub struct ToolStartInput<'a> {
     /// Read-only metadata and provenance from the exact MCP call that will execute.
     pub mcp_tool: Option<&'a McpToolContext>,
     /// Resolves evidence from the issuing step only when awaited; `None` prevents cached approval.
-    pub permissions: crate::ExtensionFuture<'a, Option<inkstack_guardian_context::PermissionContext>>,
+    pub permissions:
+        crate::ExtensionFuture<'a, Option<inkstack_guardian_context::PermissionContext>>,
     /// Finalized tool arguments, including any pre-tool-use hook rewrites.
     ///
     /// Payloads can contain sensitive plaintext and must not be logged.

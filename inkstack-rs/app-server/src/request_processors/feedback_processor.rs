@@ -275,8 +275,9 @@ impl FeedbackRequestProcessor {
             // Cancelling the RPC waiter must not release a still-running upload's slot.
             let _permit = permit;
             if include_logs {
-                extra_attachments
-                    .extend(inkstack_feedback::daemon_log_attachments(inkstack_home.as_path()));
+                extra_attachments.extend(inkstack_feedback::daemon_log_attachments(
+                    inkstack_home.as_path(),
+                ));
             }
             let tags = (!upload_tags.is_empty()).then_some(&upload_tags);
             runtime_handle.block_on(snapshot.upload_feedback(
@@ -473,7 +474,8 @@ fn auto_review_rollout_filename(thread_id: ThreadId) -> String {
 
 #[cfg(target_os = "windows")]
 fn windows_sandbox_log_attachment(inkstack_home: &Path) -> Option<FeedbackAttachmentPath> {
-    let sandbox_log_path = inkstack_windows_sandbox::current_log_file_path_for_inkstack_home(inkstack_home);
+    let sandbox_log_path =
+        inkstack_windows_sandbox::current_log_file_path_for_inkstack_home(inkstack_home);
     sandbox_log_path
         .is_file()
         .then_some(FeedbackAttachmentPath {
@@ -766,7 +768,8 @@ mod tests {
                         .expect("absolute feedback rollout directory"),
                     approval_policy: inkstack_protocol::protocol::AskForApproval::Never,
                     approvals_reviewer: None,
-                    sandbox_policy: inkstack_protocol::protocol::SandboxPolicy::new_read_only_policy(),
+                    sandbox_policy:
+                        inkstack_protocol::protocol::SandboxPolicy::new_read_only_policy(),
                     permission_profile: None,
                     active_permission_profile: None,
                     file_system_sandbox_policy: None,

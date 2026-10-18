@@ -79,7 +79,8 @@ async fn extension_tool_respects_restrictions(deny_network: bool) -> Result<()> 
     let server = responses::start_mock_server().await;
     let responses_url = format!("{}/v1/responses", server.uri()).parse()?;
     let auth = InkStackAuth::create_dummy_chatgpt_auth_for_testing();
-    let extensions = image_generation_extensions(&auth, |config| Some(config.inkstack_home.clone()));
+    let extensions =
+        image_generation_extensions(&auth, |config| Some(config.inkstack_home.clone()));
     let mut builder = test_inkstack()
         .with_auth(auth)
         .with_extensions(extensions)

@@ -353,9 +353,9 @@ async fn paginated_live_append_materializes_turn_items_and_state() {
         rollout_line_byte_offsets(rollout_path.as_path(), /*ordinal*/ 1);
     let (_, turn_end_byte_offset) =
         rollout_line_byte_offsets(rollout_path.as_path(), /*ordinal*/ 4);
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let turn = sqlx::query_as::<
@@ -485,9 +485,9 @@ async fn paginated_command_history_caps_aggregated_output() {
         .await
         .expect("append command history");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let item_json = sqlx::query_scalar::<_, String>(
@@ -559,9 +559,9 @@ async fn paginated_mcp_history_caps_large_results() {
         .await
         .expect("append MCP history");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let item_json = sqlx::query_scalar::<_, String>(
@@ -706,9 +706,9 @@ async fn paginated_realtime_items_materialize_separately_in_rollout_order() {
         ]
     );
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let projected_rows = sqlx::query_as::<_, (String, i64, i64, String)>(
@@ -909,9 +909,9 @@ async fn referenced_paginated_rollout_projects_inherited_ordinal_range() {
         );
     }
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let turn_ordinal = sqlx::query_scalar::<_, i64>(
@@ -1056,9 +1056,9 @@ async fn active_turn_stores_only_its_start_position() {
         .expect("rollout path");
     let (turn_start_byte_offset, _) =
         rollout_line_byte_offsets(rollout_path.as_path(), /*ordinal*/ 1);
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let turn_position = sqlx::query_as::<_, (Option<i64>, Option<i64>, Option<i64>)>(
@@ -1520,9 +1520,9 @@ async fn subagent_prefix_advances_projection_without_materializing_history() {
         .expect("rollout path");
     let (child_start_byte_offset, _) =
         rollout_line_byte_offsets(rollout_path.as_path(), /*ordinal*/ 5);
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let turns = sqlx::query_as::<_, (String, i64, Option<i64>)>(
@@ -1591,9 +1591,9 @@ async fn projection_preserves_exact_lifecycle_timestamps() {
         .shutdown_thread(thread_id)
         .await
         .expect("shutdown thread");
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let actual = sqlx::query_as::<_, (Option<i64>, Option<i64>)>(
@@ -1631,9 +1631,9 @@ async fn unexpected_duplicate_item_completion_does_not_poison_projection() {
         })
         .await
         .expect("append completed item");
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let first_created_at_ms = sqlx::query_scalar::<_, i64>(
@@ -1721,9 +1721,9 @@ async fn terminal_turn_does_not_change_after_later_records() {
         .await
         .expect("append later records");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let rollout_path = store
@@ -1840,9 +1840,9 @@ async fn summary_items_use_final_answers_and_ignore_nonterminal_messages() {
         .await
         .expect("append items before turn lifecycle");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     sqlx::query(
@@ -1953,9 +1953,9 @@ async fn paginated_projection_accepts_float_rate_limits_and_later_final_answers(
         .await
         .expect("append projected turn start");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let checkpoint = projection_state(&pool, thread_id).await;
@@ -2088,9 +2088,9 @@ async fn next_write_catches_up_unprojected_durable_suffix() {
         .await
         .expect("persist session metadata");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let checkpoint = projection_state(&pool, thread_id).await;
@@ -2175,9 +2175,9 @@ async fn synchronized_catch_up_does_not_replay_old_rows() {
         .await
         .expect("append turn start");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let before = projection_state(&pool, thread_id).await;
@@ -2215,9 +2215,9 @@ async fn catch_up_preserves_trailing_partial_line_boundaries() {
         .await
         .expect("persist session metadata");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let before = projection_state(&pool, thread_id).await;
@@ -2426,9 +2426,9 @@ async fn blank_and_rejected_rollout_lines_advance_projection() {
         .await
         .expect("persist session metadata");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let before = projection_state(&pool, thread_id).await;
@@ -2525,9 +2525,9 @@ async fn unknown_rollout_lines_leave_ordinals_pending_for_valid_retries() {
         .await
         .expect("persist session metadata");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let before = projection_state(&pool, thread_id).await;
@@ -2618,9 +2618,9 @@ async fn event_timestamps_allow_invalid_rollout_timestamps() {
         .await
         .expect("project records with event timestamps");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let created_at_ms = sqlx::query_scalar::<_, i64>(
@@ -2666,9 +2666,9 @@ async fn malformed_rollout_lines_skip_inferred_ordinal_gaps() {
         .await
         .expect("skip malformed gap and project later history");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let rollout_len = i64::try_from(fs::metadata(rollout_path).expect("rollout metadata").len())
@@ -2709,9 +2709,9 @@ async fn shutdown_materializes_items_queued_without_a_flush() {
         .await
         .expect("shutdown live thread");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let projected_turns = sqlx::query_scalar::<_, i64>(
@@ -2763,9 +2763,9 @@ async fn delete_waits_for_in_flight_projection_before_removing_rows() {
         .expect("finish in-flight append");
     delete.await.expect("join delete").expect("delete thread");
 
-    let pool = inkstack_state::open_thread_history_db(&inkstack_state::SqliteConfig::new_for_testing(
-        home.path().abs(),
-    ))
+    let pool = inkstack_state::open_thread_history_db(
+        &inkstack_state::SqliteConfig::new_for_testing(home.path().abs()),
+    )
     .await
     .expect("open thread history db");
     let counts = sqlx::query_as::<_, (i64, i64, i64)>(

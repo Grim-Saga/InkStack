@@ -652,10 +652,12 @@ impl PluginRequestProcessor {
                     outcome
                         .errors
                         .into_iter()
-                        .map(|err| inkstack_app_server_protocol::MarketplaceLoadErrorInfo {
-                            marketplace_path: err.path,
-                            message: err.message,
-                        })
+                        .map(
+                            |err| inkstack_app_server_protocol::MarketplaceLoadErrorInfo {
+                                marketplace_path: err.path,
+                                message: err.message,
+                            },
+                        )
                         .collect(),
                     local_marketplaces,
                 ))
@@ -943,10 +945,12 @@ impl PluginRequestProcessor {
                 outcome
                     .errors
                     .into_iter()
-                    .map(|err| inkstack_app_server_protocol::MarketplaceLoadErrorInfo {
-                        marketplace_path: err.path,
-                        message: err.message,
-                    })
+                    .map(
+                        |err| inkstack_app_server_protocol::MarketplaceLoadErrorInfo {
+                            marketplace_path: err.path,
+                            message: err.message,
+                        },
+                    )
                     .collect(),
             ))
         })
@@ -1873,7 +1877,8 @@ impl PluginRequestProcessor {
         );
         for (name, server) in plugin_mcp_servers {
             // EMA uses the account's enterprise grant, never per-plugin OAuth fallback.
-            if !server.enabled || matches!(server.auth, inkstack_config::types::McpServerAuth::EmaAuth)
+            if !server.enabled
+                || matches!(server.auth, inkstack_config::types::McpServerAuth::EmaAuth)
             {
                 continue;
             }

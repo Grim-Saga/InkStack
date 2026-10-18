@@ -166,7 +166,10 @@ async fn user_turn_includes_skill_instructions() -> Result<()> {
         .await?;
 
     core_test_support::wait_for_event(test.inkstack.as_ref(), |event| {
-        matches!(event, inkstack_protocol::protocol::EventMsg::TurnComplete(_))
+        matches!(
+            event,
+            inkstack_protocol::protocol::EventMsg::TurnComplete(_)
+        )
     })
     .await;
 
@@ -384,7 +387,10 @@ async fn user_turn_selects_symlinked_skill_by_advertised_discovery_path() -> Res
     assert!(matches!(submission, StartIfIdleSubmission::Started { .. }));
 
     core_test_support::wait_for_event(test.inkstack.as_ref(), |event| {
-        matches!(event, inkstack_protocol::protocol::EventMsg::TurnComplete(_))
+        matches!(
+            event,
+            inkstack_protocol::protocol::EventMsg::TurnComplete(_)
+        )
     })
     .await;
 
@@ -471,7 +477,10 @@ async fn idle_user_turn_includes_skill_instructions_in_the_first_request() -> Re
     assert!(matches!(submission, StartIfIdleSubmission::Started { .. }));
 
     core_test_support::wait_for_event(test.inkstack.as_ref(), |event| {
-        matches!(event, inkstack_protocol::protocol::EventMsg::TurnComplete(_))
+        matches!(
+            event,
+            inkstack_protocol::protocol::EventMsg::TurnComplete(_)
+        )
     })
     .await;
 

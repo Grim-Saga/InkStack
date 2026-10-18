@@ -412,7 +412,10 @@ async fn worker_reasoning_overrides_follow_effective_client_policy(
         .concat(),
     );
     // Fixed-effort workers neither append updates nor erase inherited live or durable history.
-    for (thread, expected) in [(&parent, inherited_updates), (&test.inkstack, worker_updates)] {
+    for (thread, expected) in [
+        (&parent, inherited_updates),
+        (&test.inkstack, worker_updates),
+    ] {
         let context_updates = thread
             .conversation_history_snapshot()
             .await

@@ -154,7 +154,9 @@ pub fn validate_environment_ids_and_cwds<'a>(
         environment_manager
             .get_environment(environment_id)
             .ok_or_else(|| {
-                InkStackErr::InvalidRequest(format!("unknown turn environment id `{environment_id}`"))
+                InkStackErr::InvalidRequest(format!(
+                    "unknown turn environment id `{environment_id}`"
+                ))
             })?;
     }
     Ok(())

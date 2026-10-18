@@ -308,12 +308,16 @@ mod tests {
             let item = RolloutItem::EventMsg(EventMsg::ItemCompleted(ItemCompletedEvent {
                 thread_id: metadata.id,
                 turn_id: "turn-1".to_string(),
-                item: TurnItem::FunctionCallOutput(inkstack_protocol::items::FunctionCallOutputItem {
-                    id: "output-1".to_string(),
-                    name: "create_thread".to_string(),
-                    namespace: Some("codex_app".to_string()),
-                    output: inkstack_protocol::models::FunctionCallOutputBody::Text(text.to_string()),
-                }),
+                item: TurnItem::FunctionCallOutput(
+                    inkstack_protocol::items::FunctionCallOutputItem {
+                        id: "output-1".to_string(),
+                        name: "create_thread".to_string(),
+                        namespace: Some("codex_app".to_string()),
+                        output: inkstack_protocol::models::FunctionCallOutputBody::Text(
+                            text.to_string(),
+                        ),
+                    },
+                ),
                 started_at_ms: Some(0),
                 completed_at_ms: 0,
             }));

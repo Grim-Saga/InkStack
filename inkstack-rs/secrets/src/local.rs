@@ -584,7 +584,13 @@ mod tests {
                 .join("mcp_oauth.age")
                 .exists()
         );
-        assert!(!inkstack_home.path().join("secrets").join("local.age").exists());
+        assert!(
+            !inkstack_home
+                .path()
+                .join("secrets")
+                .join("local.age")
+                .exists()
+        );
         assert!(
             inkstack_home
                 .path()

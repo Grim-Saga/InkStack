@@ -854,7 +854,11 @@ impl TestInkStackBuilder {
             let mut extensions = self.extensions.to_builder();
             inkstack_core::install_agent_message_board(&mut extensions, manager.clone());
             if config.features.enabled(Feature::GuardianV2) {
-                inkstack_guardian_v2::install(&mut extensions, auth_manager.clone(), manager.clone());
+                inkstack_guardian_v2::install(
+                    &mut extensions,
+                    auth_manager.clone(),
+                    manager.clone(),
+                );
             } else {
                 inkstack_guardian_v2::install_reviewer(&mut extensions, manager.clone());
             }

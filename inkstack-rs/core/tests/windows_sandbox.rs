@@ -111,8 +111,12 @@ fn inkstack_home_for_windows_sandbox_test(name: &str) -> anyhow::Result<TestInkS
         // retries run in the same Windows VM, so keep INKSTACK_HOME stable within
         // the test temp root and let setup reconcile its persisted ACL state.
         let inkstack_home = PathBuf::from(test_tmpdir).join(name);
-        std::fs::create_dir_all(&inkstack_home)
-            .with_context(|| format!("create stable test INKSTACK_HOME {}", inkstack_home.display()))?;
+        std::fs::create_dir_all(&inkstack_home).with_context(|| {
+            format!(
+                "create stable test INKSTACK_HOME {}",
+                inkstack_home.display()
+            )
+        })?;
         return Ok(TestInkStackHome::Persistent(inkstack_home));
     }
 
@@ -168,8 +172,13 @@ fn stage_windows_sandbox_cli(fixture_bin: &Path) -> anyhow::Result<(PathBuf, Pat
 
     let inkstack_source = inkstack_utils_cargo_bin::cargo_bin("inkstack")?;
     let inkstack = fixture_bin.join("inkstack.exe");
-    inkstack_utils_cargo_bin::copy_executable(&inkstack_source, &inkstack)
-        .with_context(|| format!("copy {} to {}", inkstack_source.display(), inkstack.display()))?;
+    inkstack_utils_cargo_bin::copy_executable(&inkstack_source, &inkstack).with_context(|| {
+        format!(
+            "copy {} to {}",
+            inkstack_source.display(),
+            inkstack.display()
+        )
+    })?;
     for helper_name in ["inkstack-windows-sandbox-setup", "inkstack-command-runner"] {
         let helper = inkstack_utils_cargo_bin::cargo_bin(helper_name)?;
         let destination = resources_dir.join(Path::new(helper_name).with_extension("exe"));
@@ -297,7 +306,8 @@ fn windows_sandbox_cli_preserves_managed_deny_reads_across_launches() -> anyhow:
 #[tokio::test]
 #[serial(inkstack_home)]
 async fn windows_elevated_setup_rejects_default_root_deny() -> anyhow::Result<()> {
-    let inkstack_home = inkstack_home_for_windows_sandbox_test("windows-elevated-root-deny-inkstack-home")?;
+    let inkstack_home =
+        inkstack_home_for_windows_sandbox_test("windows-elevated-root-deny-inkstack-home")?;
     let workspace = TempDir::new()?;
     let cwd = dunce::canonicalize(workspace.path())?.abs();
     let file_system_sandbox_policy =
@@ -423,7 +433,8 @@ async fn windows_restricted_token_rejects_exact_and_glob_deny_read_policy() -> a
 async fn windows_elevated_temp_only_core_and_direct_spawn_enforce_carveouts() -> anyhow::Result<()>
 {
     let _account_guard = WindowsSandboxAccountTestGuard::acquire()?;
-    let inkstack_home = inkstack_home_for_windows_sandbox_test("windows-temp-only-child-inkstack-home")?;
+    let inkstack_home =
+        inkstack_home_for_windows_sandbox_test("windows-temp-only-child-inkstack-home")?;
     let _inkstack_home_guard = EnvVarGuard::set("INKSTACK_HOME", inkstack_home.path().as_os_str());
     stage_windows_sandbox_helpers()?;
     let fixture = TempDir::new()?;
@@ -732,7 +743,8 @@ $rules = foreach ($name in @('inkstack_sandbox_offline_block_inbound', 'inkstack
 #[serial(inkstack_home)]
 async fn windows_elevated_enforces_deny_read_and_protects_setup_marker() -> anyhow::Result<()> {
     let _account_guard = WindowsSandboxAccountTestGuard::acquire()?;
-    let inkstack_home = inkstack_home_for_windows_sandbox_test("windows-elevated-deny-read-inkstack-home")?;
+    let inkstack_home =
+        inkstack_home_for_windows_sandbox_test("windows-elevated-deny-read-inkstack-home")?;
     let _inkstack_home_guard = EnvVarGuard::set("INKSTACK_HOME", inkstack_home.path().as_os_str());
     stage_windows_sandbox_helpers()?;
     let workspace = TempDir::new()?;
@@ -746,7 +758,10 @@ async fn windows_elevated_enforces_deny_read_and_protects_setup_marker() -> anyh
     let bundled_skill_dir = user_profile.path().join(".inkstack/plugins/cache");
     std::fs::create_dir_all(&bundled_skill_dir)?;
     let bundled_skill = bundled_skill_dir.join("SKILL.md");
-    let setup_marker = inkstack_home.path().join(".sandbox").join("setup_marker.json");
+    let setup_marker = inkstack_home
+        .path()
+        .join(".sandbox")
+        .join("setup_marker.json");
     std::fs::write(&glob_secret, "glob secret\n")?;
     std::fs::write(&public, "public ok\n")?;
     std::fs::write(&bundled_skill, "bundled skill ok\n")?;
@@ -879,7 +894,9 @@ async fn windows_elevated_powershell_preserves_relative_paths() -> anyhow::Resul
     let _inkstack_home_guard = EnvVarGuard::set("INKSTACK_HOME", inkstack_home.path().as_os_str());
     stage_windows_sandbox_helpers()?;
     // The refresh caller must own the helper directory after provisioning protects its DACL.
-    std::fs::create_dir_all(inkstack_windows_sandbox::sandbox_bin_dir(inkstack_home.path()))?;
+    std::fs::create_dir_all(inkstack_windows_sandbox::sandbox_bin_dir(
+        inkstack_home.path(),
+    ))?;
 
     let profile_dir = TempDir::new()?;
     let fake_profile = dunce::canonicalize(profile_dir.path())?;
@@ -1001,8 +1018,9 @@ Write-Output ('PUBLIC=' + (Get-Content -LiteralPath .\public.txt -Raw).Trim())"#
 #[serial(inkstack_home)]
 async fn windows_elevated_unified_exec_enforces_large_recursive_deny_reads() -> anyhow::Result<()> {
     let _account_guard = WindowsSandboxAccountTestGuard::acquire()?;
-    let inkstack_home =
-        inkstack_home_for_windows_sandbox_test("windows-elevated-tool-runtime-deny-read-inkstack-home")?;
+    let inkstack_home = inkstack_home_for_windows_sandbox_test(
+        "windows-elevated-tool-runtime-deny-read-inkstack-home",
+    )?;
     let _inkstack_home_guard = EnvVarGuard::set("INKSTACK_HOME", inkstack_home.path().as_os_str());
     stage_windows_sandbox_helpers()?;
 
@@ -1175,7 +1193,9 @@ async fn windows_elevated_unified_exec_enforces_large_recursive_deny_reads() -> 
 
     // Re-enter real setup after corrupting this test's bookkeeping, then exercise
     // recovery through the same agent tool path rather than relying on a cached launch.
-    let state_path = inkstack_home.path().join(".sandbox/deny_read_acl_state.json");
+    let state_path = inkstack_home
+        .path()
+        .join(".sandbox/deny_read_acl_state.json");
     std::fs::write(&state_path, b"malformed bookkeeping")?;
     let permission_profile = harness
         .test()
@@ -1273,7 +1293,8 @@ async fn windows_elevated_approved_git_pull_preserves_deny_read() -> anyhow::Res
     use EventMsg::TurnComplete;
 
     let _account_guard = WindowsSandboxAccountTestGuard::acquire()?;
-    let inkstack_home = inkstack_home_for_windows_sandbox_test("windows-elevated-git-pull-deny-read")?;
+    let inkstack_home =
+        inkstack_home_for_windows_sandbox_test("windows-elevated-git-pull-deny-read")?;
     let _inkstack_home_guard = EnvVarGuard::set("INKSTACK_HOME", inkstack_home.path().as_os_str());
     stage_windows_sandbox_helpers()?;
     let home = dunce::canonicalize(inkstack_home.path())?.abs();

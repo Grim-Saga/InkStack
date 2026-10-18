@@ -65,7 +65,9 @@ where
 
 pub(crate) fn collab_spawn_error(err: InkStackErr) -> FunctionCallError {
     match err.details() {
-        InkStackErrorDetails::UnsupportedOperation(message) if message == "thread manager dropped" => {
+        InkStackErrorDetails::UnsupportedOperation(message)
+            if message == "thread manager dropped" =>
+        {
             FunctionCallError::RespondToModel("collab manager unavailable".to_string())
         }
         InkStackErrorDetails::UnsupportedOperation(message) => {
@@ -131,7 +133,9 @@ pub(crate) fn collab_agent_error(agent_id: ThreadId, err: InkStackErr) -> Functi
 /// Keeps V2 request validation distinct from a dropped local manager.
 pub(crate) fn collab_v2_agent_error(agent_id: ThreadId, err: InkStackErr) -> FunctionCallError {
     match err.details() {
-        InkStackErrorDetails::UnsupportedOperation(message) if message != "thread manager dropped" => {
+        InkStackErrorDetails::UnsupportedOperation(message)
+            if message != "thread manager dropped" =>
+        {
             FunctionCallError::RespondToModel(message.clone())
         }
         _ => collab_agent_error(agent_id, err),

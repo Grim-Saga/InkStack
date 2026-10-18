@@ -123,8 +123,10 @@ pub(crate) async fn list(inkstack_home: PathBuf, cwd: PathBuf) -> anyhow::Result
         inkstack_config::ConfigLoadOptions::default(),
     )
     .await?;
-    let settings =
-        inkstack_worktree::WorktreeSettings::for_cli(&inkstack_home, host.config_toml.desktop.as_ref())?;
+    let settings = inkstack_worktree::WorktreeSettings::for_cli(
+        &inkstack_home,
+        host.config_toml.desktop.as_ref(),
+    )?;
     // Closing the popup discards its result; an already-running blocking Git call still finishes.
     tokio::task::spawn_blocking(move || {
         let cwd = inkstack_git_utils::get_git_repo_root(&cwd).unwrap_or(cwd);
@@ -159,8 +161,10 @@ pub(crate) async fn remove(
         inkstack_config::ConfigLoadOptions::default(),
     )
     .await?;
-    let settings =
-        inkstack_worktree::WorktreeSettings::for_cli(&inkstack_home, host.config_toml.desktop.as_ref())?;
+    let settings = inkstack_worktree::WorktreeSettings::for_cli(
+        &inkstack_home,
+        host.config_toml.desktop.as_ref(),
+    )?;
     tokio::task::spawn_blocking(move || {
         inkstack_worktree::WorktreeManager::new(settings).remove(&source_cwd, &root)
     })

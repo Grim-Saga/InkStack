@@ -295,8 +295,11 @@ fn launch_rpc_span_finishes_before_its_process_exits() {
         (Some(TRACE_ID), Some(LAUNCH_SPANS[0]))
     );
     assert_ne!(process_span["spanId"], launch_span["spanId"]);
-    let mut expected_exit =
-        expected_process_attributes("inkstack.exec_server.process_exit", /*index*/ 0, "None");
+    let mut expected_exit = expected_process_attributes(
+        "inkstack.exec_server.process_exit",
+        /*index*/ 0,
+        "None",
+    );
     expected_exit["process.exit_code"] =
         json!({"intValue": exited.exit_code.expect("exit code").to_string()});
     expected_exit["process.termination_requested"] = json!({"boolValue": true});
@@ -313,7 +316,8 @@ fn launch_rpc_span_finishes_before_its_process_exits() {
     );
     for record in &records {
         assert_eq!(record["traceId"].as_str(), Some(TRACE_ID));
-        let span = if attribute(record, "event.name") == Some("inkstack.exec_server.process_start") {
+        let span = if attribute(record, "event.name") == Some("inkstack.exec_server.process_start")
+        {
             launch_span
         } else {
             process_span
@@ -458,8 +462,11 @@ fn exported_sandbox_denial_keeps_launch_identity_and_separate_exit_outcome() {
             index,
             "MacosSeatbelt",
         ));
-        let mut exited =
-            expected_process_attributes("inkstack.exec_server.process_exit", index, "MacosSeatbelt");
+        let mut exited = expected_process_attributes(
+            "inkstack.exec_server.process_exit",
+            index,
+            "MacosSeatbelt",
+        );
         exited["process.exit_code"] = json!({"intValue": if index == 0 { "0" } else { "23" }});
         exited["process.termination_requested"] = json!({"boolValue": false});
         expected.push(exited);

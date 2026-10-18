@@ -65,9 +65,11 @@ async fn prepare_apply_patch_uses_action_policy_before_turn_policy() {
     let prepared = prepare_apply_patch(
         &step,
         &environment,
-        &PatchSandboxRoute::Platform(inkstack_protocol::config_types::WindowsSandboxLevel::Disabled)
-            .prepare_matching(&file_system_policy, &context)
-            .expect("prepare patch matching"),
+        &PatchSandboxRoute::Platform(
+            inkstack_protocol::config_types::WindowsSandboxLevel::Disabled,
+        )
+        .prepare_matching(&file_system_policy, &context)
+        .expect("prepare patch matching"),
         action,
     )
     .expect("issuing action policy should request approval");

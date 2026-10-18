@@ -60,8 +60,9 @@ pub trait ConversationHistorySnapshot: Send + Sync {
     /// Legacy providers cannot establish completeness from a message ID alone.
     fn review_items_with_sources(
         &self,
-    ) -> Box<dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_>
-    {
+    ) -> Box<
+        dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_,
+    > {
         Box::new(self.review_items().map(|item| (item, None)))
     }
 

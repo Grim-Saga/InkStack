@@ -1695,9 +1695,9 @@ impl From<inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem>
 {
     fn from(item: inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem) -> Self {
         match item {
-            inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputText { text } => {
-                Self::InputText { text }
-            }
+            inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputText {
+                text,
+            } => Self::InputText { text },
             inkstack_protocol::dynamic_tools::DynamicToolCallOutputContentItem::InputImage {
                 image_url,
             } => Self::InputImage { image_url },

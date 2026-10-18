@@ -2258,7 +2258,8 @@ mod tests {
             request, tx, /*has_input_focus*/ true, /*enhanced_keys_supported*/ false,
             /*disable_paste_burst*/ true,
         );
-        overlay.handle_paste("x".repeat(inkstack_protocol::user_input::MAX_USER_INPUT_TEXT_CHARS + 1));
+        overlay
+            .handle_paste("x".repeat(inkstack_protocol::user_input::MAX_USER_INPUT_TEXT_CHARS + 1));
         overlay.handle_key_event(KeyCode::Enter.into());
         assert!(overlay.next_frame_delay().is_some());
         overlay.handle_key_event(KeyEvent::new(KeyCode::Char('n'), KeyModifiers::CONTROL));

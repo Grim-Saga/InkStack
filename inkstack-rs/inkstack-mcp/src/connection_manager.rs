@@ -320,12 +320,13 @@ impl McpConnectionSet {
             .filter(|auth| auth.uses_inkstack_backend())
             .map(inkstack_model_provider::auth_provider_from_auth);
         let inkstack_apps_auth_provider = auth_manager.as_ref().and_then(|auth_manager| {
-            auth.filter(|auth| auth.uses_inkstack_backend()).map(|auth| {
-                inkstack_model_provider::auth_provider_from_auth_manager(
-                    Arc::clone(auth_manager),
-                    auth,
-                )
-            })
+            auth.filter(|auth| auth.uses_inkstack_backend())
+                .map(|auth| {
+                    inkstack_model_provider::auth_provider_from_auth_manager(
+                        Arc::clone(auth_manager),
+                        auth,
+                    )
+                })
         });
         for (server_name, server) in mcp_servers
             .into_iter()

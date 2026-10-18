@@ -168,8 +168,10 @@ impl LocalSettings {
         self.tui.animations &= system_motion == crate::motion::MotionMode::Animated;
         let mut audio = toml::Value::Table(Default::default());
         for layer in layers.layers_low_to_high() {
-            if !matches!(layer.name, inkstack_config::ConfigLayerSource::Project { .. })
-                && let Some(value) = layer.config.get("audio")
+            if !matches!(
+                layer.name,
+                inkstack_config::ConfigLayerSource::Project { .. }
+            ) && let Some(value) = layer.config.get("audio")
             {
                 inkstack_config::merge_toml_values(&mut audio, value);
             }

@@ -115,7 +115,8 @@ pub trait ModelProvider: fmt::Debug + Send + Sync {
             || url::Url::parse(&provider.base_url).ok().is_some_and(|url| {
                 url.scheme() == "https"
                     && url.host_str().is_some_and(|host| {
-                        host == "api.openai.com" || inkstack_http_client::is_allowed_chatgpt_host(host)
+                        host == "api.openai.com"
+                            || inkstack_http_client::is_allowed_chatgpt_host(host)
                     })
             })
     }
@@ -184,7 +185,8 @@ pub trait ModelProvider: fmt::Debug + Send + Sync {
     /// Attempts provider-owned authentication recovery before using the auth manager.
     fn recover_from_unauthorized(
         &self,
-    ) -> ModelProviderFuture<'_, inkstack_protocol::error::Result<ProviderUnauthorizedRecovery>> {
+    ) -> ModelProviderFuture<'_, inkstack_protocol::error::Result<ProviderUnauthorizedRecovery>>
+    {
         Box::pin(async { Ok(ProviderUnauthorizedRecovery::NotConfigured) })
     }
 
@@ -555,7 +557,10 @@ impl ModelProvider for ConfiguredModelProvider {
         inkstack_home: PathBuf,
         config_model_catalog: Option<ModelsResponse>,
     ) -> SharedModelsManager {
-        self.create_models_manager(config_model_catalog, ModelsCacheConfig::Disk { inkstack_home })
+        self.create_models_manager(
+            config_model_catalog,
+            ModelsCacheConfig::Disk { inkstack_home },
+        )
     }
 
     fn models_manager_without_cache(
@@ -629,7 +634,10 @@ mod tests {
     }
 
     fn test_inkstack_home() -> std::path::PathBuf {
-        std::env::temp_dir().join(format!("inkstack-model-provider-test-{}", std::process::id()))
+        std::env::temp_dir().join(format!(
+            "inkstack-model-provider-test-{}",
+            std::process::id()
+        ))
     }
 
     fn provider_for(base_url: String) -> ModelProviderInfo {
@@ -777,9 +785,9 @@ mod tests {
     fn configured_provider_uses_luna_for_approval_review_with_api_key_auth() {
         let provider = create_model_provider(
             ModelProviderInfo::create_openai_provider(/*base_url*/ None),
-            Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-                "openai-api-key",
-            ))),
+            Some(AuthManager::from_auth_for_testing(
+                InkStackAuth::from_api_key("openai-api-key"),
+            )),
         );
 
         assert_eq!(provider.approval_review_preferred_model(), "gpt-5.6-luna");
@@ -839,9 +847,9 @@ mod tests {
                 credential_export: None,
                 auth_refresh: None,
             })),
-            Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-                "openai-api-key",
-            ))),
+            Some(AuthManager::from_auth_for_testing(
+                InkStackAuth::from_api_key("openai-api-key"),
+            )),
         );
 
         assert!(provider.auth_manager().is_none());
@@ -915,9 +923,9 @@ mod tests {
 
         let first = create_model_provider(
             provider_info.clone(),
-            Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-                "openai-api-key",
-            ))),
+            Some(AuthManager::from_auth_for_testing(
+                InkStackAuth::from_api_key("openai-api-key"),
+            )),
         );
         let second = create_model_provider(provider_info.clone(), /*auth_manager*/ None);
         let shared_state = process_shared_state();
@@ -1111,9 +1119,9 @@ printf '%s\n' '{"AccessKeyId":"exported","SecretAccessKey":"secret"}'
     fn openai_provider_returns_api_key_account_state() {
         let provider = create_model_provider(
             ModelProviderInfo::create_openai_provider(/*base_url*/ None),
-            Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-                "openai-api-key",
-            ))),
+            Some(AuthManager::from_auth_for_testing(
+                InkStackAuth::from_api_key("openai-api-key"),
+            )),
         );
 
         assert_eq!(
@@ -1378,8 +1386,8 @@ printf '%s\n' '{"AccessKeyId":"exported","SecretAccessKey":"secret"}'
                     provider_info.clone(),
                     auth.clone().map(AuthManager::from_auth_for_testing),
                 );
-                let manager =
-                    provider.models_manager(test_inkstack_home(), /*config_model_catalog*/ None);
+                let manager = provider
+                    .models_manager(test_inkstack_home(), /*config_model_catalog*/ None);
                 manager.set_api_key_model_discovery_enabled(enabled);
                 let refresh_strategy = if enabled {
                     RefreshStrategy::Online

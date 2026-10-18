@@ -226,8 +226,9 @@ pub(crate) async fn prepare_exec_request_with_telemetry(
     let sandbox_manager = SandboxManager::new()
         .with_linux_sandbox_pid_namespace(runtime_paths.linux_sandbox_pid_namespace);
     #[cfg(target_os = "macos")]
-    let sandbox_manager = sandbox_manager
-        .with_allowed_symlinked_inkstack_home(runtime_paths.allowed_symlinked_inkstack_home.clone());
+    let sandbox_manager = sandbox_manager.with_allowed_symlinked_inkstack_home(
+        runtime_paths.allowed_symlinked_inkstack_home.clone(),
+    );
     let (sandbox, windows_sandbox_level) = select_sandbox(
         &sandbox_manager,
         &permissions,

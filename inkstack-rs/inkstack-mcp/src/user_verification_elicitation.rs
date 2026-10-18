@@ -27,7 +27,9 @@ pub(super) async fn route(
         return Ok(ElicitationResponse {
             action: ElicitationAction::Cancel,
             content: None,
-            meta: Some(inkstack_rmcp_client::UserVerificationReason::ApprovalUnavailable.into_meta()),
+            meta: Some(
+                inkstack_rmcp_client::UserVerificationReason::ApprovalUnavailable.into_meta(),
+            ),
         });
     };
     router

@@ -54,7 +54,8 @@ pub const DOCTOR_REPORT_ATTACHMENT_FILENAME: &str = "inkstack-doctor-report.json
 /// Filename used for the raw InkStack Apps MCP tools cache feedback attachment.
 pub const INKSTACK_APPS_TOOLS_CACHE_ATTACHMENT_FILENAME: &str = "inkstack-apps-tools-cache.json";
 /// Filename used for the raw connector directory cache feedback attachment.
-pub const INKSTACK_APP_DIRECTORY_CACHE_ATTACHMENT_FILENAME: &str = "inkstack-app-directory-cache.json";
+pub const INKSTACK_APP_DIRECTORY_CACHE_ATTACHMENT_FILENAME: &str =
+    "inkstack-app-directory-cache.json";
 /// Filename used for the Windows sandbox log feedback attachment.
 pub const WINDOWS_SANDBOX_LOG_ATTACHMENT_FILENAME: &str = "windows-sandbox.log";
 const DEFAULT_MAX_BYTES: usize = 4 * 1024 * 1024; // 4 MiB
@@ -262,7 +263,10 @@ impl InkStackFeedback {
                     // includes full websocket frames and authenticated handshakes.
                     .with_target("tungstenite", LevelFilter::DEBUG)
                     .with_target("inkstack_api::responses_websocket_timing", LevelFilter::OFF)
-                    .with_target("inkstack_core::post_sampling_token_estimate", LevelFilter::OFF),
+                    .with_target(
+                        "inkstack_core::post_sampling_token_estimate",
+                        LevelFilter::OFF,
+                    ),
             )
     }
 

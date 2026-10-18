@@ -234,7 +234,11 @@ impl ThreadTraceContext {
     /// These events are runtime observations on an already-dispatched tool. The
     /// dispatch trace records the caller-facing boundary; these payloads explain
     /// what InkStack did while executing that boundary.
-    pub fn record_tool_call_event(&self, inkstack_turn_id: impl Into<InkStackTurnId>, event: &EventMsg) {
+    pub fn record_tool_call_event(
+        &self,
+        inkstack_turn_id: impl Into<InkStackTurnId>,
+        event: &EventMsg,
+    ) {
         let ThreadTraceContextState::Enabled(context) = &self.state else {
             return;
         };

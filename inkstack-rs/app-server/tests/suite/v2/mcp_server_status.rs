@@ -730,7 +730,9 @@ async fn mcp_server_status_list_returns_raw_server_and_tool_names(plugin: bool) 
         std::fs::create_dir_all(plugin_root.path().join(".agents/plugins"))?;
         std::fs::create_dir_all(plugin_root.path().join("sample/.inkstack-plugin"))?;
         std::fs::write(
-            plugin_root.path().join("sample/.inkstack-plugin/plugin.json"),
+            plugin_root
+                .path()
+                .join("sample/.inkstack-plugin/plugin.json"),
             serde_json::to_vec(&json!({"name": "sample"}))?,
         )?;
         std::fs::write(

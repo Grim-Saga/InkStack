@@ -1913,7 +1913,10 @@ impl Config {
                 Vec::new()
             },
             protocol_mode: self.mcp_protocol_mode(),
-            host_owned_apps_protocol_mode: if self.features.enabled(Feature::InkStackAppsMcp20260728) {
+            host_owned_apps_protocol_mode: if self
+                .features
+                .enabled(Feature::InkStackAppsMcp20260728)
+            {
                 McpProtocolMode::V20260728
             } else {
                 McpProtocolMode::Legacy
@@ -2110,8 +2113,13 @@ pub async fn load_config_as_toml_with_cli_and_loader_overrides(
     cli_overrides: Vec<(String, TomlValue)>,
     loader_overrides: LoaderOverrides,
 ) -> std::io::Result<ConfigToml> {
-    load_config_as_toml_with_cli_and_load_options(inkstack_home, cwd, cli_overrides, loader_overrides)
-        .await
+    load_config_as_toml_with_cli_and_load_options(
+        inkstack_home,
+        cwd,
+        cli_overrides,
+        loader_overrides,
+    )
+    .await
 }
 
 /// DEPRECATED for most callers: prefer [Config::load_with_cli_overrides()] or
@@ -2771,7 +2779,9 @@ fn resolve_update_plan_enabled(config_toml: &ConfigToml) -> bool {
         .is_some_and(|config| config.enabled)
 }
 
-fn resolve_feature_enabled(feature: Option<&inkstack_config::config_toml::FeatureToggleToml>) -> bool {
+fn resolve_feature_enabled(
+    feature: Option<&inkstack_config::config_toml::FeatureToggleToml>,
+) -> bool {
     feature.and_then(|feature| feature.enabled).unwrap_or(true)
 }
 

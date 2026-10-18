@@ -446,7 +446,12 @@ async fn run_add(config: &Config, add_args: AddArgs) -> Result<()> {
 
     let mut servers = load_global_mcp_servers(inkstack_home)
         .await
-        .with_context(|| format!("failed to load MCP servers from {}", inkstack_home.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to load MCP servers from {}",
+                inkstack_home.display()
+            )
+        })?;
     let credential_name = new_entry.oauth_credential_name(&name);
     servers.insert(name.clone(), new_entry);
 
@@ -511,7 +516,12 @@ async fn run_remove(config_overrides: &CliConfigOverrides, remove_args: RemoveAr
     let inkstack_home = find_inkstack_home().context("failed to resolve INKSTACK_HOME")?;
     let mut servers = load_global_mcp_servers(&inkstack_home)
         .await
-        .with_context(|| format!("failed to load MCP servers from {}", inkstack_home.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to load MCP servers from {}",
+                inkstack_home.display()
+            )
+        })?;
 
     let removed = servers.remove(&name).is_some();
 
@@ -520,7 +530,9 @@ async fn run_remove(config_overrides: &CliConfigOverrides, remove_args: RemoveAr
             .replace_mcp_servers(&servers)
             .apply()
             .await
-            .with_context(|| format!("failed to write MCP servers to {}", inkstack_home.display()))?;
+            .with_context(|| {
+                format!("failed to write MCP servers to {}", inkstack_home.display())
+            })?;
     }
 
     if removed {

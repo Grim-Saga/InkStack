@@ -220,7 +220,9 @@ fn default_owned_screen_entry_paints_before_sync_ends_and_exit_clears_inline_dra
         .context("missing composer in first owned-screen frame")?;
     assert_eq!(
         (
-            first_contents.matches("Ask InkStack to do anything").count(),
+            first_contents
+                .matches("Ask InkStack to do anything")
+                .count(),
             first_frame.screen().cursor_position(),
             first_frame.screen().hide_cursor(),
         ),
@@ -296,7 +298,11 @@ impl PtyInkStack {
         let inkstack = inkstack_utils_cargo_bin::cargo_bin("inkstack-tui")
             .or_else(|_| inkstack_utils_cargo_bin::cargo_bin("inkstack"))?;
         Self::start_binary(
-            &inkstack, repo_root, inkstack_home, extra_args, /*editor*/ None,
+            &inkstack,
+            repo_root,
+            inkstack_home,
+            extra_args,
+            /*editor*/ None,
         )
     }
 
@@ -309,7 +315,11 @@ impl PtyInkStack {
         let inkstack = inkstack_utils_cargo_bin::cargo_bin("inkstack")
             .context("build inkstack-cli and set CARGO_BIN_EXE_inkstack to its executable")?;
         Self::start_binary(
-            &inkstack, repo_root, inkstack_home, extra_args, /*editor*/ None,
+            &inkstack,
+            repo_root,
+            inkstack_home,
+            extra_args,
+            /*editor*/ None,
         )
     }
 

@@ -249,7 +249,10 @@ fn inkstack_backend_routes_require_inkstack_base_url() {
         (Some("https://chatgpt-staging.com/backend-api/codex"), true),
         (Some("https://chatgpt-staging.com/backend-api/codex/"), true),
         // Query strings are not part of the backend path.
-        (Some("https://chatgpt.com/backend-api/codex?client_version=1"), true),
+        (
+            Some("https://chatgpt.com/backend-api/codex?client_version=1"),
+            true,
+        ),
         // Unrelated API endpoints are not the ChatGPT backend.
         (Some("https://proxy.example.com/v1"), false),
         (Some("https://api.openai.com/v1"), false),
@@ -348,7 +351,11 @@ args = ["login", "--profile", "inkstack-bedrock"]
             }),
             auth_refresh: Some(AwsAuthRefreshConfig {
                 command: "aws".to_string(),
-                args: vec!["login".into(), "--profile".into(), "inkstack-bedrock".into()],
+                args: vec![
+                    "login".into(),
+                    "--profile".into(),
+                    "inkstack-bedrock".into()
+                ],
                 timeout_ms: NonZeroU64::new(300_000).expect("timeout should be non-zero"),
             }),
         })
@@ -542,7 +549,11 @@ fn test_merge_configured_model_providers_applies_amazon_bedrock_aws_override() {
     };
     let auth_refresh = AwsAuthRefreshConfig {
         command: "aws".to_string(),
-        args: vec!["login".into(), "--profile".into(), "inkstack-bedrock".into()],
+        args: vec![
+            "login".into(),
+            "--profile".into(),
+            "inkstack-bedrock".into(),
+        ],
         timeout_ms: NonZeroU64::new(10_000).expect("timeout should be non-zero"),
     };
     let configured_model_providers = std::collections::HashMap::from([(

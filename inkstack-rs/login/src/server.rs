@@ -941,7 +941,10 @@ fn login_error_response(
 }
 
 /// Returns true when the OAuth callback represents a missing InkStack entitlement.
-fn is_missing_inkstack_entitlement_error(error_code: &str, error_description: Option<&str>) -> bool {
+fn is_missing_inkstack_entitlement_error(
+    error_code: &str,
+    error_description: Option<&str>,
+) -> bool {
     error_code == "access_denied"
         && error_description.is_some_and(|description| {
             description

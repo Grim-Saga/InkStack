@@ -1480,8 +1480,9 @@ mod tests {
             lines_to_plain_strings(&committed.transcript_lines(u16::MAX)),
         );
 
-        let context = InlineVisualizationContext::new(&test_cwd(), inkstack_protocol::ThreadId::new())
-            .expect("visualization context");
+        let context =
+            InlineVisualizationContext::new(&test_cwd(), inkstack_protocol::ThreadId::new())
+                .expect("visualization context");
         for (context, definition) in [
             (None, "[ref]: https://example.com\n"),
             (Some(context), "[ref]: https://example.com\n"),

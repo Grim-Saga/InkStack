@@ -494,7 +494,8 @@ async fn thread_compact_start_triggers_compaction_and_returns_empty_response() -
     let updated_cwd = TempDir::new()?;
     let extra_root = TempDir::new()?;
     let updated_roots = vec![updated_cwd.path().abs(), extra_root.path().abs()];
-    compaction_config(&server.uri(), /*auto_compact_limit*/ 1_000_000).write(inkstack_home.path())?;
+    compaction_config(&server.uri(), /*auto_compact_limit*/ 1_000_000)
+        .write(inkstack_home.path())?;
 
     // Top-level cwd restoration uses host-native paths, not a foreign executor's paths.
     let mut mcp = TestAppServer::builder()

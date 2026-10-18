@@ -73,11 +73,12 @@ async fn runtime_failures_keep_their_reason_without_error_text() {
         (Some(json!({"reason": "turnTransition"})), "interrupted"),
         (None, "responseError"),
     ] {
-        let response = from_client_result(Ok(Err(inkstack_app_server_protocol::JSONRPCErrorError {
-            code: -1,
-            message: "private error details".into(),
-            data,
-        })));
+        let response =
+            from_client_result(Ok(Err(inkstack_app_server_protocol::JSONRPCErrorError {
+                code: -1,
+                message: "private error details".into(),
+                data,
+            })));
         assert_eq!(
             response,
             McpServerElicitationRequestResponse {

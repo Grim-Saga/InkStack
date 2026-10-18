@@ -279,10 +279,12 @@ impl RollbackPlanner {
                 self.assign_targeted_record(index, Some(record.turn_id.as_str()));
             }
             RolloutItem::WorldState(_) | RolloutItem::RealtimeItem(_) => {}
-            RolloutItem::RetainedContext(inkstack_rollout::RetainedContextEvent::VerifiedAnswer {
-                answer,
-                acceptance_order,
-            }) => {
+            RolloutItem::RetainedContext(
+                inkstack_rollout::RetainedContextEvent::VerifiedAnswer {
+                    answer,
+                    acceptance_order,
+                },
+            ) => {
                 let source = (answer.turn_id.clone(), answer.call_id.clone());
                 // A late answer still belongs to its call's instruction boundary, even
                 // if the same running turn has since received another user steer.

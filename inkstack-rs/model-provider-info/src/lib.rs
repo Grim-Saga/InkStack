@@ -624,7 +624,10 @@ other non-default provider fields are not supported"
     /// and does not receive InkStack backend routing.
     pub fn supports_inkstack_backend_routes(&self) -> bool {
         self.is_openai()
-            && self.base_url.as_deref().is_none_or(is_chatgpt_codex_endpoint)
+            && self
+                .base_url
+                .as_deref()
+                .is_none_or(is_chatgpt_codex_endpoint)
     }
 
     pub fn uses_openai_actor_authorization(&self) -> bool {

@@ -212,7 +212,10 @@ fn thread_binding_rejects_primary_and_unmanaged_worktrees() {
             .is_err(),
     );
     assert!(
-        !fixture.repository.join(".git/inkstack-thread.json").exists(),
+        !fixture
+            .repository
+            .join(".git/inkstack-thread.json")
+            .exists(),
         "primary checkout ownership metadata must not be modified",
     );
 
@@ -432,9 +435,11 @@ fn creation_ignores_inherited_git_environment() {
         let root = PathBuf::from(root);
         let source = root.join("project");
         let source_cwd = source.join("nested/component");
-        let settings =
-            WorktreeSettings::from_desktop_config(&root.join("inkstack-home"), /*desktop*/ None)
-                .expect("fixture operation succeeds");
+        let settings = WorktreeSettings::from_desktop_config(
+            &root.join("inkstack-home"),
+            /*desktop*/ None,
+        )
+        .expect("fixture operation succeeds");
         let base = default_worktree_base(&source_cwd).expect("resolve source default");
         assert_eq!(base, "refs/remotes/origin/source-default");
         let worktree = create_worktree(&WorktreeManager::new(settings), &source_cwd, Some(&base))

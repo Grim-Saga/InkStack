@@ -139,9 +139,9 @@ impl ExecRequest {
         } = options;
         let windows_sandbox_filesystem_overrides = if sandbox == SandboxType::WindowsRestrictedToken
         {
-            let sandbox_policy_cwd = windows_sandbox_policy_cwd
-                .to_abs_path()
-                .map_err(|err| InkStackErr::InvalidRequest(format!("invalid sandbox cwd: {err}")))?;
+            let sandbox_policy_cwd = windows_sandbox_policy_cwd.to_abs_path().map_err(|err| {
+                InkStackErr::InvalidRequest(format!("invalid sandbox cwd: {err}"))
+            })?;
             let use_windows_elevated_backend =
                 windows_sandbox_uses_elevated_backend(windows_sandbox_level);
             if use_windows_elevated_backend {

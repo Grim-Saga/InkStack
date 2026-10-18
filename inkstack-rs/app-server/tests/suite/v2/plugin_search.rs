@@ -607,7 +607,11 @@ async fn plugin_search_deduplicates_shared_remote_identities_while_ignoring_loca
     )?;
     write_installed_plugin(inkstack_home.path(), "openai-curated", "calendar")?;
     write_installed_plugin(inkstack_home.path(), "personal-tools", "local-planner")?;
-    write_installed_plugin(inkstack_home.path(), "personal-tools", "calendar-local-only")?;
+    write_installed_plugin(
+        inkstack_home.path(),
+        "personal-tools",
+        "calendar-local-only",
+    )?;
     std::fs::write(
         inkstack_home.path().join("config.toml"),
         format!(
@@ -746,7 +750,10 @@ fn write_local_marketplace(
     )?;
 
     for plugin in plugins {
-        let plugin_manifest = root.join("plugins").join(plugin.name).join(".inkstack-plugin");
+        let plugin_manifest = root
+            .join("plugins")
+            .join(plugin.name)
+            .join(".inkstack-plugin");
         std::fs::create_dir_all(&plugin_manifest)?;
         std::fs::write(
             plugin_manifest.join("plugin.json"),

@@ -84,21 +84,22 @@ pub(crate) async fn run(
                 command.json,
                 "Starting app-server daemon with remote control enabled...",
             )?;
-            let daemon = match inkstack_app_server_daemon::start_with_features(&Default::default())
-                .await
-            {
-                Ok(daemon) => daemon,
-                #[cfg(windows)]
-                Err(error) if error.is::<inkstack_app_server_daemon::DetachedLaunchRestricted>() => {
-                    return run_foreground_remote_control(
-                        command.json,
-                        arg0_paths,
-                        root_config_overrides,
-                    )
-                    .await;
-                }
-                Err(error) => return Err(error),
-            };
+            let daemon =
+                match inkstack_app_server_daemon::start_with_features(&Default::default()).await {
+                    Ok(daemon) => daemon,
+                    #[cfg(windows)]
+                    Err(error)
+                        if error.is::<inkstack_app_server_daemon::DetachedLaunchRestricted>() =>
+                    {
+                        return run_foreground_remote_control(
+                            command.json,
+                            arg0_paths,
+                            root_config_overrides,
+                        )
+                        .await;
+                    }
+                    Err(error) => return Err(error),
+                };
             if daemon.backend.is_none() {
                 return run_foreground_remote_control(
                     command.json,
@@ -203,7 +204,8 @@ async fn run_foreground_remote_control(
         socket_path: socket_path.clone(),
     };
     let runtime_options = AppServerRuntimeOptions {
-        remote_control_startup_mode: inkstack_app_server::RemoteControlStartupMode::EnabledEphemeral,
+        remote_control_startup_mode:
+            inkstack_app_server::RemoteControlStartupMode::EnabledEphemeral,
         install_shutdown_signal_handler: false,
         ..Default::default()
     };
@@ -508,7 +510,10 @@ fn daemon_app_server_human_lines(output: &AppServerRemoteControlStartOutput) -> 
     vec![
         "Daemon used app-server:".to_string(),
         format!("  path: {}", managed_inkstack_path.display()),
-        format!("  version: {}", managed_inkstack_version.unwrap_or("unknown")),
+        format!(
+            "  version: {}",
+            managed_inkstack_version.unwrap_or("unknown")
+        ),
     ]
 }
 

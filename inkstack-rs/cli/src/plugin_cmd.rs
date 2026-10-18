@@ -274,7 +274,8 @@ pub async fn run_plugin_list(
         args.marketplace_name.as_deref(),
     )?;
 
-    let marketplace_sources = configured_marketplace_sources(&plugins_input, inkstack_home.as_path());
+    let marketplace_sources =
+        configured_marketplace_sources(&plugins_input, inkstack_home.as_path());
     let marketplaces = outcome
         .marketplaces
         .into_iter()

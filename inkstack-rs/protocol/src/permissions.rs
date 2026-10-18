@@ -859,7 +859,10 @@ impl FileSystemSandboxPolicy {
 
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".git");
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".agents");
-        append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".inkstack");
+        append_default_read_only_project_root_subpath_if_no_explicit_rule(
+            &mut entries,
+            ".inkstack",
+        );
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".aws");
         for writable_root in writable_roots {
             for protected_path in default_read_only_subpaths_for_writable_root(
@@ -3486,7 +3489,9 @@ mod tests {
 
         assert!(!file_system_policy.can_write_local_path_with_cwd(&dot_git_config, cwd.path()));
         assert!(!file_system_policy.can_write_local_path_with_cwd(&dot_agents_config, cwd.path()));
-        assert!(!file_system_policy.can_write_local_path_with_cwd(&dot_inkstack_config, cwd.path()));
+        assert!(
+            !file_system_policy.can_write_local_path_with_cwd(&dot_inkstack_config, cwd.path())
+        );
         assert!(!file_system_policy.can_write_local_path_with_cwd(&dot_aws_config, cwd.path()));
 
         let writable_roots = file_system_policy.get_writable_roots_with_cwd(cwd.path());

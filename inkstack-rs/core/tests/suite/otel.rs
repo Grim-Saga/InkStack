@@ -1036,7 +1036,9 @@ async fn handle_response_item_records_tool_result_for_exec_command_call() {
     logs_assert(|lines: &[&str]| {
         let line = lines
             .iter()
-            .find(|line| line.contains("inkstack.tool_result") && line.contains("call_id=shell-call"))
+            .find(|line| {
+                line.contains("inkstack.tool_result") && line.contains("call_id=shell-call")
+            })
             .ok_or_else(|| "missing inkstack.tool_result event".to_string())?;
 
         if !line.contains("tool_name=exec_command") {
@@ -1073,7 +1075,8 @@ fn tool_decision_assertion<'a>(
         let line = lines
             .iter()
             .find(|line| {
-                line.contains("inkstack.tool_decision") && line.contains(&format!("call_id={call_id}"))
+                line.contains("inkstack.tool_decision")
+                    && line.contains(&format!("call_id={call_id}"))
             })
             .ok_or_else(|| format!("missing inkstack.tool_decision event for {call_id}"))?;
 
@@ -1320,8 +1323,10 @@ async fn handle_exec_command_user_approved_records_tool_decision() {
         .await
         .unwrap();
 
-    let approval_event =
-        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::ExecApprovalRequest(_))).await;
+    let approval_event = wait_for_event(&inkstack, |ev| {
+        matches!(ev, EventMsg::ExecApprovalRequest(_))
+    })
+    .await;
     let EventMsg::ExecApprovalRequest(approval) = approval_event else {
         panic!("expected ExecApprovalRequest event");
     };
@@ -1384,8 +1389,10 @@ async fn handle_exec_command_user_approved_for_session_records_tool_decision() {
         .await
         .unwrap();
 
-    let approval_event =
-        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::ExecApprovalRequest(_))).await;
+    let approval_event = wait_for_event(&inkstack, |ev| {
+        matches!(ev, EventMsg::ExecApprovalRequest(_))
+    })
+    .await;
     let EventMsg::ExecApprovalRequest(approval) = approval_event else {
         panic!("expected ExecApprovalRequest event");
     };
@@ -1448,8 +1455,10 @@ async fn handle_exec_command_user_denies_records_tool_decision() {
         .await
         .unwrap();
 
-    let approval_event =
-        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::ExecApprovalRequest(_))).await;
+    let approval_event = wait_for_event(&inkstack, |ev| {
+        matches!(ev, EventMsg::ExecApprovalRequest(_))
+    })
+    .await;
     let EventMsg::ExecApprovalRequest(approval) = approval_event else {
         panic!("expected ExecApprovalRequest event");
     };

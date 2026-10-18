@@ -1456,7 +1456,9 @@ async fn project_layers_do_not_override_project_root_markers() {
     config.cwd = nested.abs();
     let project_layer = |dot_inkstack_folder: AbsolutePathBuf, marker: &str| {
         ConfigLayerEntry::new(
-            ConfigLayerSource::Project { dot_inkstack_folder },
+            ConfigLayerSource::Project {
+                dot_inkstack_folder,
+            },
             TomlValue::Table(
                 [(
                     "project_root_markers".to_string(),

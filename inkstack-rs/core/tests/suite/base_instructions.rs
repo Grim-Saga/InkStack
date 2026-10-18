@@ -46,7 +46,12 @@ fn managed_model(slug: &str, instructions: &str) -> ModelInfo {
     model
 }
 
-async fn refresh_catalog(test: &TestInkStack, server: &MockServer, model: &str, instructions: &str) {
+async fn refresh_catalog(
+    test: &TestInkStack,
+    server: &MockServer,
+    model: &str,
+    instructions: &str,
+) {
     let etag = format!("\"{model}-{}\"", instructions.len());
     let models = vec![managed_model(model, instructions)];
     responses::mount_models_once_with_etag(server, ModelsResponse { models }, &etag).await;
@@ -268,19 +273,21 @@ async fn model_switches_refresh_the_window_base_across_compaction_and_restart() 
     const SAME_PROMPT_MODEL: &str = "gpt-5.1";
     let server = MockServer::start().await;
     let builder = || {
-        test_inkstack().with_model(MODEL).with_config(move |config| {
-            config
-                .features
-                .enable(Feature::IncrementalTools)
-                .expect("enable incremental tools");
-            config.model_catalog = Some(ModelsResponse {
-                models: vec![
-                    managed_model(MODEL, ORIGINAL),
-                    managed_model(SWITCHED_MODEL, SWITCHED),
-                    managed_model(SAME_PROMPT_MODEL, SWITCHED),
-                ],
-            });
-        })
+        test_inkstack()
+            .with_model(MODEL)
+            .with_config(move |config| {
+                config
+                    .features
+                    .enable(Feature::IncrementalTools)
+                    .expect("enable incremental tools");
+                config.model_catalog = Some(ModelsResponse {
+                    models: vec![
+                        managed_model(MODEL, ORIGINAL),
+                        managed_model(SWITCHED_MODEL, SWITCHED),
+                        managed_model(SAME_PROMPT_MODEL, SWITCHED),
+                    ],
+                });
+            })
     };
     let test = builder().build_with_auto_env(&server).await?;
     let first_request = send_turn(&test, &server, "first turn").await?;

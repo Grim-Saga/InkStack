@@ -322,7 +322,8 @@ pub(crate) async fn apply_bespoke_event_handling(
             } else {
                 assessment.turn_id.clone()
             };
-            if assessment.status == inkstack_protocol::protocol::GuardianAssessmentStatus::InProgress
+            if assessment.status
+                == inkstack_protocol::protocol::GuardianAssessmentStatus::InProgress
                 && let Some((target_item_id, completion_item)) = pending_command_execution.as_ref()
             {
                 start_command_execution_item(
@@ -2376,7 +2377,9 @@ mod tests {
                 completed_at_ms: Some(1_042),
                 status: inkstack_protocol::protocol::GuardianAssessmentStatus::Denied,
                 risk_level: Some(inkstack_protocol::protocol::GuardianRiskLevel::High),
-                user_authorization: Some(inkstack_protocol::protocol::GuardianUserAuthorization::Low),
+                user_authorization: Some(
+                    inkstack_protocol::protocol::GuardianUserAuthorization::Low,
+                ),
                 rationale: Some("too risky".to_string()),
                 decision_source: Some(
                     inkstack_protocol::protocol::GuardianAssessmentDecisionSource::Agent,

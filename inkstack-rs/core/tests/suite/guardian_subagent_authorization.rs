@@ -360,7 +360,9 @@ async fn code_mode_messaging_fixture(
     let test = test_inkstack()
         .with_extensions(Arc::new(extensions.build()))
         .with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing())
-        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?)
+        .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-code-mode-host",
+        )?)
         .with_config(move |config| {
             for feature in [
                 Feature::Apps,
@@ -786,7 +788,9 @@ async fn run_guardian_subagent_review(
     if code_mode {
         builder = builder
             .with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing())
-            .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin("inkstack-code-mode-host")?);
+            .with_code_mode_host_program(inkstack_utils_cargo_bin::cargo_bin(
+                "inkstack-code-mode-host",
+            )?);
     }
     let mut test = builder.build_with_auto_env(&server).await?;
     if matches!(root_context, RootContext::Migrating) {
@@ -1069,7 +1073,9 @@ async fn run_guardian_subagent_review(
             _ => false,
         }));
     }
-    test.inkstack.inject_response_items(root_history_items).await?;
+    test.inkstack
+        .inject_response_items(root_history_items)
+        .await?;
 
     mount_sse_once_match(
         &server,

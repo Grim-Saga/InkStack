@@ -67,7 +67,9 @@ async fn provider_returns_missing_host_error() {
         .err()
         .expect("missing host should fail");
 
-    assert!(error.contains("failed to spawn code-mode host inkstack-code-mode-host-does-not-exist"));
+    assert!(
+        error.contains("failed to spawn code-mode host inkstack-code-mode-host-does-not-exist")
+    );
 }
 
 #[tokio::test]

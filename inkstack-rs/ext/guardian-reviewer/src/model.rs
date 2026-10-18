@@ -40,10 +40,9 @@ pub fn select_review_model(
     let guardian_review_model_override = model_override.map(str::to_string);
     let (guardian_model, guardian_reasoning_effort) = if let Some(preset) = review_model {
         let reasoning_effort = preferred_reasoning_effort(
-            preset
-                .supported_reasoning_efforts
-                .iter()
-                .any(|effort| effort.effort == inkstack_protocol::openai_models::ReasoningEffort::Low),
+            preset.supported_reasoning_efforts.iter().any(|effort| {
+                effort.effort == inkstack_protocol::openai_models::ReasoningEffort::Low
+            }),
             Some(preset.default_reasoning_effort.clone()),
         );
         (review_model_id.to_string(), reasoning_effort)
@@ -52,7 +51,9 @@ pub fn select_review_model(
             parent_model
                 .supported_reasoning_levels
                 .iter()
-                .any(|preset| preset.effort == inkstack_protocol::openai_models::ReasoningEffort::Low),
+                .any(|preset| {
+                    preset.effort == inkstack_protocol::openai_models::ReasoningEffort::Low
+                }),
             parent_reasoning_effort
                 .or(parent_model.default_reasoning_level.as_ref())
                 .cloned(),

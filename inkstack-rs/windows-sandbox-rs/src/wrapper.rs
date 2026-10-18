@@ -367,7 +367,9 @@ fn parse_windows_sandbox_wrapper_args(args: Vec<String>) -> Result<WindowsSandbo
 
     while let Some(arg) = args.next() {
         match arg.as_str() {
-            INKSTACK_HOME_FLAG => inkstack_home = Some(PathBuf::from(next_flag_value(&mut args, &arg)?)),
+            INKSTACK_HOME_FLAG => {
+                inkstack_home = Some(PathBuf::from(next_flag_value(&mut args, &arg)?))
+            }
             COMMAND_CWD_FLAG => {
                 command_cwd = Some(absolute_path_arg(next_flag_value(&mut args, &arg)?, &arg)?);
             }
@@ -425,7 +427,8 @@ fn parse_windows_sandbox_wrapper_args(args: Vec<String>) -> Result<WindowsSandbo
         }
     }
 
-    let inkstack_home = inkstack_home.ok_or_else(|| anyhow!("missing required {INKSTACK_HOME_FLAG}"))?;
+    let inkstack_home =
+        inkstack_home.ok_or_else(|| anyhow!("missing required {INKSTACK_HOME_FLAG}"))?;
     if !inkstack_home.is_absolute() {
         bail!(
             "{INKSTACK_HOME_FLAG} must be absolute: {}",

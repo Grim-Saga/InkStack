@@ -3224,12 +3224,14 @@ mod tests {
 
         assert_eq!(
             sandbox_policy,
-            Some(inkstack_app_server_protocol::SandboxPolicy::WorkspaceWrite {
-                writable_roots: Vec::new(),
-                network_access: false,
-                exclude_tmpdir_env_var: false,
-                exclude_slash_tmp: false,
-            })
+            Some(
+                inkstack_app_server_protocol::SandboxPolicy::WorkspaceWrite {
+                    writable_roots: Vec::new(),
+                    network_access: false,
+                    exclude_tmpdir_env_var: false,
+                    exclude_slash_tmp: false,
+                }
+            )
         );
         assert_eq!(permissions, None);
     }
@@ -4380,8 +4382,10 @@ mod tests {
         let config = build_config(&temp_dir).await;
         let thread_id = ThreadId::new();
 
-        let history_config =
-            inkstack_message_history::HistoryConfig::new(config.inkstack_home.clone(), &config.history);
+        let history_config = inkstack_message_history::HistoryConfig::new(
+            config.inkstack_home.clone(),
+            &config.history,
+        );
 
         inkstack_message_history::append_entry("older", &thread_id, &history_config)
             .await

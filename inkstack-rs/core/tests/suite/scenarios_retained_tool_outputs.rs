@@ -35,9 +35,10 @@ async fn retained_tool_output_survives_compaction_and_resume() -> Result<()> {
                 .iter_mut()
                 .find(|model| model.slug == "gpt-6-astra")
                 .unwrap()
-                .truncation_policy = inkstack_protocol::openai_models::TruncationPolicyConfig::tokens(
-                /*limit*/ 100_000,
-            );
+                .truncation_policy =
+                inkstack_protocol::openai_models::TruncationPolicyConfig::tokens(
+                    /*limit*/ 100_000,
+                );
         };
         let test = test_inkstack()
             .with_model("gpt-6-astra")

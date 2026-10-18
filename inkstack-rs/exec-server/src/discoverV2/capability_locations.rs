@@ -79,7 +79,9 @@ pub(crate) async fn prewarm_locations(
     }
     CandidateCapabilityLocations::resolve(
         fs,
-        Some(PathUri::from_abs_path(&inkstack_home.join(PLUGINS_CACHE_DIR))),
+        Some(PathUri::from_abs_path(
+            &inkstack_home.join(PLUGINS_CACHE_DIR),
+        )),
         skill_roots
             .into_iter()
             .map(|(id, root)| crate::SkillDiscoveryRoot {

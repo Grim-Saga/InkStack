@@ -928,19 +928,21 @@ async fn agents_overview_details_render_markdown() {
     app.agents_overview.last_messages.clear();
     app.track_agents_overview_activity(
         thread_id,
-        &ServerNotification::ItemCompleted(inkstack_app_server_protocol::ItemCompletedNotification {
-            thread_id: thread.id.clone(),
-            turn_id: "turn".into(),
-            completed_at_ms: 0,
-            item: ThreadItem::AgentMessage {
-                id: "answer".into(),
-                text: message.into(),
-                phase: None,
-                memory_citation: None,
-                delivery: None,
-                questions: None,
+        &ServerNotification::ItemCompleted(
+            inkstack_app_server_protocol::ItemCompletedNotification {
+                thread_id: thread.id.clone(),
+                turn_id: "turn".into(),
+                completed_at_ms: 0,
+                item: ThreadItem::AgentMessage {
+                    id: "answer".into(),
+                    text: message.into(),
+                    phase: None,
+                    memory_citation: None,
+                    delivery: None,
+                    questions: None,
+                },
             },
-        }),
+        ),
     );
     let view = app.agents_overview_view(vec![thread.clone()], Some(thread_id));
     terminal
@@ -1797,7 +1799,8 @@ async fn overview_selection_applies_user_permissions_only_to_unloaded_threads() 
     .await?
     .session;
     app.runtime_approvals_reviewer_override = Some(ApprovalsReviewer::AutoReview);
-    app.harness_overrides.sandbox_mode = Some(inkstack_protocol::config_types::SandboxMode::ReadOnly);
+    app.harness_overrides.sandbox_mode =
+        Some(inkstack_protocol::config_types::SandboxMode::ReadOnly);
     app.harness_overrides.approval_policy =
         Some(inkstack_protocol::protocol::AskForApproval::UnlessTrusted);
     app.config
@@ -1909,7 +1912,8 @@ async fn overview_selection_applies_user_permissions_only_to_unloaded_threads() 
     });
     // The picker must also abort when a session-only choice violates destination policy.
     std::fs::write(&requirements, "allowed_approval_policies = [\"never\"]\n")?;
-    app.harness_overrides.approval_policy = Some(inkstack_protocol::protocol::AskForApproval::Never);
+    app.harness_overrides.approval_policy =
+        Some(inkstack_protocol::protocol::AskForApproval::Never);
     Box::pin(app.resume_target_session(
         &mut tui,
         &mut app_server,

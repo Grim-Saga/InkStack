@@ -83,7 +83,10 @@ async fn local_thread_history_mode_survives_restart(
     let server = start_mock_server().await;
     let mut builder = test_inkstack().with_history_mode(requested);
     let initial = builder.build_with_auto_env(&server).await?;
-    assert_eq!(initial.inkstack.config_snapshot().await.history_mode, expected);
+    assert_eq!(
+        initial.inkstack.config_snapshot().await.history_mode,
+        expected
+    );
     mount_sse_once(
         &server,
         sse(vec![
@@ -204,7 +207,10 @@ async fn resume_switches_models_preserves_base_instructions() -> Result<()> {
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
     let initial_instructions = initial_mock.single_request().instructions_text();
     assert_eq!(initial_instructions, legacy_instructions);
 
@@ -324,7 +330,10 @@ async fn resume_model_switch_is_not_duplicated_after_pre_turn_override() -> Resu
             text_elements: Vec::new(),
         }]))
         .await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
     let _ = initial_mock.single_request();
 
     let resumed_mock = mount_sse_once(

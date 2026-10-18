@@ -84,7 +84,9 @@ fn map_api_error_details(err: ApiError) -> InkStackErr {
         ApiError::CyberPolicy { message } => {
             InkStackErr::new(InkStackErrorDetails::CyberPolicy { message })
         }
-        ApiError::BioPolicy { message } => InkStackErr::new(InkStackErrorDetails::BioPolicy { message }),
+        ApiError::BioPolicy { message } => {
+            InkStackErr::new(InkStackErrorDetails::BioPolicy { message })
+        }
         ApiError::MisalignmentPolicyViolation {
             message,
             misalignment,

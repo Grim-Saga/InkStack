@@ -291,7 +291,10 @@ impl Session {
             .acquire()
             .await
             .map_err(|_| anyhow::anyhow!("MCP runtime refresh semaphore closed"))?;
-        self.services.mcp_runtime.refresh_inkstack_apps_tools().await
+        self.services
+            .mcp_runtime
+            .refresh_inkstack_apps_tools()
+            .await
     }
 
     /// Reconnects the runtime so refreshed Apps tools belong to their new exact client.
@@ -360,7 +363,9 @@ impl Session {
             Some(self.mcp_elicitation_reviewer()),
         );
         anyhow::ensure!(
-            input.mcp_servers.contains_key(INKSTACK_APPS_MCP_SERVER_NAME),
+            input
+                .mcp_servers
+                .contains_key(INKSTACK_APPS_MCP_SERVER_NAME),
             "unknown MCP server '{INKSTACK_APPS_MCP_SERVER_NAME}'"
         );
         let refreshed = AuthStorageOriginator::from_client_name(&desired.originator)
@@ -905,7 +910,9 @@ async fn review_guardian_mcp_elicitation(
         .elicitation
         .meta()
         .and_then(|meta| match request.server_name.as_str() {
-            INKSTACK_APPS_MCP_SERVER_NAME => meta.get(MCP_TOOL_INKSTACK_APPS_META_KEY)?.get("call_id"),
+            INKSTACK_APPS_MCP_SERVER_NAME => {
+                meta.get(MCP_TOOL_INKSTACK_APPS_META_KEY)?.get("call_id")
+            }
             _ => meta.get("callId"),
         })
         .and_then(Value::as_str);

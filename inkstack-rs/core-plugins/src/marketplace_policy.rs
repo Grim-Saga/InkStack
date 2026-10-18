@@ -112,7 +112,9 @@ impl MarketplacePolicy {
         marketplace_name: &str,
     ) -> Result<(), String> {
         let root = marketplace_root_dir(marketplace_path).map_err(|err| err.to_string())?;
-        if let Some(expected_name) = managed_marketplace_name(inkstack_home, marketplace_path, &root) {
+        if let Some(expected_name) =
+            managed_marketplace_name(inkstack_home, marketplace_path, &root)
+        {
             if is_openai_curated_marketplace_name(expected_name) {
                 self.validate_git_source(OPENAI_PLUGINS_GIT_URL, /*ref_name*/ None)?;
             }
@@ -543,8 +545,9 @@ fn is_expected_managed_path(path: &Path, expected: &Path) -> bool {
             .chain(canonical_expected.as_deref())
             .any(|expected| {
                 let expected = expected.to_string_lossy();
-                let expected = inkstack_utils_absolute_path::normalize_windows_device_path(&expected)
-                    .unwrap_or_else(|| expected.into_owned());
+                let expected =
+                    inkstack_utils_absolute_path::normalize_windows_device_path(&expected)
+                        .unwrap_or_else(|| expected.into_owned());
                 path.eq_ignore_ascii_case(&expected.replace('/', "\\"))
             })
     }

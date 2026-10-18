@@ -393,8 +393,8 @@ impl CodeModeHost for GrpcCodeModeHost {
         if let Some(trace) = trace.as_ref() {
             inkstack_otel::set_parent_from_w3c_trace_context(&execute_span, trace);
         }
-        let callback_traceparent =
-            inkstack_otel::span_w3c_trace_context(&execute_span).and_then(|trace| trace.traceparent);
+        let callback_traceparent = inkstack_otel::span_w3c_trace_context(&execute_span)
+            .and_then(|trace| trace.traceparent);
         Box::pin(
             self.execute_request(request, callback_traceparent)
                 .instrument(execute_span),

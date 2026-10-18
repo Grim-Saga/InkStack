@@ -799,7 +799,9 @@ fn override_message(layer: &ConfigLayerSource) -> String {
         ConfigLayerSource::EnterpriseManaged { id: _, name } => {
             format!("Overridden by enterprise-managed config: {name}")
         }
-        ConfigLayerSource::Project { dot_inkstack_folder } => format!(
+        ConfigLayerSource::Project {
+            dot_inkstack_folder,
+        } => format!(
             "Overridden by project config: {}/{CONFIG_TOML_FILE}",
             dot_inkstack_folder.display(),
         ),

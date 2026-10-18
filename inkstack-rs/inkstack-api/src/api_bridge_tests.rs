@@ -8,7 +8,10 @@ use pretty_assertions::assert_eq;
 #[test]
 fn map_api_error_maps_server_overloaded() {
     let err = map_api_error(ApiError::ServerOverloaded { retry_after: None });
-    assert!(matches!(err.details(), InkStackErrorDetails::ServerOverloaded));
+    assert!(matches!(
+        err.details(),
+        InkStackErrorDetails::ServerOverloaded
+    ));
 }
 
 #[test]
@@ -646,7 +649,8 @@ fn map_api_error_does_not_fallback_limit_name_to_limit_id() {
 
 #[test]
 fn map_api_error_copies_rate_limit_reached_type_to_usage_limit_snapshot() {
-    for (active_limit, expected_limit_id) in [(None, "inkstack"), (Some("codex_other"), "codex_other")]
+    for (active_limit, expected_limit_id) in
+        [(None, "inkstack"), (Some("codex_other"), "codex_other")]
     {
         let mut headers = HeaderMap::new();
         if let Some(active_limit) = active_limit {

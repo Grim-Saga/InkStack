@@ -189,8 +189,9 @@ pub trait SectionHistory: Send + Sync {
     /// Legacy providers cannot establish completeness from a message ID alone.
     fn items_with_sources(
         &self,
-    ) -> Box<dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_>
-    {
+    ) -> Box<
+        dyn Iterator<Item = (&ResponseItem, Option<&inkstack_history::RetainedSource>)> + Send + '_,
+    > {
         Box::new(self.items().map(|item| (item, None)))
     }
 

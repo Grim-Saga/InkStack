@@ -33,7 +33,8 @@ async fn connected_trust_cancellation_and_acceptance_control_task_creation() -> 
             config_path,
             format!("{config}\n[tui]\nresume_cwd = \"current\"\n"),
         )?;
-        let socket = inkstack_app_server_client::app_server_control_socket_path(inkstack_home.path())?;
+        let socket =
+            inkstack_app_server_client::app_server_control_socket_path(inkstack_home.path())?;
         std::fs::create_dir_all(socket.parent().unwrap())?;
         let listener = UnixListener::bind(socket.as_path())?;
         let cwd = repo_root.clone();

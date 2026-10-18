@@ -21,7 +21,11 @@ use std::time::UNIX_EPOCH;
 
 pub const BUILD_COMMIT: &str = "0123456789abcdef0123456789abcdef01234567";
 pub const WAIT: Duration = Duration::from_secs(/*secs*/ 10);
-const APP: &str = if cfg!(windows) { "inkstack.exe" } else { "inkstack" };
+const APP: &str = if cfg!(windows) {
+    "inkstack.exe"
+} else {
+    "inkstack"
+};
 const HELPER: &str = if cfg!(windows) {
     "inkstack-voice-host.exe"
 } else {

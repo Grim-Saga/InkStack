@@ -27,9 +27,10 @@ async fn remote_credential_masking_request_history(
         return Ok(());
     }
     let home = Arc::new(TempDir::new()?);
-    if let Some(warning) =
-        inkstack_sandboxing::system_bwrap_warning(&PermissionProfile::workspace_write(), home.path())
-    {
+    if let Some(warning) = inkstack_sandboxing::system_bwrap_warning(
+        &PermissionProfile::workspace_write(),
+        home.path(),
+    ) {
         eprintln!("skipping sandbox test: {warning}");
         return Ok(());
     }

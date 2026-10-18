@@ -63,7 +63,9 @@ async fn denied_oauth_refresh_terminates_401_recovery_and_preserves_auth() -> Re
         .expect(/*r*/ 2) // Initial request and the existing disk-reload recovery step.
         .mount(&server)
         .await;
-    let mut builder = test_inkstack().with_home(home).with_auth_manager(auth.clone());
+    let mut builder = test_inkstack()
+        .with_home(home)
+        .with_auth_manager(auth.clone());
     let test = builder.build_with_auto_env(&server).await?;
     test.inkstack
         .start_or_steer_turn(TurnInputRequest::user_input(vec![UserInput::Text {

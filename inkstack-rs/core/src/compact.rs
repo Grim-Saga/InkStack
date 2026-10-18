@@ -521,9 +521,13 @@ impl CompactionAnalyticsAttempt {
                 inkstack_error_kind: inkstack_error.map(Into::into),
                 inkstack_error_http_status_code: inkstack_error
                     .and_then(InkStackErr::http_status_code_value),
-                usage_limit_window_minutes: inkstack_error.and_then(|error| match error.details() {
-                    InkStackErrorDetails::UsageLimitReached(error) => error.limit_window_minutes,
-                    _ => None,
+                usage_limit_window_minutes: inkstack_error.and_then(|error| {
+                    match error.details() {
+                        InkStackErrorDetails::UsageLimitReached(error) => {
+                            error.limit_window_minutes
+                        }
+                        _ => None,
+                    }
                 }),
                 active_context_tokens_before,
                 active_context_tokens_after,

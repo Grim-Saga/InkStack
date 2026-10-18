@@ -76,7 +76,9 @@ async fn run_turn_and_measure(test: &TestInkStack, prompt: &str) -> anyhow::Resu
     Ok(start.elapsed())
 }
 
-async fn build_inkstack_with_test_tool(server: &wiremock::MockServer) -> anyhow::Result<TestInkStack> {
+async fn build_inkstack_with_test_tool(
+    server: &wiremock::MockServer,
+) -> anyhow::Result<TestInkStack> {
     let mut builder = test_inkstack().with_model("test-gpt-5.1-codex");
     builder.build(server).await
 }

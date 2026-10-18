@@ -462,7 +462,9 @@ impl From<FunctionCallError> for BoardToolError {
     }
 }
 
-fn encode<T: Serialize>(value: inkstack_protocol::error::Result<T>) -> Result<Value, BoardToolError> {
+fn encode<T: Serialize>(
+    value: inkstack_protocol::error::Result<T>,
+) -> Result<Value, BoardToolError> {
     let value = value.map_err(|error| {
         if let InkStackErrorDetails::Io(io) = error.details()
             && let Some(denied) = io

@@ -466,12 +466,12 @@ impl LegacyRolloutCanonicalizer {
         timestamp: &str,
         item: RolloutItem,
     ) -> ThreadStoreResult<()> {
-        let item = match inkstack_rollout::persisted_rollout_item(&item, ThreadHistoryMode::Paginated)
-        {
-            Some(Cow::Borrowed(_)) => item,
-            Some(Cow::Owned(item)) => item,
-            None => return Ok(()),
-        };
+        let item =
+            match inkstack_rollout::persisted_rollout_item(&item, ThreadHistoryMode::Paginated) {
+                Some(Cow::Borrowed(_)) => item,
+                Some(Cow::Owned(item)) => item,
+                None => return Ok(()),
+            };
         let mut bytes = serde_json::to_vec(&RolloutLine {
             timestamp: timestamp.to_string(),
             ordinal: Some(self.next_ordinal),

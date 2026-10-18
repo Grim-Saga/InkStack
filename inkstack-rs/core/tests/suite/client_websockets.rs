@@ -145,7 +145,10 @@ fn responses_metadata(
     )
 }
 
-fn turn_metadata(harness: &WebsocketTestHarness, turn_id: Option<&str>) -> InkStackResponsesMetadata {
+fn turn_metadata(
+    harness: &WebsocketTestHarness,
+    turn_id: Option<&str>,
+) -> InkStackResponsesMetadata {
     responses_metadata(harness, turn_id, TestInkStackResponsesRequestKind::Turn)
 }
 
@@ -2741,7 +2744,9 @@ async fn websocket_harness(server: &WebSocketTestServer) -> WebsocketTestHarness
     websocket_harness_with_runtime_metrics(server, /*runtime_metrics_enabled*/ false).await
 }
 
-async fn websocket_harness_for_inkstack_backend(server: &WebSocketTestServer) -> WebsocketTestHarness {
+async fn websocket_harness_for_inkstack_backend(
+    server: &WebSocketTestServer,
+) -> WebsocketTestHarness {
     let provider = ModelProviderInfo::create_openai_provider(Some(format!("{}/v1", server.uri())));
     websocket_harness_with_provider_options_and_auth(
         provider,
@@ -2838,7 +2843,9 @@ async fn websocket_harness_with_provider_options_and_auth(
         )
     });
     let auth_manager = client_auth_manager.clone().unwrap_or_else(|| {
-        inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key("Test API Key"))
+        inkstack_core::test_support::auth_manager_from_auth(InkStackAuth::from_api_key(
+            "Test API Key",
+        ))
     });
     let exporter = InMemoryMetricExporter::default();
     let metrics = MetricsClient::new(
@@ -2922,7 +2929,11 @@ async fn responses_websocket_restored_history_metric(fork: bool) -> anyhow::Resu
     options.thread_extension_init.insert(metrics);
     let restored = if fork {
         manager
-            .fork_legacy_thread(inkstack_core::ForkSnapshot::Interrupted, options, rollout_path)
+            .fork_legacy_thread(
+                inkstack_core::ForkSnapshot::Interrupted,
+                options,
+                rollout_path,
+            )
             .await?
     } else {
         options.initial_history =

@@ -214,9 +214,9 @@ pub(in crate::async_scorer) fn sampler_config(base_url: String) -> LunaSamplerCo
         ),
         provider: create_model_provider(
             ModelProviderInfo::create_openai_provider(Some(base_url)),
-            Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-                "test-api-key",
-            ))),
+            Some(AuthManager::from_auth_for_testing(
+                InkStackAuth::from_api_key("test-api-key"),
+            )),
         ),
         http_client_factory: HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),
         agent_identity_policy: AgentIdentityAuthPolicy::JwtOnly,
@@ -845,9 +845,9 @@ async fn sampler_returns_classification_token_before_terminal_response_events() 
     let base_url = proxy_websocket_servers(&[&idle_server, &server]).await?;
     let provider = create_model_provider(
         ModelProviderInfo::create_openai_provider(Some(base_url)),
-        Some(AuthManager::from_auth_for_testing(InkStackAuth::from_api_key(
-            "test-api-key",
-        ))),
+        Some(AuthManager::from_auth_for_testing(
+            InkStackAuth::from_api_key("test-api-key"),
+        )),
     );
     let sampler = connect_sampler(LunaSamplerConfig {
         api_key_cyber_access_programs: ApiKeyCyberAccessPrograms::Disabled,
@@ -1368,7 +1368,10 @@ async fn parent_response_id_survives_classifier_transport_retry() -> Result<()> 
                     body["client_metadata"].get("parent_response_id").cloned(),
                     body["client_metadata"].get("guardian_credits_requested"),
                 ),
-                (uses_inkstack_backend.then(|| json!(parent_response_id)), None)
+                (
+                    uses_inkstack_backend.then(|| json!(parent_response_id)),
+                    None
+                )
             );
             assert!(!body["input"].to_string().contains(parent_response_id));
         }

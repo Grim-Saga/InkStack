@@ -1485,7 +1485,8 @@ async fn prepare_realtime_start(
         inkstack_response_item_prefix: params.inkstack_response_item_prefix,
         inkstack_response_handoff_mode: params.inkstack_response_handoff_mode,
         backend_reasoning_status: params.backend_reasoning_status,
-        inkstack_response_handoff_channel_prefixes: params.inkstack_response_handoff_channel_prefixes,
+        inkstack_response_handoff_channel_prefixes: params
+            .inkstack_response_handoff_channel_prefixes,
         realtime_start_instructions: params.realtime_start_instructions,
         realtime_end_instructions: params.realtime_end_instructions,
         realtime_call_api_provider,
@@ -1925,7 +1926,10 @@ fn wrap_realtime_delegation_input(
     RealtimeDelegation::new(input, transcript_delta, source).render()
 }
 
-fn realtime_api_key(auth: Option<&InkStackAuth>, provider: &ModelProviderInfo) -> InkStackResult<String> {
+fn realtime_api_key(
+    auth: Option<&InkStackAuth>,
+    provider: &ModelProviderInfo,
+) -> InkStackResult<String> {
     if let Some(api_key) = provider.api_key()? {
         return Ok(api_key);
     }

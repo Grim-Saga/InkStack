@@ -85,7 +85,8 @@ impl RemotePluginMeasurementCache {
         auth: &InkStackAuth,
         target: &PluginMeasurementTarget,
     ) -> anyhow::Result<Option<Arc<PluginMeasurementReference>>> {
-        if !config.plugins_enabled || !config.remote_plugin_enabled || !auth.uses_inkstack_backend() {
+        if !config.plugins_enabled || !config.remote_plugin_enabled || !auth.uses_inkstack_backend()
+        {
             return Ok(None);
         }
         // Like normal remote loading, the authenticated installed catalog is

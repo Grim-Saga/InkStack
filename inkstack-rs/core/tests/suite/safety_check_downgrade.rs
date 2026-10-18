@@ -92,7 +92,10 @@ async fn openai_model_header_mismatch_emits_warning_event() -> Result<()> {
     assert_eq!(reroute.to_model, SERVER_MODEL);
     assert_eq!(reroute.reason, ModelRerouteReason::HighRiskCyberActivity);
 
-    let warning = wait_for_event(&test.inkstack, |event| matches!(event, EventMsg::Warning(_))).await;
+    let warning = wait_for_event(&test.inkstack, |event| {
+        matches!(event, EventMsg::Warning(_))
+    })
+    .await;
     let EventMsg::Warning(warning) = warning else {
         panic!("expected warning event");
     };
@@ -144,7 +147,8 @@ async fn error_response_emits_typed_error_without_retry(
             }]))
             .await?;
 
-        let error = wait_for_event(&test.inkstack, |event| matches!(event, EventMsg::Error(_))).await;
+        let error =
+            wait_for_event(&test.inkstack, |event| matches!(event, EventMsg::Error(_))).await;
         let EventMsg::Error(error) = error else {
             panic!("expected error event");
         };

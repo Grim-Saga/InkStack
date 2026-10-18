@@ -84,7 +84,8 @@ impl PackageLifecycle {
         if let Some(previous) = previous {
             // A missing watcher does not retire its owner; other clients can use elevated setup.
             ensure!(
-                previous.user_sid == record.user_sid && previous.inkstack_home == record.inkstack_home,
+                previous.user_sid == record.user_sid
+                    && previous.inkstack_home == record.inkstack_home,
                 crate::ipc::ServiceUnavailable(
                     "installation is already registered to a different owner or home"
                 )

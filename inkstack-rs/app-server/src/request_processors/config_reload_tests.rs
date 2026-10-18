@@ -230,7 +230,9 @@ async fn mcp_refresh_rejects_superseded_app_server_policy(
     let outcome = thread.refresh_mcp_config(Arc::clone(&current), next).await;
     let expected = match status {
         inkstack_config::CloudConfigBundleBindingStatus::Stale => ConfigRefreshOutcome::Stale,
-        inkstack_config::CloudConfigBundleBindingStatus::Suspended => ConfigRefreshOutcome::Rejected,
+        inkstack_config::CloudConfigBundleBindingStatus::Suspended => {
+            ConfigRefreshOutcome::Rejected
+        }
         inkstack_config::CloudConfigBundleBindingStatus::Current => unreachable!(),
     };
     assert_eq!(outcome, expected);

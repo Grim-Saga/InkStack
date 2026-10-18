@@ -435,7 +435,13 @@ fn otel_export_routing_policy_routes_tool_result_log_and_trace_events() {
             .iter()
             .map(|attrs| attrs.get("product_sku").map(String::as_str))
             .collect::<Vec<_>>(),
-        vec![Some("inkstack"), Some("other"), Some("inkstack"), None, None],
+        vec![
+            Some("inkstack"),
+            Some("other"),
+            Some("inkstack"),
+            None,
+            None
+        ],
     );
     assert_eq!(
         tool_logs

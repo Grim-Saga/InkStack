@@ -135,11 +135,12 @@ impl OpenAiModelsEndpoint {
             None => ModelsClient::<ReqwestTransport>::request_url(&api_provider, client_version),
         };
         let auth_telemetry = auth_header_telemetry(api_auth.as_ref());
-        let agent_identity_telemetry = if let Some(InkStackAuth::AgentIdentity(auth)) = auth.as_ref() {
-            Some(agent_identity_telemetry(auth))
-        } else {
-            None
-        };
+        let agent_identity_telemetry =
+            if let Some(InkStackAuth::AgentIdentity(auth)) = auth.as_ref() {
+                Some(agent_identity_telemetry(auth))
+            } else {
+                None
+            };
         let request_telemetry: Arc<dyn RequestTelemetry> = Arc::new(ModelsRequestTelemetry {
             include_response_debug: self.provider_info.model_catalog_url.is_none(),
             auth_mode: auth_mode.map(|mode| TelemetryAuthMode::from(mode).to_string()),
@@ -482,7 +483,8 @@ mod tests {
             ),
         ] {
             let capture = Arc::new(CaptureModelsUrl(Mutex::new(/*t*/ None)));
-            let auth = AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
+            let auth =
+                AuthManager::from_auth_for_testing(InkStackAuth::from_api_key("test-api-key"));
             let endpoint = Arc::new(OpenAiModelsEndpoint {
                 provider_info: ModelProviderInfo {
                     name: name.to_string(),

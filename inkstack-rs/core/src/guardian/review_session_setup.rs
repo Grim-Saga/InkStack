@@ -309,9 +309,9 @@ impl ReviewerRequest for PreparedReview {
         // may follow a valid allow before publication; new guidance during capture must
         // invalidate the attempt without overwriting the last committed review.
         if let GuardianReviewSessionOutcome::Completed(Ok(Some(message))) = &result.outcome
-            && inkstack_guardian_reviewer::parse_guardian_assessment(message).is_ok_and(|assessment| {
-                assessment.outcome == super::super::GuardianAssessmentOutcome::Allow
-            })
+            && inkstack_guardian_reviewer::parse_guardian_assessment(message).is_ok_and(
+                |assessment| assessment.outcome == super::super::GuardianAssessmentOutcome::Allow,
+            )
             && let Some(authorization) = &self.params.authorization
             && let Some(invalidation) = authorization
                 .invalidation(

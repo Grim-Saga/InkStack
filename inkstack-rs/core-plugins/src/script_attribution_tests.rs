@@ -54,7 +54,11 @@ fn loaded_plugin(config_name: &str, root: &Path, enabled: bool) -> LoadedPlugin 
         error: None,
     }
 }
-fn synced_plugin_root(inkstack_home: &Path, marketplace: &str, plugin_name: &str) -> AbsolutePathBuf {
+fn synced_plugin_root(
+    inkstack_home: &Path,
+    marketplace: &str,
+    plugin_name: &str,
+) -> AbsolutePathBuf {
     let synced_root = curated_plugins_repo_path(inkstack_home);
     match marketplace {
         OPENAI_CURATED_MARKETPLACE_NAME => {
@@ -290,9 +294,12 @@ fn assert_invalid_metrics_manifest(inkstack_home: &Path, root: &AbsolutePathBuf,
 }
 fn assert_untrusted(inkstack_home: &Path, config_name: &str, root: &Path) {
     assert!(
-        roots_for(inkstack_home, vec![loaded_plugin(config_name, root, ENABLED)])
-            .roots
-            .is_empty()
+        roots_for(
+            inkstack_home,
+            vec![loaded_plugin(config_name, root, ENABLED)]
+        )
+        .roots
+        .is_empty()
     );
 }
 fn command(parts: &[&str]) -> Vec<String> {
@@ -821,7 +828,10 @@ fn executor_cache_identity_obeys_windows_and_posix_case_conventions() {
     let (_reference, roots) =
         reference_fixture(&[("sites", "2.0.0-RC1", "selected", "printf shared\\n\n")]);
     let plugin_id = PluginId::parse("sites@openai-curated-remote").expect("plugin id");
-    for prefix in ["file:///C:/Users/user/.inkstack", "file://server/share/.inkstack"] {
+    for prefix in [
+        "file:///C:/Users/user/.inkstack",
+        "file://server/share/.inkstack",
+    ] {
         let script = PathUri::parse(&format!(
             "{prefix}/PLUGINS/CACHE/OPENAI-CURATED-REMOTE/SITES/2.0.0-rc1/{REFERENCE_HELPER}"
         ))

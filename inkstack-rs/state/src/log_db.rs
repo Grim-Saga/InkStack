@@ -79,14 +79,20 @@ pub fn default_filter() -> Targets {
         .with_target("tokio_graceful::guard", LevelFilter::DEBUG)
         .with_target("tokio_graceful::trigger", LevelFilter::DEBUG)
         .with_target("inkstack_api::responses_websocket_timing", LevelFilter::OFF)
-        .with_target("inkstack_core::post_sampling_token_estimate", LevelFilter::OFF)
+        .with_target(
+            "inkstack_core::post_sampling_token_estimate",
+            LevelFilter::OFF,
+        )
         // Full model request bodies and streamed response payloads overwhelm the
         // SQLite log database, but remain available to explicit TRACE subscribers.
         .with_target("inkstack_http_client::transport", LevelFilter::DEBUG)
         .with_target("inkstack_api::sse", LevelFilter::DEBUG)
         // Per-chunk streaming traces otherwise flood the bounded SQLite log queue.
         .with_target("inkstack_tui::streaming::controller", LevelFilter::DEBUG)
-        .with_target("inkstack_tui::streaming::table_holdback", LevelFilter::DEBUG)
+        .with_target(
+            "inkstack_tui::streaming::table_holdback",
+            LevelFilter::DEBUG,
+        )
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

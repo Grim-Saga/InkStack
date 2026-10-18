@@ -150,7 +150,10 @@ impl ExternalAuth for StaticExternalAuth {
         Box::pin(async { Ok(self.0.clone()) })
     }
 
-    fn refresh(&self, _context: ExternalAuthRefreshContext) -> ExternalAuthFuture<'_, InkStackAuth> {
+    fn refresh(
+        &self,
+        _context: ExternalAuthRefreshContext,
+    ) -> ExternalAuthFuture<'_, InkStackAuth> {
         Box::pin(async { Ok(self.0.clone()) })
     }
 }
@@ -493,7 +496,8 @@ pub(crate) fn write_curated_plugin_sha_with(inkstack_home: &Path, sha: &str) {
 }
 
 pub(crate) async fn load_plugins_config(inkstack_home: &Path, cwd: &Path) -> PluginsConfigInput {
-    let inkstack_home = AbsolutePathBuf::try_from(inkstack_home).expect("inkstack home should be absolute");
+    let inkstack_home =
+        AbsolutePathBuf::try_from(inkstack_home).expect("inkstack home should be absolute");
     let cwd = AbsolutePathBuf::try_from(cwd).expect("cwd should be absolute");
     let config_layer_stack = load_config_layers_state(
         LOCAL_FS.as_ref(),

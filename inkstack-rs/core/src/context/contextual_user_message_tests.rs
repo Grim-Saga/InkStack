@@ -118,8 +118,9 @@ fn does_not_hide_arbitrary_context_tags() {
 #[test]
 fn rejects_invalid_internal_model_context_source() {
     assert!(!is_contextual_user_fragment(&ContentItem::InputText {
-        text: "<inkstack_internal_context source=\"Extension\">\nbody\n</inkstack_internal_context>"
-            .to_string(),
+        text:
+            "<inkstack_internal_context source=\"Extension\">\nbody\n</inkstack_internal_context>"
+                .to_string(),
     }));
 }
 

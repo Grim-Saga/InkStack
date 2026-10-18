@@ -134,7 +134,8 @@ async fn review_op_emits_lifecycle_and_review_output() {
         }
         other => panic!("expected entered review item completion, got {other:?}"),
     }
-    let entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     match entered {
         EventMsg::EnteredReviewMode(event) => {
             assert_eq!(event.turn_id.as_deref(), Some(review_turn_id.as_str()));
@@ -309,11 +310,12 @@ async fn review_overload_preserves_lifecycle_order() {
             .set_body_json(serde_json::json!({ "error": { "code": "server_is_overloaded" } })),
     )
     .await;
-    let inkstack = new_conversation_for_server(&server, Arc::new(TempDir::new().unwrap()), |config| {
-        config.model_provider.request_max_retries = Some(0);
-        config.model_provider.stream_max_retries = Some(0);
-    })
-    .await;
+    let inkstack =
+        new_conversation_for_server(&server, Arc::new(TempDir::new().unwrap()), |config| {
+            config.model_provider.request_max_retries = Some(0);
+            config.model_provider.stream_max_retries = Some(0);
+        })
+        .await;
 
     inkstack
         .submit(Op::Review {
@@ -461,7 +463,8 @@ async fn review_op_with_plain_text_emits_review_fallback() {
         .await
         .unwrap();
 
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let closed = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::ExitedReviewMode(_))).await;
     let review = match closed {
         EventMsg::ExitedReviewMode(ev) => ev
@@ -754,7 +757,10 @@ async fn review_uses_updated_turn_permissions_and_approval_policy() {
         })
         .await
         .expect("review should start");
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     assert_eq!(inkstack.thread_settings_snapshot().await, stored_settings);
     let request = request_log.single_request();
@@ -956,7 +962,10 @@ async fn review_resolves_inherited_summary_preferences() -> anyhow::Result<()> {
             matches!(event, EventMsg::TurnComplete(_))
         })
         .await;
-        assert_eq!(test.inkstack.thread_settings_snapshot().await, stored_settings);
+        assert_eq!(
+            test.inkstack.thread_settings_snapshot().await,
+            stored_settings
+        );
     }
     let actual = request_log
         .requests()
@@ -1024,7 +1033,8 @@ async fn review_uses_custom_review_model_from_config() {
         .unwrap();
 
     // Wait for completion
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let _closed = wait_for_event(&inkstack, |ev| {
         matches!(
             ev,
@@ -1090,7 +1100,8 @@ async fn review_uses_session_model_when_review_model_unset() {
         .await
         .unwrap();
 
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let _closed = wait_for_event(&inkstack, |ev| {
         matches!(
             ev,
@@ -1201,9 +1212,13 @@ async fn review_input_isolated_from_parent_history() {
             .await
             .unwrap();
     }
-    let inkstack =
-        resume_conversation_for_server(&server, inkstack_home.clone(), session_file.clone(), |_| {})
-            .await;
+    let inkstack = resume_conversation_for_server(
+        &server,
+        inkstack_home.clone(),
+        session_file.clone(),
+        |_| {},
+    )
+    .await;
 
     // Submit review request; it must start fresh (no parent history in `input`).
     let review_prompt = "Please review only this".to_string();
@@ -1219,7 +1234,8 @@ async fn review_input_isolated_from_parent_history() {
         .await
         .unwrap();
 
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let _closed = wait_for_event(&inkstack, |ev| {
         matches!(
             ev,
@@ -1332,7 +1348,8 @@ async fn review_history_surfaces_in_parent_session() {
         })
         .await
         .unwrap();
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let _closed = wait_for_event(&inkstack, |ev| {
         matches!(
             ev,
@@ -1477,7 +1494,8 @@ async fn review_uses_overridden_cwd_for_base_branch_merge_base() {
         .await
         .unwrap();
 
-    let _entered = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
+    let _entered =
+        wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::EnteredReviewMode(_))).await;
     let _complete = wait_for_event(&inkstack, |ev| matches!(ev, EventMsg::TurnComplete(_))).await;
 
     let requests = request_log.requests();

@@ -1201,7 +1201,10 @@ async fn rate_limit_snapshots_keep_separate_entries_per_limit_id() {
         .get("codex_other")
         .expect("inkstack_other snapshot should exist");
 
-    assert_eq!(inkstack.primary.as_ref().map(|w| w.used_percent), Some(20.0));
+    assert_eq!(
+        inkstack.primary.as_ref().map(|w| w.used_percent),
+        Some(20.0)
+    );
     assert_eq!(
         inkstack
             .credits

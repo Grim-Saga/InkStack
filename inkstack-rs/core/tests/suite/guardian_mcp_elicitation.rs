@@ -246,8 +246,10 @@ async fn server_initiated_mcp_elicitation_can_require_synchronous_auto_review(
         fn decide<'a>(
             &'a self,
             _input: &'a inkstack_extension_api::ApprovalDecisionInput<'_>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Option<inkstack_extension_api::ApprovalDecision>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Option<inkstack_extension_api::ApprovalDecision>,
+        > {
             Box::pin(async { Some(inkstack_extension_api::ApprovalDecision::Allow) })
         }
     }

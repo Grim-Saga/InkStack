@@ -20,7 +20,10 @@ fn tool_call_id_replaces_platform_equivalent_names() {
         (Some(representable.as_str()), Some(representable.as_str())),
     ] {
         let mut env = HashMap::from([
-            ("INKSTACK_TOOL_CALL_ID".to_string(), "stale-call".to_string()),
+            (
+                "INKSTACK_TOOL_CALL_ID".to_string(),
+                "stale-call".to_string(),
+            ),
             (
                 "InkStack_Tool_Call_Id".to_string(),
                 "mixed-case-call".to_string(),
@@ -47,7 +50,10 @@ fn tool_call_id_replaces_platform_equivalent_names() {
             ),
         ]);
         if let Some(expected_call) = expected_call {
-            expected.insert("INKSTACK_TOOL_CALL_ID".to_string(), expected_call.to_string());
+            expected.insert(
+                "INKSTACK_TOOL_CALL_ID".to_string(),
+                expected_call.to_string(),
+            );
         }
         assert_eq!(env, expected, "call_id: {call_id:?}");
     }
@@ -142,7 +148,10 @@ fn command_scrubber_removes_names_from_real_child_environment() {
             INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN_ENV_VAR,
             "configured-noise-token",
         )
-        .env("INKSTACK_GUARDIAN_DECISIONS_API_KEY", "synthetic-override-key")
+        .env(
+            "INKSTACK_GUARDIAN_DECISIONS_API_KEY",
+            "synthetic-override-key",
+        )
         .env("SAFE", "value");
     scrub_non_inheritable_env_vars(&mut command);
     let output = command.output().expect("read child environment");

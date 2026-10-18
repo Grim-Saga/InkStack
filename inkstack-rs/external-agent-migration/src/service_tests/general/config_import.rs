@@ -180,9 +180,10 @@ async fn import_home_migrates_supported_config_fields_skills_and_agents_md() {
         "InkStack guidance"
     );
 
-    let config: TomlValue =
-        toml::from_str(&fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"))
-            .expect("parse config");
+    let config: TomlValue = toml::from_str(
+        &fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"),
+    )
+    .expect("parse config");
     let expected: TomlValue = toml::from_str(
         r#"
 sandbox_mode = "workspace-write"
@@ -235,9 +236,10 @@ async fn import_home_config_uses_local_settings_over_project_settings() {
         }])
         .await;
 
-    let config: TomlValue =
-        toml::from_str(&fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"))
-            .expect("parse config");
+    let config: TomlValue = toml::from_str(
+        &fs::read_to_string(inkstack_home.join("config.toml")).expect("read config"),
+    )
+    .expect("parse config");
     let expected: TomlValue = toml::from_str(
         r#"
 sandbox_mode = "workspace-write"

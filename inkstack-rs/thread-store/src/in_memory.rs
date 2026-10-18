@@ -1193,7 +1193,9 @@ fn history_mode_from_state(
         .unwrap_or_default()
 }
 
-fn git_info_from_patch(patch: &ThreadMetadataPatch) -> Option<inkstack_protocol::protocol::GitInfo> {
+fn git_info_from_patch(
+    patch: &ThreadMetadataPatch,
+) -> Option<inkstack_protocol::protocol::GitInfo> {
     let git_info = patch.git_info.as_ref()?;
     let sha = git_info.sha.clone().flatten();
     let branch = git_info.branch.clone().flatten();

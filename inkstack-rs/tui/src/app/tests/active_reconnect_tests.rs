@@ -197,7 +197,10 @@ async fn reconnect_restores_history_permissions_and_resumes_unsent_input() -> Re
         ));
         let mut overrides = None;
         transport.configure_mcp(&mut overrides);
-        let mcp = overrides.unwrap().remove("mcp_servers.inkstack_tui").unwrap();
+        let mcp = overrides
+            .unwrap()
+            .remove("mcp_servers.inkstack_tui")
+            .unwrap();
         let client = inkstack_http_client::HttpClientBuilder::new().build_direct()?;
         let call_mcp = || {
             client

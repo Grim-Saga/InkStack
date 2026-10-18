@@ -116,7 +116,8 @@ async fn app_server_uses_configured_notes_backend_for_context_window_hints(
 
     let inkstack_home = TempDir::new()?;
     let config = load_default_config_for_test(&inkstack_home).await;
-    let mut model = inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
+    let mut model =
+        inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
     model.supports_experimental_context = supports_experimental_context;
     let catalog_path = inkstack_home.path().join("models.json");
     std::fs::write(
@@ -340,7 +341,8 @@ async fn history_notes_and_async_message_emit_control_tool_analytics() -> Result
 
     let inkstack_home = TempDir::new()?;
     let config = load_default_config_for_test(&inkstack_home).await;
-    let mut model = inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
+    let mut model =
+        inkstack_core::test_support::construct_model_info_offline("mock-model", &config);
     model.supports_experimental_context = true;
     model
         .experimental_supported_tools

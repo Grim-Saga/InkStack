@@ -288,7 +288,10 @@ async fn bootstrap_gets_honor_disabled_fallback() {
     let proxy = MockServer::start().await;
     let base_url = BLOCKED_ORIGIN;
     for endpoint in ["config/bundle", "accounts/check"] {
-        cache_system_proxy_route_for_test(&format!("{base_url}/api/inkstack/{endpoint}"), proxy.uri());
+        cache_system_proxy_route_for_test(
+            &format!("{base_url}/api/inkstack/{endpoint}"),
+            proxy.uri(),
+        );
     }
     let client = Client::new(
         base_url,

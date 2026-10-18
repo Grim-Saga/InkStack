@@ -172,7 +172,9 @@ impl Fixture {
             ),
             inkstack_apps_tools_cache: Default::default(),
             tool_catalog_cache: Default::default(),
-            inkstack_apps_tools_cache_key: inkstack_mcp::inkstack_apps_tools_cache_key(Some(&auth_value)),
+            inkstack_apps_tools_cache_key: inkstack_mcp::inkstack_apps_tools_cache_key(Some(
+                &auth_value,
+            )),
             client_mcp_extensions: Default::default(),
             auth: Some(auth_value.clone()),
             auth_manager: Some(Arc::clone(&auth)),

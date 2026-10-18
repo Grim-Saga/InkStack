@@ -94,7 +94,10 @@ impl Session {
         if !matches!(scope, RuntimeConfigRefresh::UserFiles) {
             for (feature, description) in [
                 (Feature::Mcp20260728, "MCP protocol"),
-                (Feature::InkStackAppsMcp20260728, "InkStack Apps MCP protocol"),
+                (
+                    Feature::InkStackAppsMcp20260728,
+                    "InkStack Apps MCP protocol",
+                ),
             ] {
                 if let Err(err) = config
                     .features

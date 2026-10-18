@@ -632,9 +632,9 @@ impl AnalyticsEventsClient {
     }
 
     pub fn track_turn_inkstack_error(&self, fact: TurnInkStackErrorFact) {
-        self.record_fact(AnalyticsFact::Custom(CustomAnalyticsFact::TurnInkStackError(
-            Box::new(fact),
-        )));
+        self.record_fact(AnalyticsFact::Custom(
+            CustomAnalyticsFact::TurnInkStackError(Box::new(fact)),
+        ));
     }
 
     pub fn track_plugin_installed(&self, plugin: PluginTelemetryMetadata) {

@@ -1673,7 +1673,10 @@ connectors = true
     )
 }
 
-fn write_connectors_and_plugins_config(inkstack_home: &Path, base_url: &str) -> std::io::Result<()> {
+fn write_connectors_and_plugins_config(
+    inkstack_home: &Path,
+    base_url: &str,
+) -> std::io::Result<()> {
     let config_toml = inkstack_home.join("config.toml");
     std::fs::write(
         config_toml,

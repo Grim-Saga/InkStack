@@ -175,7 +175,9 @@ fn terminal_title_project_root(config: &Config, cwd: &Path) -> Option<ProjectTit
         .config_layer_stack
         .all_layers_low_to_high()
         .find_map(|layer| match &layer.name {
-            ConfigLayerSource::Project { dot_inkstack_folder } => dot_inkstack_folder
+            ConfigLayerSource::Project {
+                dot_inkstack_folder,
+            } => dot_inkstack_folder
                 .as_path()
                 .parent()
                 .map(|root| ProjectTitleRoot {

@@ -270,19 +270,23 @@ impl PluginsManager {
             &plugin_id.marketplace_name,
             &plugin_id.plugin_name,
         );
-        let cache_removal_error =
-            match remote::uninstall_remote_plugin(&service, auth, self.inkstack_home.clone(), target)
-                .await
-            {
-                Ok(()) => None,
-                Err(err @ RemotePluginCatalogError::CacheRemove(_)) => Some(err),
-                Err(source) => {
-                    return Err(resolved(Error::Catalog {
-                        context: "uninstall remote plugin",
-                        source,
-                    }));
-                }
-            };
+        let cache_removal_error = match remote::uninstall_remote_plugin(
+            &service,
+            auth,
+            self.inkstack_home.clone(),
+            target,
+        )
+        .await
+        {
+            Ok(()) => None,
+            Err(err @ RemotePluginCatalogError::CacheRemove(_)) => Some(err),
+            Err(source) => {
+                return Err(resolved(Error::Catalog {
+                    context: "uninstall remote plugin",
+                    source,
+                }));
+            }
+        };
         let effective_plugins_changed = self.clear_remote_installed_plugins_cache();
         self.maybe_start_remote_installed_plugins_cache_refresh_after_mutation(
             config,

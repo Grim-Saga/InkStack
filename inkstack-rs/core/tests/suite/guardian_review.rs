@@ -153,8 +153,9 @@ async fn guardian_session_inherits_parent_http_fallback(
     expected_guardian_path: &str,
     response_id_present: bool,
 ) -> Result<()> {
-    let credits_enabled =
-        auth.uses_inkstack_backend() && provider_name == "OpenAI" && base_path == "/backend-api/inkstack";
+    let credits_enabled = auth.uses_inkstack_backend()
+        && provider_name == "OpenAI"
+        && base_path == "/backend-api/inkstack";
     skip_if_no_network!(Ok(()));
 
     let configured_policy = "Use the task-configured Guardian policy.";
@@ -1495,7 +1496,9 @@ async fn guardian_reviews_delayed_and_new_actions_after_catalog_refresh() -> Res
             turn_id,
             update: inkstack_protocol::protocol::TurnSettingsUpdate {
                 model: Some("guardian-parent-b".to_string()),
-                effort: Some(Some(inkstack_protocol::openai_models::ReasoningEffort::Medium)),
+                effort: Some(Some(
+                    inkstack_protocol::openai_models::ReasoningEffort::Medium,
+                )),
                 summary: Some(inkstack_protocol::config_types::ReasoningSummary::Concise),
                 ..Default::default()
             },
@@ -2381,8 +2384,10 @@ async fn guardian_timeout_rejects_tool_call_with_acting_model_instructions(
         fn decide<'a>(
             &'a self,
             input: &'a inkstack_extension_api::ApprovalDecisionInput<'_>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Option<inkstack_extension_api::ApprovalDecision>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Option<inkstack_extension_api::ApprovalDecision>,
+        > {
             assert_eq!(input.tool_call_id, Some("exec-call-timed-out"));
             Box::pin(async {
                 Some(inkstack_extension_api::ApprovalDecision::Reviewed(

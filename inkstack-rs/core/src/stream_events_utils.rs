@@ -66,7 +66,9 @@ pub(crate) fn raw_assistant_output_text_from_item(item: &ResponseItem) -> Option
         let combined = content
             .iter()
             .filter_map(|ci| match ci {
-                inkstack_protocol::models::ContentItem::OutputText { text, .. } => Some(text.as_str()),
+                inkstack_protocol::models::ContentItem::OutputText { text, .. } => {
+                    Some(text.as_str())
+                }
                 _ => None,
             })
             .collect::<String>();
@@ -282,7 +284,9 @@ pub(crate) async fn finalize_non_tool_response_item(
                     .content
                     .iter()
                     .map(|entry| match entry {
-                        inkstack_protocol::items::AgentMessageContent::Text { text } => text.as_str(),
+                        inkstack_protocol::items::AgentMessageContent::Text { text } => {
+                            text.as_str()
+                        }
                     })
                     .collect::<String>();
                 let last_agent_message = if combined.trim().is_empty() {

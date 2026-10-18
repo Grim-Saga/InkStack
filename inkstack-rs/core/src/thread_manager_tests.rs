@@ -160,7 +160,9 @@ async fn live_fork_keeps_instructions_when_source_is_unloaded_during_setup() {
 async fn thread_analytics_opt_out_overrides_shared_client() {
     let server = MockServer::start().await;
     wiremock::Mock::given(wiremock::matchers::method("POST"))
-        .and(wiremock::matchers::path("/inkstack/analytics-events/events"))
+        .and(wiremock::matchers::path(
+            "/inkstack/analytics-events/events",
+        ))
         .respond_with(wiremock::ResponseTemplate::new(200))
         .mount(&server)
         .await;
@@ -1023,8 +1025,10 @@ async fn mcp_invalidation_refreshes_threads_that_are_still_starting() {
         fn contribute<'a>(
             &'a self,
             _context: inkstack_extension_api::McpServerContributionContext<'a, Config>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::McpServerContribution>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Vec<inkstack_extension_api::McpServerContribution>,
+        > {
             Box::pin(async move {
                 if self.projections.fetch_add(1, Ordering::AcqRel) != 0 {
                     self.refreshed.notify_one();
@@ -1038,7 +1042,8 @@ async fn mcp_invalidation_refreshes_threads_that_are_still_starting() {
     let mut config = test_config().await;
     // Resolve the model locally before waiting for the MCP lifecycle hook.
     config.model_catalog = Some(
-        inkstack_models_manager::bundled_models_response().expect("bundled model catalog should load"),
+        inkstack_models_manager::bundled_models_response()
+            .expect("bundled model catalog should load"),
     );
     config.inkstack_home = temp_dir.path().join("inkstack-home").abs();
     config.cwd = config.inkstack_home.abs();
@@ -1270,8 +1275,10 @@ async fn spawn_internal_session_preserves_parent_lineage_without_forking_history
         fn contribute<'a>(
             &'a self,
             context: inkstack_extension_api::McpServerContributionContext<'a, Config>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::McpServerContribution>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Vec<inkstack_extension_api::McpServerContribution>,
+        > {
             Box::pin(async move {
                 if let Some(session_source) = context.session_source() {
                     self.observed_mcp_sources
@@ -1298,7 +1305,10 @@ async fn spawn_internal_session_preserves_parent_lineage_without_forking_history
 
     let mut managed_exec_policy = inkstack_execpolicy::Policy::empty();
     managed_exec_policy
-        .add_prefix_rule(&["rm".to_string()], inkstack_execpolicy::Decision::Forbidden)
+        .add_prefix_rule(
+            &["rm".to_string()],
+            inkstack_execpolicy::Decision::Forbidden,
+        )
         .expect("add managed execution restriction");
     let mut requirements = config.config_layer_stack.requirements().clone();
     requirements.exec_policy = Some(inkstack_config::Sourced::new(
@@ -1625,8 +1635,10 @@ async fn start_thread_seeds_extension_data_for_mcp_and_lifecycle_contributors() 
         fn contribute<'a>(
             &'a self,
             _context: inkstack_extension_api::McpServerContributionContext<'a, Config>,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::McpServerContribution>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Vec<inkstack_extension_api::McpServerContribution>,
+        > {
             Box::pin(async { Vec::new() })
         }
 
@@ -1634,8 +1646,10 @@ async fn start_thread_seeds_extension_data_for_mcp_and_lifecycle_contributors() 
             &'a self,
             context: inkstack_extension_api::McpServerContributionContext<'a, Config>,
             _plugins_config: &'a inkstack_config::types::PluginsConfigToml,
-        ) -> inkstack_extension_api::ExtensionFuture<'a, Vec<inkstack_extension_api::SelectedPlugin<'a>>>
-        {
+        ) -> inkstack_extension_api::ExtensionFuture<
+            'a,
+            Vec<inkstack_extension_api::SelectedPlugin<'a>>,
+        > {
             Box::pin(async move {
                 assert_eq!(
                     context.selected_environments(),
@@ -1872,7 +1886,9 @@ async fn start_thread_seeds_extension_data_for_mcp_and_lifecycle_contributors() 
         .remove(inkstack_mcp::INKSTACK_APPS_MCP_SERVER_NAME)
         .expect("InkStack Apps server should be configured");
     let inkstack_apps_headers = match inkstack_apps_server.transport {
-        inkstack_config::McpServerTransportConfig::StreamableHttp { http_headers, .. } => http_headers,
+        inkstack_config::McpServerTransportConfig::StreamableHttp { http_headers, .. } => {
+            http_headers
+        }
         inkstack_config::McpServerTransportConfig::Stdio { .. } => {
             panic!("InkStack Apps server should use streamable HTTP")
         }

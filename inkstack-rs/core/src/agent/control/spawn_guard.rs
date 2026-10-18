@@ -64,8 +64,10 @@ impl Drop for PendingSpawn {
         drop(tokio::spawn(async move {
             if let Some(thread) = state.remove_thread(&child).await {
                 if let Err(error) = thread.shutdown_and_wait().await {
-                    teardown
-                        .record_shutdown_failure("stop_child", InkStackErrKind::from(&error).into());
+                    teardown.record_shutdown_failure(
+                        "stop_child",
+                        InkStackErrKind::from(&error).into(),
+                    );
                     warn!("failed to stop cancelled child spawn: {error}");
                 }
                 if let Some(live_thread) = thread.session.live_thread() {

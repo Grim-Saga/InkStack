@@ -649,7 +649,9 @@ async fn discovery_warns_once_per_invalid_manifest() {
     let too_long_prompt = "x".repeat(129);
     for plugin_name in ["gmail", "openai-developers"] {
         write_file(
-            &curated_root.join(format!("plugins/{plugin_name}/.inkstack-plugin/plugin.json")),
+            &curated_root.join(format!(
+                "plugins/{plugin_name}/.inkstack-plugin/plugin.json"
+            )),
             &format!(
                 r#"{{
   "name": "{plugin_name}",
@@ -698,7 +700,10 @@ async fn discovery_warns_once_per_invalid_manifest() {
         .expect("utf8 logs")
         .replace('\\', "/");
     assert_eq!(logs.matches("ignoring interface.defaultPrompt").count(), 2);
-    assert_eq!(logs.matches("gmail/.inkstack-plugin/plugin.json").count(), 1);
+    assert_eq!(
+        logs.matches("gmail/.inkstack-plugin/plugin.json").count(),
+        1
+    );
     assert_eq!(
         logs.matches("openai-developers/.inkstack-plugin/plugin.json")
             .count(),
@@ -824,7 +829,12 @@ source = "/tmp/{sales_marketplace_name}"
 "#
         ),
     );
-    install_marketplace_plugin(inkstack_home.path(), sales_marketplace_root.as_path(), "sales").await;
+    install_marketplace_plugin(
+        inkstack_home.path(),
+        sales_marketplace_root.as_path(),
+        "sales",
+    )
+    .await;
 
     let plugins = load_plugins_config(inkstack_home.path(), inkstack_home.path()).await;
     let plugins_manager = test_plugins_manager(inkstack_home.path().to_path_buf());
@@ -1077,7 +1087,11 @@ fn string_set(values: &[&str]) -> HashSet<String> {
     values.iter().map(ToString::to_string).collect()
 }
 
-async fn install_marketplace_plugin(inkstack_home: &Path, marketplace_root: &Path, plugin_name: &str) {
+async fn install_marketplace_plugin(
+    inkstack_home: &Path,
+    marketplace_root: &Path,
+    plugin_name: &str,
+) {
     write_curated_plugin_sha_with(inkstack_home, TEST_CURATED_PLUGIN_SHA);
     let config = load_plugins_config(inkstack_home, marketplace_root).await;
     test_plugins_manager(inkstack_home.to_path_buf())

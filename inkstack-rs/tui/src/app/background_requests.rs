@@ -1045,7 +1045,8 @@ fn plugin_remote_section_error_next_step(label: &str, err: &str) -> &'static str
         "Switch to the matching workspace or ask the sharer for access"
     } else if err.contains("not found") || err.contains("status 404") {
         "Check that you are signed in to the correct workspace and still have access"
-    } else if err.contains("old build") || err.contains("update inkstack") || err.contains("stale") {
+    } else if err.contains("old build") || err.contains("update inkstack") || err.contains("stale")
+    {
         "Update InkStack, then try opening the shared plugin again"
     } else if err.contains("service unavailable")
         || err.contains("temporarily unavailable")
@@ -1068,7 +1069,8 @@ fn plugin_sharing_disabled_remote_section_error() -> PluginRemoteSectionError {
     PluginRemoteSectionError {
         section_id: "shared-with-me".to_string(),
         label: "Shared with me".to_string(),
-        message: "Enable plugin sharing for this InkStack session to load shared plugins".to_string(),
+        message: "Enable plugin sharing for this InkStack session to load shared plugins"
+            .to_string(),
     }
 }
 
@@ -1335,9 +1337,15 @@ pub(super) fn mcp_inventory_maps_from_statuses(statuses: Vec<McpServerStatus>) -
             server_name.clone(),
             match status.auth_status {
                 inkstack_app_server_protocol::McpAuthStatus::Unknown => McpAuthStatus::Unknown,
-                inkstack_app_server_protocol::McpAuthStatus::Unsupported => McpAuthStatus::Unsupported,
-                inkstack_app_server_protocol::McpAuthStatus::NotLoggedIn => McpAuthStatus::NotLoggedIn,
-                inkstack_app_server_protocol::McpAuthStatus::BearerToken => McpAuthStatus::BearerToken,
+                inkstack_app_server_protocol::McpAuthStatus::Unsupported => {
+                    McpAuthStatus::Unsupported
+                }
+                inkstack_app_server_protocol::McpAuthStatus::NotLoggedIn => {
+                    McpAuthStatus::NotLoggedIn
+                }
+                inkstack_app_server_protocol::McpAuthStatus::BearerToken => {
+                    McpAuthStatus::BearerToken
+                }
                 inkstack_app_server_protocol::McpAuthStatus::OAuth => McpAuthStatus::OAuth,
             },
         );

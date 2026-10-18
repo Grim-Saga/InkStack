@@ -22,9 +22,12 @@ mod reviewer_config;
 pub(super) use reviewer_config::build_reviewer_config;
 
 pub(crate) fn install(session: &Session, config: &Config) {
-    session.services.thread_extension_data.insert(
-        inkstack_guardian_reviewer::ReviewerConfig::<Config>(build_reviewer_config),
-    );
+    session
+        .services
+        .thread_extension_data
+        .insert(inkstack_guardian_reviewer::ReviewerConfig::<Config>(
+            build_reviewer_config,
+        ));
     let manager = Arc::new(crate::ThreadManager::new(
         config,
         Arc::clone(&session.services.auth_manager),

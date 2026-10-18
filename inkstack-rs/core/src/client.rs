@@ -1193,7 +1193,11 @@ impl ModelClient {
             .filter(|config| {
                 config.model == model
                     && self.uses_inkstack_backend(auth)
-                    && self.state.provider.info().supports_inkstack_backend_routes()
+                    && self
+                        .state
+                        .provider
+                        .info()
+                        .supports_inkstack_backend_routes()
             })
             .map(|config| config.headers.clone())
             .unwrap_or_default()
@@ -1235,7 +1239,11 @@ impl ModelClient {
                 Some(InkStackAuth::Chatgpt(_) | InkStackAuth::ChatgptAuthTokens(_))
             )
             && self.uses_inkstack_backend(auth)
-            && self.state.provider.info().supports_inkstack_backend_routes()
+            && self
+                .state
+                .provider
+                .info()
+                .supports_inkstack_backend_routes()
         {
             metadata
                 .get_or_insert_with(HashMap::new)
@@ -2086,7 +2094,8 @@ impl ModelClientSession {
                 model_info.use_responses_lite,
             );
             if let Some(turn_state) = self.turn_state.get() {
-                client_metadata.insert(X_INKSTACK_TURN_STATE_HEADER.to_string(), turn_state.clone());
+                client_metadata
+                    .insert(X_INKSTACK_TURN_STATE_HEADER.to_string(), turn_state.clone());
             }
             let (continuation, mode, reason, previous_item_type, current_item_type) =
                 match self.prepare_websocket_request(&request) {

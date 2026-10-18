@@ -979,8 +979,11 @@ async fn skills_for_config_ignores_cwd_cache_when_session_flags_reenable_skill()
     let disabled_skill_config = path_toggle_config(&skill_path, /*enabled*/ false);
     let enabled_skill_config = path_toggle_config(&skill_path, /*enabled*/ true);
     let parent_stack = config_stack(&inkstack_home, &disabled_skill_config);
-    let child_stack =
-        config_stack_with_session_flags(&inkstack_home, &disabled_skill_config, &enabled_skill_config);
+    let child_stack = config_stack_with_session_flags(
+        &inkstack_home,
+        &disabled_skill_config,
+        &enabled_skill_config,
+    );
     let skills_service = HostSkillsService::new(
         inkstack_home.path().abs(),
         /*bundled_skills_enabled*/ true,

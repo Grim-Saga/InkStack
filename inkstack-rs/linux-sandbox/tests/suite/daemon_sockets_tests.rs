@@ -14,7 +14,8 @@ async fn private_tmp_mount_preserves_daemon_socket_isolation() {
     let private = tempfile::tempdir_in("/tmp").unwrap();
     let test_executable = std::env::current_exe().unwrap();
     // Keep both executables available after the original /tmp is hidden.
-    inkstack_utils_cargo_bin::copy_executable(&test_executable, &private.path().join("test")).unwrap();
+    inkstack_utils_cargo_bin::copy_executable(&test_executable, &private.path().join("test"))
+        .unwrap();
     inkstack_utils_cargo_bin::copy_executable(
         &inkstack_linux_sandbox_exe(),
         &private.path().join("sandbox"),

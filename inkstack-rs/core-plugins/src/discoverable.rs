@@ -76,8 +76,8 @@ impl PluginsManager {
             return Ok(Vec::new());
         }
 
-        let use_remote_global_catalog =
-            input.plugins.remote_plugin_enabled && auth.is_some_and(InkStackAuth::uses_inkstack_backend);
+        let use_remote_global_catalog = input.plugins.remote_plugin_enabled
+            && auth.is_some_and(InkStackAuth::uses_inkstack_backend);
         let marketplaces = self
             .list_marketplaces_for_config(
                 &input.plugins,

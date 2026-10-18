@@ -916,7 +916,9 @@ fn run_update_command() -> anyhow::Result<()> {
 fn run_verified_standalone_update() -> anyhow::Result<()> {
     let script = fetch_verified_installer_script_blocking()?;
     let staging = tempfile::tempdir()?;
-    let script_path = staging.path().join(inkstack_app_server_daemon::verified_installer::installer_file_name());
+    let script_path = staging
+        .path()
+        .join(inkstack_app_server_daemon::verified_installer::installer_file_name());
     std::fs::write(&script_path, &script)?;
 
     let status = {
@@ -1026,8 +1028,13 @@ async fn run_debug_app_server_command(cmd: DebugAppServerCommand) -> anyhow::Res
     match cmd.subcommand {
         DebugAppServerSubcommand::SendMessageV2(cmd) => {
             let inkstack_bin = std::env::current_exe()?;
-            inkstack_app_server_test_client::send_message_v2(&inkstack_bin, &[], cmd.user_message, &None)
-                .await
+            inkstack_app_server_test_client::send_message_v2(
+                &inkstack_bin,
+                &[],
+                cmd.user_message,
+                &None,
+            )
+            .await
         }
     }
 }
@@ -1788,8 +1795,11 @@ async fn cli_main(
                 &mut cloud_cli.config_overrides,
                 root_config_overrides.clone(),
             );
-            inkstack_cloud_tasks::run_main(cloud_cli, arg0_paths.inkstack_linux_sandbox_exe.clone())
-                .await?;
+            inkstack_cloud_tasks::run_main(
+                cloud_cli,
+                arg0_paths.inkstack_linux_sandbox_exe.clone(),
+            )
+            .await?;
         }
         Some(Subcommand::Sandbox(SandboxCommand {
             host: mut sandbox_cli,
@@ -2967,7 +2977,8 @@ enabled = true
         // OpenAI distribution hosts must stay blocked by the updater network
         // policy, alongside unlisted destinations; these are deny-list probes
         // for this test only and are never contacted by any update path.
-        const DENIED_UPDATE_PROBE_HOSTS: [&str; 3] = ["chatgpt.com", "releases.openai.com", "unlisted.example"];
+        const DENIED_UPDATE_PROBE_HOSTS: [&str; 3] =
+            ["chatgpt.com", "releases.openai.com", "unlisted.example"];
         for host in DENIED_UPDATE_PROBE_HOSTS {
             assert_eq!(
                 factory
@@ -3175,7 +3186,10 @@ enabled = true
 
         assert_eq!(
             overrides.user_config_path,
-            Some(resolve_profile_v2_config_path(inkstack_home.path(), &profile))
+            Some(resolve_profile_v2_config_path(
+                inkstack_home.path(),
+                &profile
+            ))
         );
         assert_eq!(overrides.user_config_profile, Some(profile));
         Ok(())
@@ -3183,7 +3197,9 @@ enabled = true
 
     #[test]
     fn profile_v2_is_rejected_for_config_management_subcommands() {
-        assert!(profile_v2_for_args(&["inkstack", "--profile", "work", "features", "list"]).is_err());
+        assert!(
+            profile_v2_for_args(&["inkstack", "--profile", "work", "features", "list"]).is_err()
+        );
     }
 
     #[test]
@@ -3225,7 +3241,8 @@ enabled = true
     #[test]
     fn profile_v2_rejects_non_plain_names_at_parse_time() {
         assert!(
-            MultitoolCli::try_parse_from(["inkstack", "--profile", "nested/work", "resume"]).is_err()
+            MultitoolCli::try_parse_from(["inkstack", "--profile", "nested/work", "resume"])
+                .is_err()
         );
     }
 
@@ -3386,7 +3403,10 @@ enabled = true
 
     #[test]
     fn not_so_yolo_alias_is_hidden_from_help() {
-        for args in [&["inkstack", "--help"][..], &["inkstack", "exec", "--help"][..]] {
+        for args in [
+            &["inkstack", "--help"][..],
+            &["inkstack", "exec", "--help"][..],
+        ] {
             let help = help_from_args(args);
 
             assert!(!help.contains("--not-so-yolo"), "{help}");
@@ -3556,8 +3576,8 @@ enabled = true
 
     #[test]
     fn debug_models_parses_bundled_flag() {
-        let cli =
-            MultitoolCli::try_parse_from(["inkstack", "debug", "models", "--bundled"]).expect("parse");
+        let cli = MultitoolCli::try_parse_from(["inkstack", "debug", "models", "--bundled"])
+            .expect("parse");
 
         let Some(Subcommand::Debug(DebugCommand {
             subcommand: DebugSubcommand::Models(cmd),
@@ -3636,9 +3656,14 @@ enabled = true
 
     #[test]
     fn plugin_marketplace_add_parses_under_plugin() {
-        let cli =
-            MultitoolCli::try_parse_from(["inkstack", "plugin", "marketplace", "add", "owner/repo"])
-                .expect("parse");
+        let cli = MultitoolCli::try_parse_from([
+            "inkstack",
+            "plugin",
+            "marketplace",
+            "add",
+            "owner/repo",
+        ])
+        .expect("parse");
 
         assert!(matches!(cli.subcommand, Some(Subcommand::Plugin(_))));
     }
@@ -3746,7 +3771,8 @@ enabled = true
 
     #[test]
     fn sandbox_uninstall_respects_command_separator() {
-        let cli = MultitoolCli::try_parse_from(["inkstack", "sandbox", "uninstall"]).expect("parse");
+        let cli =
+            MultitoolCli::try_parse_from(["inkstack", "sandbox", "uninstall"]).expect("parse");
         assert!(matches!(
             cli.subcommand,
             Some(Subcommand::Sandbox(SandboxCommand {
@@ -3844,9 +3870,15 @@ enabled = true
     #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
     #[test]
     fn sandbox_parses_config_profile() {
-        let cli =
-            MultitoolCli::try_parse_from(["inkstack", "sandbox", "--profile", "work", "--", "echo"])
-                .expect("parse");
+        let cli = MultitoolCli::try_parse_from([
+            "inkstack",
+            "sandbox",
+            "--profile",
+            "work",
+            "--",
+            "echo",
+        ])
+        .expect("parse");
 
         let Some(Subcommand::Sandbox(SandboxCommand { host: command, .. })) = cli.subcommand else {
             panic!("expected sandbox command");
@@ -4307,8 +4339,9 @@ enabled = true
 
     #[test]
     fn fork_last_accepts_prompt_positional() {
-        let interactive =
-            finalize_fork_from_args(["inkstack", "fork", "--last", "/compact focus on auth"].as_ref());
+        let interactive = finalize_fork_from_args(
+            ["inkstack", "fork", "--last", "/compact focus on auth"].as_ref(),
+        );
 
         assert!(!interactive.fork_picker);
         assert!(interactive.fork_last);
@@ -4374,8 +4407,9 @@ enabled = true
 
     #[test]
     fn app_server_analytics_default_enabled_with_flag() {
-        let app_server =
-            app_server_from_args(["inkstack", "app-server", "--analytics-default-enabled"].as_ref());
+        let app_server = app_server_from_args(
+            ["inkstack", "app-server", "--analytics-default-enabled"].as_ref(),
+        );
         assert!(app_server.analytics_default_enabled);
     }
 
@@ -4384,9 +4418,13 @@ enabled = true
         let cli = MultitoolCli::try_parse_from(["inkstack", "--strict-config"]).expect("parse");
         assert!(cli.interactive.strict_config);
 
-        let cli =
-            MultitoolCli::try_parse_from(["inkstack", "review", "--strict-config", "--uncommitted"])
-                .expect("parse");
+        let cli = MultitoolCli::try_parse_from([
+            "inkstack",
+            "review",
+            "--strict-config",
+            "--uncommitted",
+        ])
+        .expect("parse");
         assert_matches!(
             cli.subcommand,
             Some(Subcommand::Review(ReviewCommand {
@@ -4519,8 +4557,9 @@ enabled = true
 
     #[test]
     fn reject_remote_flag_for_remote_control() {
-        let cli = MultitoolCli::try_parse_from(["inkstack", "--remote", "unix://", "remote-control"])
-            .expect("parse");
+        let cli =
+            MultitoolCli::try_parse_from(["inkstack", "--remote", "unix://", "remote-control"])
+                .expect("parse");
         let Some(Subcommand::RemoteControl(remote_control)) = &cli.subcommand else {
             panic!("expected remote-control subcommand");
         };
@@ -4538,7 +4577,8 @@ enabled = true
 
     #[test]
     fn remote_control_pair_parses() {
-        let cli = MultitoolCli::try_parse_from(["inkstack", "remote-control", "pair"]).expect("parse");
+        let cli =
+            MultitoolCli::try_parse_from(["inkstack", "remote-control", "pair"]).expect("parse");
         let Some(Subcommand::RemoteControl(remote_control)) = &cli.subcommand else {
             panic!("expected remote-control subcommand");
         };
@@ -4570,9 +4610,13 @@ enabled = true
 
     #[test]
     fn remote_flag_parses_for_resume_subcommand() {
-        let cli =
-            MultitoolCli::try_parse_from(["inkstack", "resume", "--remote", "unix://inkstack.sock"])
-                .expect("parse");
+        let cli = MultitoolCli::try_parse_from([
+            "inkstack",
+            "resume",
+            "--remote",
+            "unix://inkstack.sock",
+        ])
+        .expect("parse");
         let Subcommand::Resume(ResumeCommand { remote, .. }) =
             cli.subcommand.expect("resume present")
         else {
@@ -4722,9 +4766,13 @@ enabled = true
             "https://alice:secret@example.test",
             "http://example.test/?token=secret",
         ] {
-            let error =
-                MultitoolCli::try_parse_from(["inkstack", "app-server", "--code-mode-host", endpoint])
-                    .expect_err("invalid code-mode host endpoint should fail argument parsing");
+            let error = MultitoolCli::try_parse_from([
+                "inkstack",
+                "app-server",
+                "--code-mode-host",
+                endpoint,
+            ])
+            .expect_err("invalid code-mode host endpoint should fail argument parsing");
 
             assert_eq!(error.kind(), clap::error::ErrorKind::ValueValidation);
             let rendered_error = error.to_string();
@@ -4790,7 +4838,13 @@ enabled = true
     #[test]
     fn app_server_listen_unix_socket_path_parses() {
         let app_server = app_server_from_args(
-            ["inkstack", "app-server", "--listen", "unix:///tmp/inkstack.sock"].as_ref(),
+            [
+                "inkstack",
+                "app-server",
+                "--listen",
+                "unix:///tmp/inkstack.sock",
+            ]
+            .as_ref(),
         );
         assert_eq!(
             app_server.listen,
@@ -4803,8 +4857,12 @@ enabled = true
 
     #[test]
     fn app_server_listen_off_parses() {
-        let app_server = app_server_from_args(["inkstack", "app-server", "--listen", "off"].as_ref());
-        assert_eq!(app_server.listen, inkstack_app_server::AppServerTransport::Off);
+        let app_server =
+            app_server_from_args(["inkstack", "app-server", "--listen", "off"].as_ref());
+        assert_eq!(
+            app_server.listen,
+            inkstack_app_server::AppServerTransport::Off
+        );
     }
 
     #[test]
@@ -4852,7 +4910,8 @@ enabled = true
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["inkstack", "app-server", "daemon", "restart"].as_ref()).subcommand,
+            app_server_from_args(["inkstack", "app-server", "daemon", "restart"].as_ref())
+                .subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Restart
             }))
@@ -4882,7 +4941,8 @@ enabled = true
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["inkstack", "app-server", "daemon", "version"].as_ref()).subcommand,
+            app_server_from_args(["inkstack", "app-server", "daemon", "version"].as_ref())
+                .subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Version
             }))
@@ -4891,8 +4951,9 @@ enabled = true
 
     #[test]
     fn app_server_proxy_sock_path_parses() {
-        let app_server =
-            app_server_from_args(["inkstack", "app-server", "proxy", "--sock", "inkstack.sock"].as_ref());
+        let app_server = app_server_from_args(
+            ["inkstack", "app-server", "proxy", "--sock", "inkstack.sock"].as_ref(),
+        );
         let Some(AppServerSubcommand::Proxy(proxy)) = app_server.subcommand else {
             panic!("expected proxy subcommand");
         };

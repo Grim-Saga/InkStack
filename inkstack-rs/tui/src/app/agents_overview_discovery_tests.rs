@@ -79,7 +79,10 @@ async fn check_discovery(mixed_sources: bool) -> Result<()> {
                 "thread/loaded/list" => json!({"data": [], "nextCursor": null}),
                 "thread/list" => {
                     if params["sortKey"] == "section_position" {
-                        assert_eq!(params["sectionId"], inkstack_state::PINNED_THREAD_SECTION_ID);
+                        assert_eq!(
+                            params["sectionId"],
+                            inkstack_state::PINNED_THREAD_SECTION_ID
+                        );
                         let interactive = params["sourceKinds"] == json!([]);
                         let cursor = params["cursor"].as_str();
                         let reopened = server_show_reopened_pin.load(Ordering::SeqCst);

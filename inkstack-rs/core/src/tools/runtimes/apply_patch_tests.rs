@@ -352,7 +352,8 @@ async fn file_system_sandbox_context_respects_sandbox_request() {
             workspace_roots: vec![cwd],
             user_home_dir: Some(user_home_dir),
             temporary_directories: None,
-            windows_sandbox_selection: inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
+            windows_sandbox_selection:
+                inkstack_file_system::WindowsSandboxSelection::RestrictedToken,
             windows_sandbox_proxy_settings_mode: None,
             use_legacy_landlock: false,
         })

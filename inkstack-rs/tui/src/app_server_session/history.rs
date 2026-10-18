@@ -141,7 +141,8 @@ impl AppServerSession {
         thread_id: ThreadId,
         before_turn_id: String,
         retained_turns: &[Turn],
-    ) -> std::result::Result<ThreadRevertResponse, inkstack_app_server_client::TypedRequestError> {
+    ) -> std::result::Result<ThreadRevertResponse, inkstack_app_server_client::TypedRequestError>
+    {
         let request_id = self.next_request_id();
         let response: ThreadRevertResponse = self
             .client

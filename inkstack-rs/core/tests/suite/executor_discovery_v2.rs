@@ -86,8 +86,9 @@ impl Executor {
         let requests = Arc::new(Mutex::new(Vec::new()));
         let recorded = Arc::clone(&requests);
         let discovery_attempts = Arc::new(AtomicUsize::new(0));
-        let http = inkstack_exec_server::Environment::create_for_tests(/*exec_server_url*/ None)?
-            .get_http_client();
+        let http =
+            inkstack_exec_server::Environment::create_for_tests(/*exec_server_url*/ None)?
+                .get_http_client();
         let task = tokio::spawn(async move {
             let mut connections = tokio::task::JoinSet::new();
             while let Ok((stream, _)) = listener.accept().await {
@@ -331,8 +332,8 @@ async fn check_acquisition(enabled: bool, supported: bool) -> Result<()> {
     selection.environment_id = inkstack_exec_server::REMOTE_ENVIRONMENT_ID.to_string();
     let cwd = selection.cwd.clone();
     selection.workspace_roots = vec![cwd.clone()];
-    selection.config =
-        inkstack_protocol::protocol::EnvironmentConfigState::Ready(inkstack_core::EnvironmentConfig {
+    selection.config = inkstack_protocol::protocol::EnvironmentConfigState::Ready(
+        inkstack_core::EnvironmentConfig {
             allow_login_shell: false,
             workspace_roots: selection.workspace_roots.clone(),
             permission_profile: inkstack_protocol::models::PermissionProfileSnapshot::legacy(
@@ -345,14 +346,18 @@ async fn check_acquisition(enabled: bool, supported: bool) -> Result<()> {
             exec_policy: None,
             mcp_policy: None,
             network_policy: None,
-            selected_capability_roots: vec![inkstack_protocol::capabilities::SelectedCapabilityRoot {
-                id: "legacy-root".to_string(),
-                location: inkstack_protocol::capabilities::CapabilityRootLocation::Environment {
-                    environment_id: selection.environment_id.clone(),
-                    path: cwd.clone(),
+            selected_capability_roots: vec![
+                inkstack_protocol::capabilities::SelectedCapabilityRoot {
+                    id: "legacy-root".to_string(),
+                    location:
+                        inkstack_protocol::capabilities::CapabilityRootLocation::Environment {
+                            environment_id: selection.environment_id.clone(),
+                            path: cwd.clone(),
+                        },
                 },
-            }],
-        });
+            ],
+        },
+    );
     // Only the successful lifecycle case needs two turns and multiple model steps.
     let turns = if acquires_v2 { 2 } else { 1 };
     let mut previous_inventory = None;

@@ -476,8 +476,11 @@ async fn unsupported_system_bwrap_falls_back_to_bundled_bwrap() {
     let sandbox_executable = tempdir.path().join("inkstack-linux-sandbox");
     let original_executable = env!("CARGO_BIN_EXE_inkstack-linux-sandbox");
     if std::fs::hard_link(original_executable, &sandbox_executable).is_err() {
-        inkstack_utils_cargo_bin::copy_executable(Path::new(original_executable), &sandbox_executable)
-            .expect("copy sandbox executable");
+        inkstack_utils_cargo_bin::copy_executable(
+            Path::new(original_executable),
+            &sandbox_executable,
+        )
+        .expect("copy sandbox executable");
     }
 
     let resources_dir = tempdir.path().join("inkstack-resources");

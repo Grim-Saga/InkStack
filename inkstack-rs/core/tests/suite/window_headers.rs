@@ -151,7 +151,8 @@ async fn submit_user_turn(inkstack: &Arc<InkStackThread>, text: &str) -> Result<
 
 async fn submit_compact_turn(inkstack: &Arc<InkStackThread>) -> Result<()> {
     inkstack.submit(Op::Compact).await?;
-    let warning_event = wait_for_event(inkstack, |event| matches!(event, EventMsg::Warning(_))).await;
+    let warning_event =
+        wait_for_event(inkstack, |event| matches!(event, EventMsg::Warning(_))).await;
     let EventMsg::Warning(WarningEvent { message }) = warning_event else {
         panic!("expected warning event after compact");
     };
@@ -162,7 +163,10 @@ async fn submit_compact_turn(inkstack: &Arc<InkStackThread>) -> Result<()> {
 
 async fn shutdown_thread(inkstack: &Arc<InkStackThread>) -> Result<()> {
     inkstack.submit(Op::Shutdown).await?;
-    wait_for_event(inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    wait_for_event(inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
     Ok(())
 }
 

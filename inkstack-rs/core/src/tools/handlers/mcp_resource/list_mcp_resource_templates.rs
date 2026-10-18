@@ -76,7 +76,10 @@ impl ListMcpResourceTemplatesHandler {
         let args = args.normalized();
 
         let invocation = McpInvocation {
-            server: args.server.clone().unwrap_or_else(|| "inkstack".to_string()),
+            server: args
+                .server
+                .clone()
+                .unwrap_or_else(|| "inkstack".to_string()),
             tool: "list_mcp_resource_templates".to_string(),
             arguments: arguments.clone(),
         };

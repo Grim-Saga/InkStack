@@ -83,13 +83,13 @@ fn inkstack_apps_tools_cache_is_overwritten_by_last_write() {
     let tools_gateway_2 = vec![create_test_tool(INKSTACK_APPS_MCP_SERVER_NAME, "two")];
 
     write_cached_inkstack_apps_tools(&cache_context, &tools_gateway_1).expect("write first cache");
-    let cached_gateway_1 =
-        read_cached_inkstack_apps_tools(&cache_context).expect("cache entry exists for first write");
+    let cached_gateway_1 = read_cached_inkstack_apps_tools(&cache_context)
+        .expect("cache entry exists for first write");
     assert_eq!(cached_gateway_1[0].callable_name, "one");
 
     write_cached_inkstack_apps_tools(&cache_context, &tools_gateway_2).expect("write second cache");
-    let cached_gateway_2 =
-        read_cached_inkstack_apps_tools(&cache_context).expect("cache entry exists for second write");
+    let cached_gateway_2 = read_cached_inkstack_apps_tools(&cache_context)
+        .expect("cache entry exists for second write");
     assert_eq!(cached_gateway_2[0].callable_name, "two");
 }
 
@@ -152,7 +152,8 @@ fn inkstack_apps_tools_cache_preserves_formerly_disallowed_connectors() {
     ];
 
     write_cached_inkstack_apps_tools(&cache_context, &tools).expect("write cache");
-    let cached = read_cached_inkstack_apps_tools(&cache_context).expect("cache entry exists for user");
+    let cached =
+        read_cached_inkstack_apps_tools(&cache_context).expect("cache entry exists for user");
 
     assert_eq!(
         cached
@@ -340,7 +341,8 @@ fn inkstack_apps_tools_cache_context_does_not_reread_disk_after_creation() {
         "cached"
     );
     assert_eq!(
-        read_cached_inkstack_apps_tools(&writer_cache_context).expect("disk tools")[0].callable_name,
+        read_cached_inkstack_apps_tools(&writer_cache_context).expect("disk tools")[0]
+            .callable_name,
         "updated"
     );
 }

@@ -218,9 +218,10 @@ fn schema_root() -> Result<PathBuf> {
         .context("derive schema root from schema/typescript/index.ts")?
         .to_path_buf();
 
-    let json_bundle =
-        inkstack_utils_cargo_bin::find_resource!("schema/json/inkstack_app_server_protocol.schemas.json")
-            .context("resolve JSON schema bundle")?;
+    let json_bundle = inkstack_utils_cargo_bin::find_resource!(
+        "schema/json/inkstack_app_server_protocol.schemas.json"
+    )
+    .context("resolve JSON schema bundle")?;
     let json_root = json_bundle
         .parent()
         .and_then(|p| p.parent())

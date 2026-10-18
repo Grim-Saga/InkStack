@@ -845,7 +845,10 @@ async fn maybe_request_inkstack_apps_auth_elicitation(
     auth_elicitation_completed_result(&plan.auth_failure, result.meta)
 }
 
-async fn refresh_inkstack_apps_after_connector_auth(sess: &Arc<Session>, turn_context: &TurnContext) {
+async fn refresh_inkstack_apps_after_connector_auth(
+    sess: &Arc<Session>,
+    turn_context: &TurnContext,
+) {
     let mcp_tools_result = sess.hard_refresh_latest_inkstack_apps_tools().await;
 
     match mcp_tools_result {
@@ -893,7 +896,10 @@ async fn augment_mcp_tool_request_meta_with_sandbox_state(
             &mut meta,
             SandboxState {
                 permission_profile: prepared_call.permission_profile().clone(),
-                inkstack_linux_sandbox_exe: prepared_call.config().inkstack_linux_sandbox_exe.clone(),
+                inkstack_linux_sandbox_exe: prepared_call
+                    .config()
+                    .inkstack_linux_sandbox_exe
+                    .clone(),
                 sandbox_cwd,
                 use_legacy_landlock: prepared_call.config().use_legacy_landlock,
                 use_mxc: prepared_call
@@ -2459,7 +2465,8 @@ fn project_mcp_tool_approval_config_folder(
                 .and_then(|table| table.get("mcp_servers"))
                 .cloned()
                 .and_then(|value| {
-                    HashMap::<String, inkstack_config::types::McpServerConfig>::deserialize(value).ok()
+                    HashMap::<String, inkstack_config::types::McpServerConfig>::deserialize(value)
+                        .ok()
                 })?;
             if servers.contains_key(server) {
                 layer.config_folder()

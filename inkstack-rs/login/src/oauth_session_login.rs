@@ -50,7 +50,10 @@ impl OAuthLoginControl {
         )
     }
 
-    pub(super) fn for_host(inkstack_home: &std::path::Path, factory: &HttpClientFactory) -> Arc<Self> {
+    pub(super) fn for_host(
+        inkstack_home: &std::path::Path,
+        factory: &HttpClientFactory,
+    ) -> Arc<Self> {
         type Controls = Vec<(PathBuf, HttpClientFactory, Arc<OAuthLoginControl>)>;
         static CONTROLS: OnceLock<std::sync::Mutex<Controls>> = OnceLock::new();
         let mut controls = CONTROLS

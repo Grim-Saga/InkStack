@@ -85,7 +85,9 @@ impl AgentControl for LocalAgentControl {
                         .rsplit_once('/')
                         .and_then(|(parent, _)| AgentPath::try_from(parent).ok())
                         .ok_or_else(|| {
-                            InkStackErr::InvalidRequest("spawn input needs a child path".to_string())
+                            InkStackErr::InvalidRequest(
+                                "spawn input needs a child path".to_string(),
+                            )
                         })?;
                     SpawnInitialInput::InterAgentCommunication(
                         message.into_communication(author, recipient, mode),

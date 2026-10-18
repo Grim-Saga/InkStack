@@ -13,8 +13,20 @@ use serde_json::json;
 #[tokio::test]
 async fn user_verification_initialize_owns_advertisement_and_eligibility() -> Result<()> {
     for (origin, name, opt_in, supported, expected) in [
-        (ConnectionOrigin::InProcess, "inkstack-tui", true, true, true),
-        (ConnectionOrigin::WebSocket, "inkstack-tui", true, true, false),
+        (
+            ConnectionOrigin::InProcess,
+            "inkstack-tui",
+            true,
+            true,
+            true,
+        ),
+        (
+            ConnectionOrigin::WebSocket,
+            "inkstack-tui",
+            true,
+            true,
+            false,
+        ),
         (
             ConnectionOrigin::RemoteControl,
             "inkstack-tui",
@@ -24,9 +36,27 @@ async fn user_verification_initialize_owns_advertisement_and_eligibility() -> Re
         ),
         (ConnectionOrigin::Stdio, "inkstack-tui", true, true, false),
         (ConnectionOrigin::InProcess, "other-ui", true, true, false),
-        (ConnectionOrigin::InProcess, "inkstack-tui", false, true, false),
-        (ConnectionOrigin::InProcess, "inkstack-tui", true, false, false),
-        (ConnectionOrigin::Stdio, "InkStack Desktop", true, true, true),
+        (
+            ConnectionOrigin::InProcess,
+            "inkstack-tui",
+            false,
+            true,
+            false,
+        ),
+        (
+            ConnectionOrigin::InProcess,
+            "inkstack-tui",
+            true,
+            false,
+            false,
+        ),
+        (
+            ConnectionOrigin::Stdio,
+            "InkStack Desktop",
+            true,
+            true,
+            true,
+        ),
         (
             ConnectionOrigin::InProcess,
             "InkStack Desktop",
@@ -49,9 +79,27 @@ async fn user_verification_initialize_owns_advertisement_and_eligibility() -> Re
             false,
         ),
         (ConnectionOrigin::Stdio, "other-ui", true, true, false),
-        (ConnectionOrigin::Stdio, "inkstack_desktop", true, true, false),
-        (ConnectionOrigin::Stdio, "InkStack Desktop", false, true, false),
-        (ConnectionOrigin::Stdio, "InkStack Desktop", true, false, false),
+        (
+            ConnectionOrigin::Stdio,
+            "inkstack_desktop",
+            true,
+            true,
+            false,
+        ),
+        (
+            ConnectionOrigin::Stdio,
+            "InkStack Desktop",
+            false,
+            true,
+            false,
+        ),
+        (
+            ConnectionOrigin::Stdio,
+            "InkStack Desktop",
+            true,
+            false,
+            false,
+        ),
     ] {
         let probe: fn() -> bool = if supported { || true } else { || false };
         let mut h = Harness::new(origin, probe).await?;

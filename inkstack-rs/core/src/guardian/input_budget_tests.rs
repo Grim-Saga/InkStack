@@ -227,7 +227,8 @@ async fn feasibility_rejects_required_evidence_inside_the_reserved_margin() {
     let (session, mut turn) = crate::session::tests::make_session_and_context().await;
     let context = required_context("required action".to_owned());
     let base = session.get_prompt_base_instructions().await;
-    let prefix = inkstack_protocol::protocol::TruncationPolicy::Bytes(base.text.len()).token_budget();
+    let prefix =
+        inkstack_protocol::protocol::TruncationPolicy::Bytes(base.text.len()).token_budget();
     let model = Arc::make_mut(&mut Arc::make_mut(&mut turn.initial_settings).model_info);
     model.effective_context_window_percent = 100;
     Arc::make_mut(&mut turn.config).model_context_window =

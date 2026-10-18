@@ -76,8 +76,9 @@ async fn init_backend(user_agent_suffix: &str) -> anyhow::Result<BackendContext>
         http_client_factory.clone(),
         ClientRouteClass::Api,
     );
-    let mut http = inkstack_cloud_tasks_client::HttpClient::new(base_url.clone(), http_client_factory)
-        .with_user_agent(ua);
+    let mut http =
+        inkstack_cloud_tasks_client::HttpClient::new(base_url.clone(), http_client_factory)
+            .with_user_agent(ua);
     let style = if base_url.contains("/backend-api") {
         "wham"
     } else {
@@ -750,7 +751,10 @@ fn spawn_apply(
 // (no standalone patch summarizer needed – UI displays raw diffs)
 
 /// Entry point for the `inkstack cloud` subcommand.
-pub async fn run_main(cli: Cli, _inkstack_linux_sandbox_exe: Option<PathBuf>) -> anyhow::Result<()> {
+pub async fn run_main(
+    cli: Cli,
+    _inkstack_linux_sandbox_exe: Option<PathBuf>,
+) -> anyhow::Result<()> {
     if let Some(command) = cli.command {
         return match command {
             crate::cli::Command::Exec(args) => run_exec_command(args).await,

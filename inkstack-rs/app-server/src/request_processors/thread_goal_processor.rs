@@ -218,7 +218,9 @@ impl ThreadGoalRequestProcessor {
         let persist_result = match self.thread_manager.get_thread(thread_id).await {
             Ok(thread) => {
                 let needs_settings_checkpoint = match thread.rollout_path() {
-                    Some(path) => inkstack_rollout::existing_rollout_path(&path).await.is_none(),
+                    Some(path) => inkstack_rollout::existing_rollout_path(&path)
+                        .await
+                        .is_none(),
                     None => false,
                 };
                 match thread

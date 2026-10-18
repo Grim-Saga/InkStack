@@ -348,8 +348,14 @@ impl RemoteCatalogCacheRefreshRequest {
         self.service_config == other.service_config
             && self.auth.as_ref().and_then(InkStackAuth::get_account_id)
                 == other.auth.as_ref().and_then(InkStackAuth::get_account_id)
-            && self.auth.as_ref().and_then(InkStackAuth::get_chatgpt_user_id)
-                == other.auth.as_ref().and_then(InkStackAuth::get_chatgpt_user_id)
+            && self
+                .auth
+                .as_ref()
+                .and_then(InkStackAuth::get_chatgpt_user_id)
+                == other
+                    .auth
+                    .as_ref()
+                    .and_then(InkStackAuth::get_chatgpt_user_id)
             && self.auth.as_ref().map(InkStackAuth::is_workspace_account)
                 == other.auth.as_ref().map(InkStackAuth::is_workspace_account)
     }
@@ -750,7 +756,10 @@ impl PluginsManager {
     }
 
     fn remote_global_catalog_active(&self, config: &PluginsConfigInput) -> bool {
-        config.remote_plugin_enabled && self.auth_mode().is_some_and(AuthMode::uses_inkstack_backend)
+        config.remote_plugin_enabled
+            && self
+                .auth_mode()
+                .is_some_and(AuthMode::uses_inkstack_backend)
     }
 
     /// Starts the local curated marketplace sync when the remote catalog is unavailable.
@@ -3325,7 +3334,9 @@ impl PluginsManager {
                 match sync_openai_plugins_repo(inkstack_home.as_path(), http_client_factory) {
                     Ok(curated_plugin_version) => {
                         let configured_curated_plugin_ids =
-                            configured_curated_plugin_ids_from_inkstack_home(inkstack_home.as_path());
+                            configured_curated_plugin_ids_from_inkstack_home(
+                                inkstack_home.as_path(),
+                            );
                         match refresh_curated_plugin_cache(
                             inkstack_home.as_path(),
                             &curated_plugin_version,

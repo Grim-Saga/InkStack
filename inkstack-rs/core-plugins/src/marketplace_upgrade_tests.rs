@@ -50,9 +50,10 @@ fn one_upgrade_failure_does_not_block_another_marketplace() {
     let good_url = url::Url::from_directory_path(remote_repo.path())
         .expect("remote repository URL")
         .to_string();
-    let missing_url = url::Url::from_directory_path(inkstack_home.path().join("missing-repository"))
-        .expect("missing repository URL")
-        .to_string();
+    let missing_url =
+        url::Url::from_directory_path(inkstack_home.path().join("missing-repository"))
+            .expect("missing repository URL")
+            .to_string();
     let config = format!(
         r#"
 [marketplaces.bad]

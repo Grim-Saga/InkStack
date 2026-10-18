@@ -33,7 +33,8 @@ async fn cloud_list_only_allows_trusted_credential_destinations() -> Result<()> 
     )?;
 
     let command = || -> Result<assert_cmd::Command> {
-        let mut command = assert_cmd::Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?);
+        let mut command =
+            assert_cmd::Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack")?);
         command
             .current_dir(inkstack_home.path())
             .env("INKSTACK_HOME", inkstack_home.path())

@@ -662,10 +662,12 @@ async fn raw_selected_plugin_contributions(
         None
     };
 
-    let v2 = [inkstack_exec_server::ExecutorCapabilityDiscoveryV2Snapshot {
-        environment_id: LOCAL_ENVIRONMENT_ID.to_string(),
-        result: Err("V2 must not change existing contributions".to_string()),
-    }];
+    let v2 = [
+        inkstack_exec_server::ExecutorCapabilityDiscoveryV2Snapshot {
+            environment_id: LOCAL_ENVIRONMENT_ID.to_string(),
+            result: Err("V2 must not change existing contributions".to_string()),
+        },
+    ];
     let selected = registry.mcp_server_contributors()[0]
         .selected_plugins(
             McpServerContributionContext::for_step(

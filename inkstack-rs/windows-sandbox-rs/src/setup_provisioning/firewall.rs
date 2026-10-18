@@ -43,7 +43,8 @@ const OFFLINE_BLOCK_INBOUND_RULE_FRIENDLY: &str =
     "InkStack Sandbox Offline - Block Non-Loopback Inbound";
 const OFFLINE_BLOCK_LOOPBACK_TCP_RULE_FRIENDLY: &str =
     "InkStack Sandbox Offline - Block Loopback TCP (Except Proxy)";
-const OFFLINE_BLOCK_LOOPBACK_UDP_RULE_FRIENDLY: &str = "InkStack Sandbox Offline - Block Loopback UDP";
+const OFFLINE_BLOCK_LOOPBACK_UDP_RULE_FRIENDLY: &str =
+    "InkStack Sandbox Offline - Block Loopback UDP";
 const OFFLINE_PROXY_ALLOW_RULE_NAME: &str = "inkstack_sandbox_offline_allow_loopback_proxy";
 const LOOPBACK_REMOTE_ADDRESSES: &str = "127.0.0.0/8,::/127";
 const NON_LOOPBACK_REMOTE_ADDRESSES: &str = "0.0.0.0-126.255.255.255,128.0.0.0-255.255.255.255,::,::2-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";

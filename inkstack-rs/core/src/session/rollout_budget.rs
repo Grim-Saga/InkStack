@@ -31,7 +31,10 @@ pub(super) async fn maybe_record_reminder(
 }
 
 impl Session {
-    pub(crate) async fn record_rollout_budget_usage(&self, usage: &TokenUsage) -> InkStackResult<()> {
+    pub(crate) async fn record_rollout_budget_usage(
+        &self,
+        usage: &TokenUsage,
+    ) -> InkStackResult<()> {
         self.services
             .agent_control
             .record_usage(usage.clone())

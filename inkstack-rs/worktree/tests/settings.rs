@@ -17,8 +17,9 @@ fn desktop_config(entries: [(&str, Value); 3]) -> HashMap<String, Value> {
 fn default_settings_match_desktop_worktree_defaults() {
     let inkstack_home = tempfile::tempdir().expect("create InkStack home");
 
-    let settings = WorktreeSettings::from_desktop_config(inkstack_home.path(), /*desktop*/ None)
-        .expect("load default worktree settings");
+    let settings =
+        WorktreeSettings::from_desktop_config(inkstack_home.path(), /*desktop*/ None)
+            .expect("load default worktree settings");
 
     assert_eq!(
         settings,

@@ -149,8 +149,12 @@ where
 impl From<CoreInkStackErrorInfo> for InkStackErrorInfo {
     fn from(value: CoreInkStackErrorInfo) -> Self {
         match value {
-            CoreInkStackErrorInfo::ContextWindowExceeded => InkStackErrorInfo::ContextWindowExceeded,
-            CoreInkStackErrorInfo::SessionBudgetExceeded => InkStackErrorInfo::SessionBudgetExceeded,
+            CoreInkStackErrorInfo::ContextWindowExceeded => {
+                InkStackErrorInfo::ContextWindowExceeded
+            }
+            CoreInkStackErrorInfo::SessionBudgetExceeded => {
+                InkStackErrorInfo::SessionBudgetExceeded
+            }
             CoreInkStackErrorInfo::UsageLimitExceeded => InkStackErrorInfo::UsageLimitExceeded,
             CoreInkStackErrorInfo::RateLimitExceeded => InkStackErrorInfo::RateLimitExceeded,
             CoreInkStackErrorInfo::FlexUnavailable => InkStackErrorInfo::FlexUnavailable,

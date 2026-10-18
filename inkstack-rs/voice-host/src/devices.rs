@@ -151,7 +151,9 @@ impl Devices {
         self.worker.buffers.take_state()
     }
 
-    pub(super) fn open(selection: inkstack_realtime_webrtc::AudioDeviceSelection) -> io::Result<Self> {
+    pub(super) fn open(
+        selection: inkstack_realtime_webrtc::AudioDeviceSelection,
+    ) -> io::Result<Self> {
         let host = cpal::default_host();
         let input = device(
             &host,

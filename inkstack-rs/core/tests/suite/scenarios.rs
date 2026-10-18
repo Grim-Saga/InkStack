@@ -1604,7 +1604,10 @@ async fn astra_continues_after_input_yields_a_code_mode_cell() -> Result<()> {
             },
         })
         .await?;
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = mock.requests();
     assert!(requests[1].body_contains_text("Script running with cell ID 1"));
@@ -2704,7 +2707,10 @@ async fn async_compaction_reuses_pending_work(
         test.submit_text_turn("after manual compaction").await?;
     }
 
-    let history = test.inkstack.load_history(/*include_archived*/ false).await?;
+    let history = test
+        .inkstack
+        .load_history(/*include_archived*/ false)
+        .await?;
     let usage = |id| {
         history
             .items

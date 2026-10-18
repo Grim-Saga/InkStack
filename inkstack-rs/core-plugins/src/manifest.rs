@@ -27,7 +27,8 @@ use agent_plugin_manifest::parse_agent_plugin_manifest_uri;
 
 pub type PluginManifest = inkstack_plugin::manifest::PluginManifest<AbsolutePathBuf>;
 pub type PluginManifestHooks = inkstack_plugin::manifest::PluginManifestHooks<AbsolutePathBuf>;
-pub type PluginManifestInterface = inkstack_plugin::manifest::PluginManifestInterface<AbsolutePathBuf>;
+pub type PluginManifestInterface =
+    inkstack_plugin::manifest::PluginManifestInterface<AbsolutePathBuf>;
 pub type PluginManifestMcpServers =
     inkstack_plugin::manifest::PluginManifestMcpServers<AbsolutePathBuf>;
 pub type PluginManifestPaths = inkstack_plugin::manifest::PluginManifestPaths<AbsolutePathBuf>;
@@ -418,15 +419,15 @@ fn resolve_manifest_hooks(
                 .iter()
                 .filter_map(|path| resolve_manifest_path(plugin_root, "hooks", Some(path)))
                 .collect::<Vec<_>>();
-            (!hooks.is_empty()).then_some(inkstack_plugin::manifest::PluginManifestHooks::Paths(hooks))
+            (!hooks.is_empty())
+                .then_some(inkstack_plugin::manifest::PluginManifestHooks::Paths(hooks))
         }
-        RawPluginManifestHooks::Inline(hooks) => {
-            Some(inkstack_plugin::manifest::PluginManifestHooks::Inline(vec![
-                *hooks,
-            ]))
-        }
-        RawPluginManifestHooks::InlineList(hooks) => (!hooks.is_empty())
-            .then_some(inkstack_plugin::manifest::PluginManifestHooks::Inline(hooks)),
+        RawPluginManifestHooks::Inline(hooks) => Some(
+            inkstack_plugin::manifest::PluginManifestHooks::Inline(vec![*hooks]),
+        ),
+        RawPluginManifestHooks::InlineList(hooks) => (!hooks.is_empty()).then_some(
+            inkstack_plugin::manifest::PluginManifestHooks::Inline(hooks),
+        ),
         RawPluginManifestHooks::Invalid(value) => {
             tracing::warn!(
                 "ignoring hooks: expected a string, string array, object, or object array; found {}",

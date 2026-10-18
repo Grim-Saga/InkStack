@@ -510,7 +510,10 @@ fn transform_linux_seccomp_uses_helper_alias_when_launcher_is_not_helper_path() 
         ),
     ] {
         let exec_request = transform_linux_seccomp_request(&inkstack_linux_sandbox_exe, mode);
-        assert_eq!(exec_request.arg0, Some("inkstack-linux-sandbox".to_string()));
+        assert_eq!(
+            exec_request.arg0,
+            Some("inkstack-linux-sandbox".to_string())
+        );
         assert_eq!(exec_request.command[1], first_helper_arg);
     }
 }

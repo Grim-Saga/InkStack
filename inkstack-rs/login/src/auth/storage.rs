@@ -408,7 +408,11 @@ impl AuthStorageBackend for SecretsKeyringAuthStorage {
     fn save(&self, auth: &AuthDotJson) -> std::io::Result<()> {
         let serialized = serde_json::to_string(auth).map_err(std::io::Error::other)?;
         self.secrets_manager
-            .set(&SecretScope::Global, &INKSTACK_AUTH_SECRET_NAME, &serialized)
+            .set(
+                &SecretScope::Global,
+                &INKSTACK_AUTH_SECRET_NAME,
+                &serialized,
+            )
             .map_err(|error| {
                 let error = storage_error::with_context(
                     "failed to write OAuth tokens to encrypted auth storage",

@@ -841,8 +841,14 @@ async fn any_new_input_interrupts_sleep() {
     let third: Value = from_slice(&requests[2]).expect("parse third request");
     assert_interrupted_sleep_output(function_call_output_text(&third, SECOND_SLEEP_CALL_ID));
 
-    inkstack.submit(Op::Shutdown).await.expect("shutdown session");
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::ShutdownComplete)).await;
+    inkstack
+        .submit(Op::Shutdown)
+        .await
+        .expect("shutdown session");
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::ShutdownComplete)
+    })
+    .await;
 
     let rollout_path = inkstack.rollout_path().expect("rollout path");
     let rollout = tokio::fs::read_to_string(rollout_path)
@@ -968,7 +974,10 @@ async fn injected_user_input_triggers_follow_up_request_with_deltas() {
 
     let _ = gate_completed_tx.send(());
 
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     let requests = server.requests().await;
     assert_eq!(requests.len(), 2);
@@ -2348,7 +2357,8 @@ async fn terminal_compaction_error_does_not_retry_pending_input(
     // The failed turn must not poison a later explicit retry once compaction can succeed.
     submit_user_input(inkstack, "retry after quota resets").await;
     wait_for_agent_message(inkstack, "recovered answer").await;
-    let completed = wait_for_event(inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    let completed =
+        wait_for_event(inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
     let EventMsg::TurnComplete(completed) = completed else {
         unreachable!("expected turn completion");
     };

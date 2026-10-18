@@ -297,7 +297,8 @@ mod tests {
         fs::write(plugin_root.join("benign.json"), r#"{"name":"sample"}"#)
             .expect("benign manifest");
         fs::write(&claude_path, r#"{"name":"sample"}"#).expect("Claude manifest");
-        std::os::unix::fs::symlink("../benign.json", &inkstack_path).expect("InkStack manifest symlink");
+        std::os::unix::fs::symlink("../benign.json", &inkstack_path)
+            .expect("InkStack manifest symlink");
 
         assert_eq!(find_plugin_manifest_path(&plugin_root), None);
     }

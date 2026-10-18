@@ -42,7 +42,9 @@ fn retryability_preserves_error_details_distinctions() {
         (InkStackErr::ServerOverloaded, false),
         (InkStackErr::new(InkStackErrorDetails::ContentFilter), true),
         (
-            InkStackErr::new(InkStackErrorDetails::RateLimitExceeded("retry later".into())),
+            InkStackErr::new(InkStackErrorDetails::RateLimitExceeded(
+                "retry later".into(),
+            )),
             true,
         ),
         (

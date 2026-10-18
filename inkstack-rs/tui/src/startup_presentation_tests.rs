@@ -55,7 +55,11 @@ async fn first_frame_respects_screen_and_status_line_overrides() -> anyhow::Resu
     for (config, args, expected) in [
         ("", vec!["inkstack"], (true, true, true)),
         ("[tui]\n", vec!["inkstack"], (true, true, true)),
-        ("", vec!["inkstack", "--no-alt-screen"], (false, false, true)),
+        (
+            "",
+            vec!["inkstack", "--no-alt-screen"],
+            (false, false, true),
+        ),
         (
             "[tui]\nfullscreen_transcript = true\n",
             vec!["inkstack"],

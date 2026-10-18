@@ -17,7 +17,9 @@ pub fn find_inkstack_home() -> std::io::Result<AbsolutePathBuf> {
     find_inkstack_home_from_env(inkstack_home_env.as_deref())
 }
 
-fn find_inkstack_home_from_env(inkstack_home_env: Option<&str>) -> std::io::Result<AbsolutePathBuf> {
+fn find_inkstack_home_from_env(
+    inkstack_home_env: Option<&str>,
+) -> std::io::Result<AbsolutePathBuf> {
     // Honor the `INKSTACK_HOME` environment variable when it is set to allow users
     // (and tests) to override the default location.
     match inkstack_home_env {
@@ -80,7 +82,8 @@ mod tests {
             .to_str()
             .expect("missing inkstack home path should be valid utf-8");
 
-        let err = find_inkstack_home_from_env(Some(missing_str)).expect_err("missing INKSTACK_HOME");
+        let err =
+            find_inkstack_home_from_env(Some(missing_str)).expect_err("missing INKSTACK_HOME");
         assert_eq!(err.kind(), ErrorKind::NotFound);
         assert!(
             err.to_string().contains("INKSTACK_HOME"),

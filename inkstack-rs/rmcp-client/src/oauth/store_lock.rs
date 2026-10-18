@@ -204,7 +204,9 @@ pub(super) enum OAuthStoreLockFailure {
 }
 
 fn oauth_store_lock_path(inkstack_home: &Path, store: OAuthStore) -> PathBuf {
-    inkstack_home.join(OAUTH_LOCK_DIR).join(store.lock_filename())
+    inkstack_home
+        .join(OAUTH_LOCK_DIR)
+        .join(store.lock_filename())
 }
 
 #[cfg(test)]

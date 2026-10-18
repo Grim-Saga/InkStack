@@ -131,7 +131,10 @@ pub(crate) fn set_theme_override(
 
 /// Check whether a theme name resolves to a bundled theme or a custom
 /// `.tmTheme` file.  Returns a user-facing warning when it does not.
-pub(crate) fn validate_theme_name(name: Option<&str>, inkstack_home: Option<&Path>) -> Option<String> {
+pub(crate) fn validate_theme_name(
+    name: Option<&str>,
+    inkstack_home: Option<&Path>,
+) -> Option<String> {
     let name = name?;
     let custom_theme_path_display = inkstack_home
         .map(|home| custom_theme_path(name, home).display().to_string())

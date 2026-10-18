@@ -118,7 +118,8 @@ fn write_sample_plugin_manifest_and_config_at_root(
     plugin_root: std::path::PathBuf,
     plugin_config_name: &str,
 ) -> std::path::PathBuf {
-    std::fs::create_dir_all(plugin_root.join(".inkstack-plugin")).expect("create plugin manifest dir");
+    std::fs::create_dir_all(plugin_root.join(".inkstack-plugin"))
+        .expect("create plugin manifest dir");
     std::fs::write(
         plugin_root.join(".inkstack-plugin/plugin.json"),
         format!(
@@ -564,7 +565,10 @@ async fn persisted_remote_plugin_command_attribution_flows_through_turn_context(
         "sandboxed plugin command failed: {}",
         end.aggregated_output
     );
-    wait_for_event(&inkstack, |event| matches!(event, EventMsg::TurnComplete(_))).await;
+    wait_for_event(&inkstack, |event| {
+        matches!(event, EventMsg::TurnComplete(_))
+    })
+    .await;
 
     for (plugin_id, script_path) in [
         (begin.plugin_id.as_deref(), begin.script_path.as_deref()),
@@ -1581,7 +1585,10 @@ async fn curated_plugin_skills_follow_auth_switch() -> Result<()> {
         },
     ];
 
-    async fn loaded_plugin_skills_for_config(test_inkstack: &TestInkStack, config: &Config) -> String {
+    async fn loaded_plugin_skills_for_config(
+        test_inkstack: &TestInkStack,
+        config: &Config,
+    ) -> String {
         let plugins_input = config.plugins_config_input();
         let plugins_manager = test_inkstack.thread_manager.plugins_manager();
         let plugin_outcome = plugins_manager.plugins_for_config(&plugins_input).await;
@@ -1686,7 +1693,8 @@ enabled = true
             .with_extensions(skills_extensions())
             .with_auth(InkStackAuth::create_dummy_chatgpt_auth_for_testing());
         let test_inkstack = builder.build_with_auto_env(&server).await?;
-        let initial_skills = loaded_plugin_skills_for_config(&test_inkstack, &test_inkstack.config).await;
+        let initial_skills =
+            loaded_plugin_skills_for_config(&test_inkstack, &test_inkstack.config).await;
         assert_loaded_plugin_skills(
             fixture.name,
             "initial ChatGPT config",
@@ -1731,7 +1739,10 @@ enabled = true
             }
         };
         assert_eq!(
-            test_inkstack.thread_manager.auth_manager().get_api_auth_mode(),
+            test_inkstack
+                .thread_manager
+                .auth_manager()
+                .get_api_auth_mode(),
             expected_auth_mode
         );
         test_inkstack.thread_manager.skills_service().clear_cache();
@@ -1785,9 +1796,12 @@ async fn explicit_plugin_mentions_use_apps_for_chatgpt_dual_surface_plugins(
         format!("{config}\n[apps.calendar]\nenabled = {app_enabled}\n"),
     )?;
 
-    let test_inkstack =
-        build_apps_enabled_plugin_test_inkstack(&server, inkstack_home, apps_server.chatgpt_base_url)
-            .await?;
+    let test_inkstack = build_apps_enabled_plugin_test_inkstack(
+        &server,
+        inkstack_home,
+        apps_server.chatgpt_base_url,
+    )
+    .await?;
     let inkstack = Arc::clone(&test_inkstack.inkstack);
     wait_for_mcp_server(&inkstack, INKSTACK_APPS_MCP_SERVER_NAME).await?;
 
@@ -1872,9 +1886,12 @@ async fn explicit_plugin_mentions_keep_non_conflicting_mcp_for_chatgpt_auth() ->
     write_plugin_mcp_plugin(inkstack_home.as_ref(), &rmcp_test_server_bin);
     write_plugin_app_plugin_with_name(inkstack_home.as_ref(), "sample_app");
 
-    let test_inkstack =
-        build_apps_enabled_plugin_test_inkstack(&server, inkstack_home, apps_server.chatgpt_base_url)
-            .await?;
+    let test_inkstack = build_apps_enabled_plugin_test_inkstack(
+        &server,
+        inkstack_home,
+        apps_server.chatgpt_base_url,
+    )
+    .await?;
     let inkstack = Arc::clone(&test_inkstack.inkstack);
     wait_for_mcp_server(&inkstack, "sample").await?;
 
@@ -2058,7 +2075,8 @@ async fn explicitly_requested_mcp_waits_for_startup(request: ExplicitMcpRequest)
     let skill_path = dunce::canonicalize(write_plugin_skill_plugin(inkstack_home.as_ref()))?;
     write_plugin_mcp_plugin(inkstack_home.as_ref(), &rmcp_test_server_bin);
     write_plugin_app_plugin(inkstack_home.as_ref());
-    let initialize_barrier = block_plugin_mcp_startup(inkstack_home.as_ref(), &rmcp_test_server_bin);
+    let initialize_barrier =
+        block_plugin_mcp_startup(inkstack_home.as_ref(), &rmcp_test_server_bin);
 
     let mut builder = test_inkstack()
         .with_home(inkstack_home)

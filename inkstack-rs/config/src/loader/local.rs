@@ -97,7 +97,8 @@ pub async fn load_local_config_layers(
     inkstack_home: &Path,
     cwd: &AbsolutePathBuf,
 ) -> io::Result<LocalConfigLayers> {
-    load_local_config_layers_with_overrides(fs, inkstack_home, cwd, &LoaderOverrides::default()).await
+    load_local_config_layers_with_overrides(fs, inkstack_home, cwd, &LoaderOverrides::default())
+        .await
 }
 
 pub(super) async fn load_local_config_layers_with_overrides(
@@ -136,9 +137,13 @@ pub(super) async fn load_local_config_layers_with_overrides(
     )?;
     let project_root_markers = project_root_markers_from_config(&discovery_config)?
         .unwrap_or_else(default_project_root_markers);
-    let requirements =
-        local_requirements_layers(fs, inkstack_home.as_path(), overrides, loaded_managed.clone())
-            .await?;
+    let requirements = local_requirements_layers(
+        fs,
+        inkstack_home.as_path(),
+        overrides,
+        loaded_managed.clone(),
+    )
+    .await?;
     let mut trust_context = project_trust_context(
         fs,
         &discovery_config,

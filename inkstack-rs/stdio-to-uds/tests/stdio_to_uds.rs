@@ -72,13 +72,15 @@ async fn pipes_stdin_and_stdout_through_socket() -> anyhow::Result<()> {
     let child_task = tokio::task::spawn_blocking(move || -> anyhow::Result<ChildOutput> {
         let stdin =
             std::fs::File::open(&request_path).context("failed to open child stdin fixture")?;
-        let mut child = Command::new(inkstack_utils_cargo_bin::cargo_bin("inkstack-stdio-to-uds")?)
-            .arg(&socket_path)
-            .stdin(Stdio::from(stdin))
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .context("failed to spawn inkstack-stdio-to-uds")?;
+        let mut child = Command::new(inkstack_utils_cargo_bin::cargo_bin(
+            "inkstack-stdio-to-uds",
+        )?)
+        .arg(&socket_path)
+        .stdin(Stdio::from(stdin))
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .context("failed to spawn inkstack-stdio-to-uds")?;
 
         let mut child_stdout = child.stdout.take().context("missing child stdout")?;
         let mut child_stderr = child.stderr.take().context("missing child stderr")?;

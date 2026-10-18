@@ -79,7 +79,8 @@ fn authenticate_impersonated_client(
 ) -> Result<ClientIdentity> {
     // Pin the group generation through identity capture.
     // Release this lock before the provisioning worker checks machine policy.
-    let _setup_lock = inkstack_windows_sandbox::acquire_sandbox_setup_lock(/*timeout_ms*/ 5_000)?;
+    let _setup_lock =
+        inkstack_windows_sandbox::acquire_sandbox_setup_lock(/*timeout_ms*/ 5_000)?;
     anyhow::ensure!(
         inkstack_windows_sandbox::resolve_sid(inkstack_windows_sandbox::SANDBOX_USERS_GROUP)
             .is_ok_and(|current| current == sandbox_sid),
@@ -202,15 +203,17 @@ fn authenticate_impersonated_client(
             (path, handles)
         }
     };
-    let desktop_installation =
-        crate::installation_record::read_desktop_installation(&inkstack_home, token.as_raw_handle())
-            .inspect_err(|_| {
-                crate::service::log_error(
-                    crate::service::EVENT_SERVICE_FAILED,
-                    "unable to read desktop directory ownership; preserving desktop directories",
-                );
-            })
-            .ok();
+    let desktop_installation = crate::installation_record::read_desktop_installation(
+        &inkstack_home,
+        token.as_raw_handle(),
+    )
+    .inspect_err(|_| {
+        crate::service::log_error(
+            crate::service::EVENT_SERVICE_FAILED,
+            "unable to read desktop directory ownership; preserving desktop directories",
+        );
+    })
+    .ok();
     Ok(ClientIdentity {
         account,
         inkstack_home,

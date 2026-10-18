@@ -503,7 +503,8 @@ async fn run_command_under_sandbox(
                 sandbox_policy_cwd: &sandbox_policy_cwd,
                 sandbox_exe: Some(inkstack_self_exe.as_path()),
                 use_legacy_landlock: false,
-                windows_sandbox_level: inkstack_protocol::config_types::WindowsSandboxLevel::Disabled,
+                windows_sandbox_level:
+                    inkstack_protocol::config_types::WindowsSandboxLevel::Disabled,
             })?;
             let (program, args) = request
                 .command

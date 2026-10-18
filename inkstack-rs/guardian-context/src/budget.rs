@@ -206,8 +206,9 @@ pub fn estimate_input_tokens_from_serialized_len(
         let framing =
             TruncationPolicy::Bytes(serialized_len.saturating_sub(encrypted_content.len()))
                 .token_budget();
-        let content =
-            inkstack_protocol::protocol::estimate_compaction_content_length(encrypted_content.len());
+        let content = inkstack_protocol::protocol::estimate_compaction_content_length(
+            encrypted_content.len(),
+        );
         return framing.saturating_add(TruncationPolicy::Bytes(content).token_budget());
     }
     let content = match item {

@@ -104,7 +104,8 @@ async fn cloud_config_bundle_service_for_storage(
     enable_openai_api_key_env: bool,
 ) -> std::io::Result<CloudConfigBundleService<BackendBundleClient>> {
     let auth_manager =
-        AuthManager::shared_from_auth_config(auth_config.clone(), enable_openai_api_key_env).await?;
+        AuthManager::shared_from_auth_config(auth_config.clone(), enable_openai_api_key_env)
+            .await?;
     Ok(CloudConfigBundleService::new(
         auth_manager,
         Arc::new(BackendBundleClient::new(

@@ -354,7 +354,9 @@ async fn owned_transcript_reserves_a_row_above_the_composer() -> Result<()> {
         if label == "Detailed" {
             app.transcript_cells = vec![Arc::new(crate::history_cell::new_view_image_tool_call(
                 "detail-image".to_string(),
-                inkstack_utils_path_uri::LegacyAppPathString::from_string("assets/detail-image.png"),
+                inkstack_utils_path_uri::LegacyAppPathString::from_string(
+                    "assets/detail-image.png",
+                ),
             ))];
             app.open_transcript_overlay(&mut tui);
             assert!(app.overlay.is_none() && app.transcript_view.is_detailed());

@@ -950,7 +950,8 @@ async fn subagent_stop_replaces_stop_and_skips_internal_subagents() -> Result<()
         read_hook_log(test.inkstack_home_path(), "subagent_stop_hook_log.jsonl")?;
     assert_eq!(subagent_stop_inputs_after_internal, subagent_stop_inputs);
 
-    let stop_inputs_after_internal = read_hook_log(test.inkstack_home_path(), "stop_hook_log.jsonl")?;
+    let stop_inputs_after_internal =
+        read_hook_log(test.inkstack_home_path(), "stop_hook_log.jsonl")?;
     assert_eq!(stop_inputs_after_internal.len(), stop_input_count);
 
     Ok(())
@@ -1110,7 +1111,8 @@ async fn spawned_child_receives_forked_parent_context(
             .expect("legacy child thread id"),
     )?;
     // Read the acknowledged fork from storage without flushing the live child first.
-    let reopened_store = inkstack_core::thread_store_from_config(&test.config, /*state_db*/ None);
+    let reopened_store =
+        inkstack_core::thread_store_from_config(&test.config, /*state_db*/ None);
     let persisted = reopened_store
         .load_latest_model_context(LoadThreadHistoryParams {
             thread_id: child_thread_id,

@@ -6,7 +6,8 @@ use std::collections::HashMap;
 pub const INKSTACK_SESSION_ID_ENV_VAR: &str = "INKSTACK_SESSION_ID";
 pub const INKSTACK_THREAD_ID_ENV_VAR: &str = "INKSTACK_THREAD_ID";
 pub const INKSTACK_TOOL_CALL_ID_ENV_VAR: &str = "INKSTACK_TOOL_CALL_ID";
-pub const INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN_ENV_VAR: &str = "INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN";
+pub const INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN_ENV_VAR: &str =
+    "INKSTACK_EXEC_SERVER_NOISE_AUTH_TOKEN";
 pub const OPENAI_FEDERATION_RULE_ID_ENV_VAR: &str = "OPENAI_FEDERATION_RULE_ID";
 pub const OPENAI_IDENTITY_TOKEN_FILE_ENV_VAR: &str = "OPENAI_IDENTITY_TOKEN_FILE";
 pub const OPENAI_WORKLOAD_IDENTITY_CONTEXT_ENV_VAR: &str = "OPENAI_WORKLOAD_IDENTITY_CONTEXT";
@@ -164,7 +165,10 @@ where
 
     // Step 6 - Populate the thread ID environment variable when provided.
     if let Some(thread_id) = thread_id {
-        env_map.insert(INKSTACK_THREAD_ID_ENV_VAR.to_string(), thread_id.to_string());
+        env_map.insert(
+            INKSTACK_THREAD_ID_ENV_VAR.to_string(),
+            thread_id.to_string(),
+        );
     }
 
     // Restricted launch context cannot be restored through user-provided shell
