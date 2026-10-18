@@ -448,3 +448,72 @@ V8 rebuild.
 merge, force push, tag, release, or publication occurred. The implementation
 commits are on local `task-14/mcp-conformance-final-validation`, pushed to
 origin for review.
+
+## Task 15 resolution record (branch `task-15/ci-format-toolchain-match`,
+pushed to origin)
+
+### Phase 1 — Git state (verified)
+
+Task 14 commit `e136bbd` is the branch ancestor; all previous repair tasks
+remain integrated. Remote `main` is `f31d1c2`, unchanged. User worktrees
+(`task-10/verified-updater-bootstrap` at `e521c54` with its dirty
+`Cargo.lock`, and `codex/rusty-v8-release` at `92a7954` with its untracked
+migration plan) are untouched. Task 15 was developed in a separate clean
+worktree at `/home/grim/Dev/Agent Harness/InkStack-task15`.
+
+### Phase 2 — CI readiness preflight (formatting gate investigation)
+
+The `rust-ci.yml` and `rust-ci-full.yml` `general` job runs:
+`cargo fmt -- --config imports_granularity=Item --check`
+on Rust toolchain 1.95.0 (from `inkstack-rs/rust-toolchain.toml`).
+
+**Root cause:** `inkstack-rs/rustfmt.toml` specifies
+`imports_granularity = "Item"`, which is a nightly-only unstable feature.
+On stable 1.95.0 it is ignored with a warning, so rustfmt uses defaults
+(`imports_granularity = Preserve`, `reorder_imports = true`,
+`max_width = 100`). The committed source was formatted with
+`imports_granularity = Item` + `reorder_imports = false` (imports kept in
+original order, not alphabetically sorted) and allows function
+signatures/call arguments over 100 chars on single lines.
+
+**Exact commands and results:**
+
+| Command | Toolchain | Files differing | Result |
+|---|---|---|---|
+| `cargo fmt -- --config imports_granularity=Item --check` | stable 1.95.0 | 3,510 | FAIL (setting ignored, warning) |
+| `cargo fmt -- --config imports_granularity=Item --check` | nightly-2026-08-20 | 3,516 | FAIL (imports sorted alphabetically) |
+| `cargo fmt -- --config imports_granularity=Item --config reorder_imports=false --check` | nightly-2026-08-20 | 1,510 | FAIL (fn signature wrapping) |
+| `cargo fmt -- --config imports_granularity=Item --config reorder_imports=false --config max_width=103 --check` | nightly-2026-08-20 | 6,594 | FAIL (mass-unwrapping) |
+
+**Genuine formatting baseline issue:** The committed source was formatted
+with `imports_granularity = Item` + `reorder_imports = false` and allows
+function signatures/call arguments exceeding 100 chars (with indentation)
+on single lines. Neither stable 1.95.0 nor nightly-2026-08-20 matches.
+No single `max_width` value works: `max_width = 100` wraps long function
+signatures; any `max_width > 100` unwraps lines at 100–102 chars,
+causing 49,000+ differences.
+
+**Recommended fix:**
+1. Add `reorder_imports = false` to `inkstack-rs/rustfmt.toml`
+2. Pin CI formatting to nightly-2026-08-20 (where
+   `imports_granularity = Item` works without warning)
+3. Run `cargo fmt` once with the corrected config to reformat ~1,510
+   files (function signature/call argument wrapping), after which
+   `cargo fmt --check` passes on nightly
+
+Mass-reformatting ~1,510 files is unavoidable — no toolchain/config
+combination matches the committed source without it.
+
+### Phase 3 — Main-push approval gate
+
+**NOT PROCEEDING.** `main` remains at `f31d1c2`. The formatting gate
+failure (`general` job in `rust-ci-full`) would fail on a main push until
+the rustfmt.toml/CI toolchain mismatch is resolved. Awaiting owner
+direction on whether to proceed with the recommended fix above.
+
+**Known CI limitations:** Formatting gate fails on pre-existing drift
+(3,510 files on stable, not introduced by Tasks 1–14). Windows
+self-hosted runner groups may be unavailable for Windows matrix jobs.
+V8 canary build matrix WILL run (MODULE.bazel.lock changed in Task 2;
+`canary_required=true` per `v8_canary_changes.py`; V8 version unchanged
+at 150.4.0 so `windows_source_required=false`).
