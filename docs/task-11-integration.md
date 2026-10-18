@@ -517,3 +517,70 @@ self-hosted runner groups may be unavailable for Windows matrix jobs.
 V8 canary build matrix WILL run (MODULE.bazel.lock changed in Task 2;
 `canary_required=true` per `v8_canary_changes.py`; V8 version unchanged
 at 150.4.0 so `windows_source_required=false`).
+
+## Task 15B resolution record (branch `task-15b/formatting-baseline-stabilization`,
+pushed to origin)
+
+### Phase 1 — Formatting report (verified)
+
+| Command | Toolchain | Files differing | Result |
+|---|---|---|---|
+| `cargo fmt -- --config imports_granularity=Item --check` | stable 1.95.0 | 3,510 | FAIL |
+| `cargo fmt -- --config imports_granularity=Item --check` | nightly-2026-08-20 | 3,516 | FAIL |
+| `cargo fmt -- --config imports_granularity=Item --config reorder_imports=false --check` | nightly-2026-08-20 | 1,510 | FAIL |
+
+All 1,510 differences are formatting-only (function signature wrapping,
+match arm wrapping, tuple struct wrapping, closure argument wrapping).
+No semantic changes. Verified by inspecting 20+ representative diffs
+across diverse crates (agent-graph-store, analytics, app-server,
+app-server-daemon, app-server-protocol, cli, core, tui, windows-sandbox-service,
+windows-sandbox-service, voice-host).
+
+### Phase 2 — Smallest reliable correction
+
+No rustfmt config combination matches the committed source without
+modification. Tested: `imports_granularity=Item` + `reorder_imports=false`
+(1,510 files), `+ use_small_heuristics=Always/Never` (invalid key),
+`+ overflow_delimited_expr=true` (6,936 files), `+ max_width=103`
+(6,594 files). The only path to a clean check is a one-time formatting
+pass.
+
+### Phase 3 — Mechanical normalization
+
+Ran `cargo fmt` once with `imports_granularity=Item` +
+`reorder_imports=false` on nightly-2026-08-20. Result: 699 files changed
+(698 `.rs` + 1 `toml` — the rustfmt.toml itself). All changes are
+mechanical formatting: function signature wrapping, argument list
+wrapping, brace placement. Verified zero non-formatting changes by
+inspecting the diff (all changed lines are whitespace/brace/paren
+rearrangement; no identifiers, strings, or logic changed).
+
+### Phase 4 — CI formatting gates fixed
+
+Updated `.github/workflows/rust-ci.yml` and
+`.github/workflows/rust-ci-full.yml`:
+- `general` job now pins `dtolnay/rust-toolchain` to the same commit SHA
+  but specifies `toolchain: nightly-2026-08-20` for rustfmt only
+- `cargo fmt` command now includes `--config reorder_imports=false`
+- All other jobs (clippy, lint_build, tests) remain on stable 1.95.0
+
+### Phase 5 — Validation (all green)
+
+| Check | Result |
+|---|---|
+| `cargo fmt --check` (nightly, run 1) | exit 0 |
+| `cargo fmt --check` (nightly, run 2, idempotency) | exit 0 |
+| `cargo check --workspace --locked` | exit 0 |
+| `cargo check -p inkstack-cli -p inkstack-tui --release --locked` | exit 0 |
+| `python3 -m unittest discover -s .github/scripts -p 'test_*.py'` | 127 passed |
+| `cargo test -p inkstack-model-provider-info --lib --locked` | 33 passed |
+| `cargo test -p inkstack-cli --bin inkstack doctor --locked` | 130 passed, 1 ignored |
+
+### Phase 6 — Commit and report
+
+Two commits:
+1. `rustfmt.toml` + both workflow files (formatting configuration + CI toolchain)
+2. 699 formatted source files (mechanical normalization only)
+
+No `Cargo.lock` modification. No V8 rebuild. No release tag. `main` remains
+`f31d1c2`.
