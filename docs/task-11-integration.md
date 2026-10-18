@@ -559,10 +559,70 @@ rearrangement; no identifiers, strings, or logic changed).
 
 Updated `.github/workflows/rust-ci.yml` and
 `.github/workflows/rust-ci-full.yml`:
-- `general` job now pins `dtolnay/rust-toolchain` to the same commit SHA
-  but specifies `toolchain: nightly-2026-08-20` for rustfmt only
-- `cargo fmt` command now includes `--config reorder_imports=false`
+- `general` job keeps the stable 1.95.0 toolchain installation
+  (unchanged for clippy/builds/tests)
+- Added a separate step to install `nightly-2026-08-20` with its `rustfmt`
+  component via `rustup toolchain install nightly-2026-08-20 --component rustfmt`
+- `cargo fmt` now invoked explicitly as `cargo +nightly-2026-08-20 fmt` so the
+  nightly toolchain is actually used for formatting, not stable 1.95.0
 - All other jobs (clippy, lint_build, tests) remain on stable 1.95.0
+
+### Phase 5 — Validation (all green)
+
+| Check | Result |
+|---|---|
+| `cargo fmt -- --config imports_granularity=Item --config reorder_imports=false --check` (nightly-2026-08-20, run 1) | exit 0 |
+| `cargo fmt -- --config imports_granularity=Item --config reorder_imports=false --check` (nightly-2026-08-20, run 2, idempotency) | exit 0 |
+| `cargo check --workspace --locked` | exit 0 |
+| `cargo check -p inkstack-cli -p inkstack-tui --release --locked` | exit 0 |
+| `python3 -m unittest discover -s .github/scripts -p 'test_*.py'` | 127 passed |
+| `cargo test -p inkstack-model-provider-info --lib --locked` | 33 passed |
+| `cargo test -p inkstack-cli --bin inkstack doctor --locked` | 130 passed, 1 ignored |
+
+### Phase 6 — Commit and report
+
+Three commits:
+1. `rustfmt.toml` + both workflow files (formatting configuration + CI toolchain)
+2. 699 formatted source files (mechanical normalization only)
+3. `rust-ci.yml` + `rust-ci-full.yml` (explicit nightly-2026-08-20 rustfmt invocation)
+
+No `Cargo.lock` modification. No V8 rebuild. No release tag. `main` remains
+`f31d1c2`.
+
+## Task 15C resolution record (branch `task-15c/explicit-nightly-rustfmt`,
+pushed to origin)
+
+### Phase 1 — Root cause confirmation
+
+`dtolnay/rust-toolchain@e081816240890017053eacbb1bdf337761dc5582` is a pinned
+revision that hardcodes stable 1.95.0 internally. It does **not** support the
+`toolchain` input, so specifying `toolchain: nightly-2026-08-20` in the
+workflow had no effect — rustfmt always ran on stable 1.95.0, where
+`imports_granularity=Item` is an unsupported (ignored) option and the
+formatting gate failed on 3,510 files.
+
+### Phase 2 — Exact GitHub Actions changes
+
+Updated `.github/workflows/rust-ci.yml` and
+`.github/workflows/rust-ci-full.yml`:
+- Kept the existing stable 1.95.0 toolchain installation
+  (`dtolnay/rust-toolchain@e081816240890017053eacbb1bdf337761dc5582`) for
+  clippy/builds/tests — unchanged
+- Added a narrowly scoped step to install `nightly-2026-08-20` with its
+  `rustfmt` component via `rustup toolchain install nightly-2026-08-20 --component rustfmt`
+- Changed the format command from `cargo fmt` to `cargo +nightly-2026-08-20 fmt`
+  so the nightly toolchain is explicitly selected for rustfmt
+- `rust-toolchain.toml` remains pinned to stable 1.95.0
+
+### Phase 3 — Proof that nightly executes the formatting check
+
+`rustup run nightly-2026-08-20 rustfmt --version` → `rustfmt 1.10.0-nightly (f7d782a3be 2026-08-19)`
+
+Exact passing command (from `inkstack-rs/`):
+```
+cargo +nightly-2026-08-20 fmt -- --config imports_granularity=Item --config reorder_imports=false --check
+```
+Exit code: 0 (verified twice for idempotency)
 
 ### Phase 5 — Validation (all green)
 
@@ -573,14 +633,7 @@ Updated `.github/workflows/rust-ci.yml` and
 | `cargo check --workspace --locked` | exit 0 |
 | `cargo check -p inkstack-cli -p inkstack-tui --release --locked` | exit 0 |
 | `python3 -m unittest discover -s .github/scripts -p 'test_*.py'` | 127 passed |
-| `cargo test -p inkstack-model-provider-info --lib --locked` | 33 passed |
-| `cargo test -p inkstack-cli --bin inkstack doctor --locked` | 130 passed, 1 ignored |
 
-### Phase 6 — Commit and report
+No `Cargo.lock` modification. No source files reformatted. No V8 rebuild. No release tag. `main` remains `f31d1c2`.
 
-Two commits:
-1. `rustfmt.toml` + both workflow files (formatting configuration + CI toolchain)
-2. 699 formatted source files (mechanical normalization only)
 
-No `Cargo.lock` modification. No V8 rebuild. No release tag. `main` remains
-`f31d1c2`.
