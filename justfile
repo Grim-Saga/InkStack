@@ -99,7 +99,7 @@ test-github-scripts:
 
 # Run explicit workspace benchmark targets.
 bench *args:
-    cargo bench --workspace --bench '*' {args}
+    cargo bench --locked --workspace --bench '*' {args}
 
 # Run benchmark targets once to ensure they start successfully.
 bench-smoke:
