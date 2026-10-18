@@ -117,6 +117,59 @@ class UpdaterDestinationScannerTest(unittest.TestCase):
         source = negative_test(DECLARATION).replace("#[cfg(test)]\n", "")
         self.assertEqual(len(updater_destination_findings(CLI, source)), 1)
 
+    def test_real_scope_survives_braces_in_comments_strings_and_characters(self):
+        prefixes = (
+            '// ignored } "\n',
+            "/* outer { /* nested } */ } */\n",
+            r'let text = "escaped \"quote\" }";' + "\n",
+            "let quote = '\"';\n",
+            'let value: &\'static str = r###"}"###;\n',
+        )
+        for prefix in prefixes:
+            with self.subTest(prefix=prefix):
+                self.assertEqual(
+                    updater_destination_findings(
+                        CLI, negative_test(prefix + DECLARATION)
+                    ),
+                    [],
+                )
+
+    def test_commented_test_headers_cannot_exempt_a_production_host(self):
+        source = (
+            "/*\n#[cfg(test)]\nmod tests {\n"
+            "    #[tokio::test]\n"
+            "    async fn updater_http_client_factory_enforces_application_requirements() {\n"
+            "*/\nfn production_update() {\n    if true {\n"
+            + textwrap.indent(DECLARATION, "        ")
+            + "\n    }\n}\n"
+        )
+        self.assertEqual(len(updater_destination_findings(CLI, source)), 1)
+
+    def test_raw_string_test_headers_cannot_exempt_a_production_host(self):
+        for prefix, suffix in [('r"', '"'), ('r###"', '"###'), ('br#"', '"#')]:
+            with self.subTest(prefix=prefix):
+                source = (
+                    "const DECOY: &str = " + prefix + "\n#[cfg(test)]\nmod tests {\n"
+                    "    #[tokio::test]\n"
+                    "    async fn updater_http_client_factory_enforces_application_requirements() {\n"
+                    + suffix
+                    + ";\nfn production_update() {\n    if true {\n"
+                    + textwrap.indent(DECLARATION, "        ")
+                    + "\n    }\n}\n"
+                )
+                self.assertEqual(len(updater_destination_findings(CLI, source)), 1)
+
+    def test_comments_and_strings_cannot_supply_the_declaration(self):
+        for body in (
+            "/*\n" + DECLARATION + "\n*/",
+            "/* outer /* nested */\n" + DECLARATION + "\n*/",
+            'let decoy = r###"\n' + DECLARATION + '\n"###;',
+        ):
+            with self.subTest(body=body):
+                self.assertEqual(
+                    len(updater_destination_findings(CLI, negative_test(body))), 1
+                )
+
     def test_rejects_unterminated_declaration_without_swallowing_later_url(self):
         source = negative_test(
             DECLARATION[:-2] + '\nfetch("https://releases.openai.com/codex.exe");'

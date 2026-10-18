@@ -48,36 +48,103 @@ FORBIDDEN_EXECUTION_PATTERNS = (
 DOCUMENTATION_FILES = ("inkstack-rs/app-server-daemon/README.md",)
 
 
+def rust_code(text: str) -> str:
+    """Blank comments and literals, retaining offsets and structural newlines."""
+    code = list(text)
+    raw_string = re.compile(r'(?:br|cr|r)(#*)"')
+    character = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F_]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")
+    i = 0
+    while i < len(text):
+        start = i
+        if text.startswith("//", i):
+            end = text.find("\n", i)
+            end = len(text) if end < 0 else end
+        elif text.startswith("/*", i):
+            end, depth = i + 2, 1
+            while end < len(text) and depth:
+                if text.startswith("/*", end):
+                    depth += 1
+                    end += 2
+                elif text.startswith("*/", end):
+                    depth -= 1
+                    end += 2
+                else:
+                    end += 1
+        elif match := raw_string.match(text, i):
+            terminator = '"' + match.group(1)
+            close = text.find(terminator, match.end())
+            end = len(text) if close < 0 else close + len(terminator)
+        elif text[i] == '"':
+            end = i + 1
+            while end < len(text):
+                if text[end] == "\\":
+                    end += 2
+                elif text[end] == '"':
+                    end += 1
+                    break
+                else:
+                    end += 1
+        elif match := character.match(text, i):
+            end = match.end()
+        else:
+            i += 1
+            continue
+        end = min(end, len(text))
+        for pos in range(start, end):
+            if text[pos] != "\n":
+                code[pos] = " "
+        i = end
+    return "".join(code)
+
+
+def rust_block_end(code: str, opening: int) -> int | None:
+    depth = 0
+    for pos in range(opening, len(code)):
+        if code[pos] == "{":
+            depth += 1
+        elif code[pos] == "}":
+            depth -= 1
+            if depth == 0:
+                return pos
+    return None
+
+
 def negative_probe_span(relative: str, text: str) -> tuple[int, int] | None:
     """Recognize only the literal host fixture in its cfg(test) CLI test.
 
-    This deliberately accepts a small Rust syntax subset, failing closed on
+    Scope is identified in Rust code, never comments or string contents.
+    The declaration accepts a small syntax subset and fails closed on
     changed names, types, expressions or hosts. No whole line is exempted.
     """
     if relative != "inkstack-rs/cli/src/main.rs":
         return None
-    module = re.search(r"(?ms)^#\[cfg\(test\)\]\nmod tests \{\n(?P<body>.*?)^}", text)
+    code = rust_code(text)
+    module = re.search(r"(?m)^#\[cfg\(test\)\]\nmod tests \{", code)
     if module is None:
         return None
-    test = re.search(
-        r"(?ms)^    #\[tokio::test\]\n"
-        r"    async fn updater_http_client_factory_enforces_application_requirements\(\) \{\n"
-        r"(?P<body>.*?)^    }",
-        module.group("body"),
-    )
+    module_end = rust_block_end(code, module.end() - 1)
+    if module_end is None:
+        return None
+    test = re.compile(
+        r"(?m)^    #\[tokio::test\]\n"
+        r"    async fn updater_http_client_factory_enforces_application_requirements\(\) \{"
+    ).search(code, module.end(), module_end)
     if test is None:
         return None
-    declaration = re.search(
+    test_end = rust_block_end(code, test.end() - 1)
+    if test_end is None or test_end >= module_end:
+        return None
+    declaration = re.compile(
         r"(?m)^        const[ \t]+DENIED_UPDATE_PROBE_HOSTS\s*:\s*"
         r"\[\s*&str\s*;\s*3\s*\]\s*=\s*"
         r'\[\s*"chatgpt\.com"\s*,\s*"releases\.openai\.com"\s*,\s*'
-        r'"unlisted\.example"\s*,?\s*\]\s*;',
-        test.group("body"),
+        r'"unlisted\.example"\s*,?\s*\]\s*;'
     )
-    if declaration is None:
-        return None
-    offset = module.start("body") + test.start("body")
-    return offset + declaration.start(), offset + declaration.end()
+    for match in declaration.finditer(text, test.end(), test_end):
+        # A matching declaration written inside a comment/raw string is data.
+        if code[match.start() + 8 : match.start() + 13] == "const":
+            return match.start(), match.end()
+    return None
 
 
 def updater_destination_findings(relative: str, text: str) -> list[str]:
