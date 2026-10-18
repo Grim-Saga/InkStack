@@ -305,7 +305,7 @@ in .bazelrc, `RUST_MIN_STACK: "8388608"` in rust-ci.yml, rust-ci-full.yml and
 rust-ci-full-nextest-platform.yml). Verified: all pass at 8 MiB. No production
 thread stack was changed.
 
-### Phase 3 — TypeScript SDK (47/49)
+### Phase 3 — TypeScript SDK (49/49)
 
 pnpm@10.34.5 (the required packageManager) installed via npm to
 `~/.npm-global` (corepack not installed; npm global install blocked by
@@ -315,12 +315,13 @@ permissions; user prefix used). SDK dependencies installed with
 creating `target/debug/gn_out/obj/` before the v8 build script's
 `copy_archive` could write to it).
 
-SDK test result: 47 passed, 2 failed. The 2 failures
-(`MCP client conformance › ...`) are not code regressions: they fail because
-the test expects `run_inkstack_compliance.py`, but the repo still carries
-`run_codex_compliance.py` in `scripts/mcp_conformance/` (the codex→inkstack
-rebranding of that fixture is in flight). This is pre-existing and unrelated
-to Tasks 11–13.
+SDK test result: 49 passed, 0 failed. Both MCP client conformance tests
+(`MCP client conformance › does not introduce shipping, intermediate, or
+modern official conformance regressions` and `... production reviewer or
+catalog-boundary regressions`) now execute the actual
+`scripts/mcp_conformance/run_inkstack_compliance.py` runner (116 s), not
+skipped or mocked. This was blocked in Task 13 solely by the
+codex→inkstack fixture rename completed in Task 14.
 
 ### Phase 4 — regression checks (all green)
 
@@ -348,3 +349,102 @@ package consumer unchanged; no V8 rebuild.
 merge, force push, tag, release, or publication occurred. The implementation
 commits are on local `task-13/backend-route-test-hardening`, pushed to origin
 for review.
+
+## Task 14 resolution record (branch `task-14/mcp-conformance-final-validation`,
+pushed to origin)
+
+### Phase 1 — Git state (verified)
+
+Task 13 commit `fb0e1f9` is the branch ancestor; all previous repair tasks
+remain integrated. Remote `main` is `f31d1c2`, unchanged. User worktrees
+(`task-10/verified-updater-bootstrap` at `e521c54` with its dirty
+`Cargo.lock`, and `codex/rusty-v8-release` at `92a7954` with its untracked
+migration plan) are untouched. Task 14 was developed in a separate clean
+worktree at `/home/grim/Dev/Agent Harness/InkStack-task14`.
+
+### Phase 2 — MCP conformance filenames (repaired via `git mv`)
+
+Root cause: the codex→inkstack fixture rename completed Task 13 updated all
+*imports* to `run_inkstack_compliance` / `inkstack_conformance_adapter`, but
+the source files retained the old names (`run_codex_compliance.py`,
+`codex_conformance_adapter.py`, `test_codex_compliance.py`), so neither the
+TypeScript SDK tests nor the Python test discovery could resolve the runner.
+
+Renamed (executable bits preserved — none were set):
+- `scripts/mcp_conformance/run_codex_compliance.py` →
+  `scripts/mcp_conformance/run_inkstack_compliance.py`
+- `scripts/mcp_conformance/codex_conformance_adapter.py` →
+  `scripts/mcp_conformance/inkstack_conformance_adapter.py`
+- `scripts/mcp_conformance/test_codex_compliance.py` →
+  `scripts/mcp_conformance/test_inkstack_compliance.py`
+
+Updated callers: all Python imports already referenced the new names
+(`test_official_conformance.py`, `test_inkstack_compliance.py`,
+`review_regressions.py`, `run_inkstack_compliance.py` line 2011 default);
+the TypeScript SDK test (`sdk/typescript/tests/mcpConformance.test.ts`)
+already referenced `run_inkstack_compliance.py`. No Bazel or CI references
+existed. The runner's CLI arguments and behavior are unchanged; no duplicate
+compatibility scripts were introduced. Third-party MCP/OpenAI protocol
+identifiers and historical attribution were left untouched.
+
+### Phase 3 — Python conformance validation (239 passed)
+
+`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q scripts/mcp_conformance`:
+**239 passed, 0 failed**. Direct invocation of the renamed runner works
+(`run_inkstack_compliance.py --help` exits 0). Renamed test file discovered
+and passes standalone (54 passed).
+
+### Phase 4 — TypeScript SDK validation (49/49)
+
+pnpm@10.34.5 installed via npm user prefix; dependencies installed with
+`pnpm install --frozen-lockfile` (existing store, no version changes). Both
+previously failing MCP conformance tests now execute the actual runner and
+pass (49 passed, 0 failed, 0 skipped; not mocked).
+
+### Phase 5 — final regression validation (all green)
+
+- `cargo test -p inkstack-model-provider-info --lib --locked`: 33 passed
+- `cargo test -p inkstack-model-provider --lib --locked`: 102 passed
+- `cargo test -p inkstack-cli --bin inkstack doctor --locked`: 130 passed,
+  1 ignored (pre-existing)
+- `cargo test -p inkstack-cli --test login --locked`: 8 passed
+- `cargo test -p inkstack-app-server-daemon --lib update --locked`: 40 passed
+- `cargo test -p inkstack-app-server-daemon --lib verified_installer --locked`:
+  3 passed
+- TUI tests at `RUST_MIN_STACK=8388608` (daemon menu ×3, model picker,
+  browser link, update_action/update_versions/update_prompt/startup_preflight):
+  all pass
+- `cargo test -p inkstack-cli --lib --locked`: 15 passed
+- GitHub scripts: 127 passed; installer: 24 passed; packaging: 32 passed
+- `cargo check --workspace --locked`: exit 0
+- `cargo check -p inkstack-cli -p inkstack-tui --release --locked`: exit 0
+- Python conformance: 239 passed; TypeScript SDK: 49 passed
+
+Cargo.lock preservation: Task 14 commits do not modify Cargo.lock. The
+integration lock remains byte-identical to Task 10 (including the daemon
+`sha2 0.10.9` edge); normalized TOML comparison is equal to the committed
+lock. V8 release workflow, fetch script and package consumer unchanged; no
+V8 rebuild.
+
+### Phase 6 — integration readiness audit
+
+- Application release URLs: InkStack-owned
+  (`github.com/Grim-Saga/InkStack`); no OpenAI Codex executable downloads
+  remain (`test_bazel_no_upstream_binaries.py` is the guard).
+- GitHub remains the only active application publisher (external publishers
+  removed in Task 11).
+- Installer script verification remains enforced (`verified_installer.rs`,
+  SHA-256 against GitHub-recorded digest).
+- API-key authentication uses `OPENAI_API_KEY` without the retired
+  `INKSTACK_API_KEY` alias (Task 11).
+- ChatGPT backend routes use the correct external service endpoint
+  (`https://chatgpt.com/backend-api/codex`, Task 13).
+- Required upstream licensing and attribution intact (Task 11/12).
+- Rust release-mode checks succeed (exit 0).
+- All CI dependencies reference existing files/scripts (24 workflows parse;
+  all `needs` resolve to existing jobs).
+
+`main` remains `f31d1c2`; both local and remote `main` are unchanged; no
+merge, force push, tag, release, or publication occurred. The implementation
+commits are on local `task-14/mcp-conformance-final-validation`, pushed to
+origin for review.
