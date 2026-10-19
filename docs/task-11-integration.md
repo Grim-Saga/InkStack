@@ -157,7 +157,7 @@ of an obsolete secret name. The publisher-test ruling's cost if wrong is that
 an overlooked caller would fail; caller searches, workflow graph validation,
 and the replacement guards found none.
 
-Deferred minor: doctor still labels an unparseable version as "not older".
+Deferred minor: doctor still labels an unparsable version as "not older".
 Valid prereleases are now comparable; unknown version wording is deferred.
 
 ## Final validation record

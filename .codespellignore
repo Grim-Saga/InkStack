@@ -5,3 +5,9 @@ psuedo
 SOM
 te
 TE
+# rustix open flag identifier (OFlags::WRONLY).
+wronly
+# LaTeX contour-integral command and renderer token.
+oint
+# RustCrypto crate name recorded in the ZIP dependency graph.
+inout
