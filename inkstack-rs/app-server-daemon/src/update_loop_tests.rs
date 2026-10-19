@@ -103,7 +103,7 @@ async fn installer_fetch_uses_exact_urls_and_preserves_bytes() {
     assert_eq!(
         http.requested_urls(),
         vec![
-            releases_list_url(1),
+            releases_list_url(/*page*/ 1),
             installer_asset_url(APPLICATION_RELEASE_TAG),
         ]
     );
@@ -121,7 +121,7 @@ async fn installer_fetch_rejects_non_success_status() {
         .expect_err("non-success response should fail");
 
     assert!(error.to_string().contains("503"));
-    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+    assert_eq!(http.requested_urls(), vec![releases_list_url(/*page*/ 1)]);
 }
 
 #[tokio::test]
@@ -131,7 +131,7 @@ async fn installer_fetch_skips_v8_dependency_releases() {
             release_entry(
                 V8_DEPENDENCY_RELEASE_TAG,
                 &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
-                None,
+                /*installer_digest*/ None,
             ),
             installer_release_entry(b"#!/bin/sh\nprintf 'installer'\n"),
         ]),
@@ -146,7 +146,7 @@ async fn installer_fetch_skips_v8_dependency_releases() {
     assert_eq!(
         http.requested_urls(),
         vec![
-            releases_list_url(1),
+            releases_list_url(/*page*/ 1),
             installer_asset_url(APPLICATION_RELEASE_TAG),
         ]
     );
@@ -162,7 +162,11 @@ async fn installer_fetch_skips_v8_dependency_releases() {
 async fn installer_fetch_skips_application_releases_without_installer_assets() {
     let http = FakeInstallerHttp::with_list(
         releases_list_json(&[
-            release_entry("rust-v0.142.4", &["inkstack-package_SHA256SUMS"], None),
+            release_entry(
+                "rust-v0.142.4",
+                &["inkstack-package_SHA256SUMS"],
+                /*installer_digest*/ None,
+            ),
             installer_release_entry(b"#!/bin/sh\nexit 0\n"),
         ]),
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
@@ -175,7 +179,7 @@ async fn installer_fetch_skips_application_releases_without_installer_assets() {
     assert_eq!(
         http.requested_urls(),
         vec![
-            releases_list_url(1),
+            releases_list_url(/*page*/ 1),
             installer_asset_url(APPLICATION_RELEASE_TAG),
         ]
     );
@@ -187,7 +191,7 @@ async fn installer_fetch_fails_cleanly_without_application_releases() {
         releases_list_json(&[release_entry(
             V8_DEPENDENCY_RELEASE_TAG,
             &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
-            None,
+            /*installer_digest*/ None,
         )]),
         InstallerResponse::Success(b"#!/bin/sh\nexit 0\n".to_vec()),
     );
@@ -202,7 +206,7 @@ async fn installer_fetch_fails_cleanly_without_application_releases() {
             .contains("no compatible InkStack application release"),
         "unexpected error: {error}"
     );
-    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+    assert_eq!(http.requested_urls(), vec![releases_list_url(/*page*/ 1)]);
 }
 
 #[tokio::test]
@@ -215,7 +219,7 @@ async fn installer_fetch_paginates_large_release_lists() {
         page_one.push(release_entry(
             V8_DEPENDENCY_RELEASE_TAG,
             &["librusty_v8_release_x86_64-unknown-linux-gnu.a.gz"],
-            None,
+            /*installer_digest*/ None,
         ));
     }
     let http = FakeInstallerHttp::with_pages(
@@ -233,8 +237,8 @@ async fn installer_fetch_paginates_large_release_lists() {
     assert_eq!(
         http.requested_urls(),
         vec![
-            releases_list_url(1),
-            releases_list_url(2),
+            releases_list_url(/*page*/ 1),
+            releases_list_url(/*page*/ 2),
             installer_asset_url(APPLICATION_RELEASE_TAG),
         ]
     );
@@ -252,7 +256,7 @@ async fn installer_fetch_rejects_malformed_release_lists() {
         .expect_err("malformed metadata must fail");
 
     assert!(error.to_string().contains("release list"));
-    assert_eq!(http.requested_urls(), vec![releases_list_url(1)]);
+    assert_eq!(http.requested_urls(), vec![releases_list_url(/*page*/ 1)]);
 }
 
 #[test]
@@ -566,7 +570,7 @@ async fn explicit_update_migrates_running_and_stopped_installations() {
                 vec![]
             } else {
                 vec![
-                    releases_list_url(1),
+                    releases_list_url(/*page*/ 1),
                     installer_asset_url(APPLICATION_RELEASE_TAG),
                 ]
             }
@@ -689,7 +693,11 @@ impl FakeInstallerHttp {
         let entry = match &response {
             InstallerResponse::Success(body) => installer_release_entry(body),
             InstallerResponse::Unsuccessful { .. } => {
-                release_entry(APPLICATION_RELEASE_TAG, &[INSTALLER_ASSET_NAME], None)
+                release_entry(
+                    APPLICATION_RELEASE_TAG,
+                    &[INSTALLER_ASSET_NAME],
+                    /*installer_digest*/ None,
+                )
             }
         };
         Self::with_list(releases_list_json(&[entry]), response)

@@ -74,9 +74,9 @@ mod version_discovery_tests {
     #[tokio::test]
     async fn version_discovery_accepts_prereleases_and_skips_dependency_and_draft_releases() {
         let history = History(json!([
-            release("rusty-v8-v150.4.0", false),
-            release("rust-v9.0.0", true),
-            release("rust-v1.0.0-alpha.10", false)
+            release("rusty-v8-v150.4.0", /*draft*/ false),
+            release("rust-v9.0.0", /*draft*/ true),
+            release("rust-v1.0.0-alpha.10", /*draft*/ false)
         ]));
         assert_eq!(
             resolve_installer_release(&history).await.unwrap().tag,
@@ -88,7 +88,7 @@ mod version_discovery_tests {
     async fn version_discovery_fails_safely_without_application_assets() {
         for history in [
             json!([]),
-            json!([release("rusty-v8-v150.4.0", false)]),
+            json!([release("rusty-v8-v150.4.0", /*draft*/ false)]),
             json!([{"tag_name":"rust-v1.0.0","assets":[]}]),
         ] {
             assert!(resolve_installer_release(&History(history)).await.is_err());
