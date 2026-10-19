@@ -153,9 +153,10 @@ confidence-threshold = 0.8
 # Allow 1 or more licenses on a per-crate basis, so that particular licenses
 # aren't accepted for every possible crate as with the normal allow list
 exceptions = [
-    # Each entry is the crate and version constraint, and its specific allow
-    # list
-    #{ allow = ["Zlib"], crate = "adler32" },
+    # ZIP 9 uses this Rust bzip2 implementation. Reviewed its unmodified LICENSE:
+    # source/binary redistribution is permitted with origin/attribution conditions.
+    # Keep this approval version-specific; do not allow the license globally.
+    { name = "libbz2-rs-sys", version = "=0.2.5", allow = ["bzip2-1.0.6"] },
 ]
 
 # Some crates don't have (easily) machine readable licensing information,

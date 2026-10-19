@@ -1041,21 +1041,47 @@ fn extract_zipball_to_dir(bytes: &[u8], destination: &Path) -> Result<(), String
             destination.display()
         )
     })?;
+    ensure_zip_directory(destination)?;
 
     let cursor = std::io::Cursor::new(bytes);
     let mut archive = ZipArchive::new(cursor)
         .map_err(|err| format!("failed to open curated plugins zip archive: {err}"))?;
 
+    // Callers extract into a private staging directory. Refuse existing links and
+    // files as well, so extraction never follows an earlier filesystem entry.
     for index in 0..archive.len() {
         let mut entry = archive
             .by_index(index)
             .map_err(|err| format!("failed to read curated plugins zip entry: {err}"))?;
+        let name = entry
+            .name()
+            .map_err(|err| format!("failed to decode curated plugins zip entry name: {err}"))?;
+        // ZIP names use '/', even on Windows. Reject ambiguous Windows separators,
+        // drive/stream syntax and names Win32 would normalize before joining paths.
+        if name.starts_with('/')
+            || name.contains(['\\', ':'])
+            || name.split('/').any(|segment| segment.ends_with(['.', ' ']))
+        {
+            return Err(format!(
+                "curated plugins zip entry `{}` contains an unsafe path",
+                name
+            ));
+        }
         let Some(relative_path) = entry.enclosed_name() else {
             return Err(format!(
                 "curated plugins zip entry `{}` escapes extraction root",
-                entry.name()
+                name
             ));
         };
+        let mode = entry.unix_mode();
+        if let Some(mode) = mode
+            && !matches!(mode & 0o170000, 0 | 0o040000 | 0o100000)
+        {
+            return Err(format!(
+                "curated plugins zip entry `{}` is a symlink or special file",
+                name
+            ));
+        }
 
         let mut components = relative_path.components();
         let Some(std::path::Component::Normal(_)) = components.next() else {
@@ -1073,60 +1099,94 @@ fn extract_zipball_to_dir(bytes: &[u8], destination: &Path) -> Result<(), String
         }
 
         let output_path = destination.join(&output_relative);
+        let directory_relative = if entry.is_dir() {
+            output_relative.as_path()
+        } else {
+            output_relative.parent().unwrap_or_else(|| Path::new(""))
+        };
+        let mut directory = destination.to_path_buf();
+        for component in directory_relative.components() {
+            directory.push(component);
+            match std::fs::create_dir(&directory) {
+                Ok(()) => {}
+                Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {}
+                Err(err) => {
+                    return Err(format!(
+                        "failed to create curated plugins directory {}: {err}",
+                        directory.display()
+                    ));
+                }
+            }
+            ensure_zip_directory(&directory)?;
+        }
         if entry.is_dir() {
-            std::fs::create_dir_all(&output_path).map_err(|err| {
-                format!(
-                    "failed to create curated plugins directory {}: {err}",
-                    output_path.display()
-                )
-            })?;
             continue;
         }
 
-        if let Some(parent) = output_path.parent() {
-            std::fs::create_dir_all(parent).map_err(|err| {
+        let mut output = File::options()
+            .write(true)
+            .create_new(true)
+            .open(&output_path)
+            .map_err(|err| {
                 format!(
-                    "failed to create curated plugins directory {}: {err}",
-                    parent.display()
+                    "failed to create curated plugins file {}: {err}",
+                    output_path.display()
                 )
             })?;
-        }
-        let mut output = std::fs::File::create(&output_path).map_err(|err| {
-            format!(
-                "failed to create curated plugins file {}: {err}",
-                output_path.display()
-            )
-        })?;
         std::io::copy(&mut entry, &mut output).map_err(|err| {
             format!(
                 "failed to write curated plugins file {}: {err}",
                 output_path.display()
             )
         })?;
-        apply_zip_permissions(&entry, &output_path)?;
+        apply_zip_permissions(mode, &output, &output_path)?;
     }
 
     Ok(())
 }
 
+fn ensure_zip_directory(path: &Path) -> Result<(), String> {
+    let metadata = std::fs::symlink_metadata(path).map_err(|err| {
+        format!(
+            "failed to inspect curated plugins directory {}: {err}",
+            path.display()
+        )
+    })?;
+    if !metadata.file_type().is_dir() {
+        return Err(format!(
+            "curated plugins extraction directory is a symlink or not a directory: {}",
+            path.display()
+        ));
+    }
+    Ok(())
+}
+
 #[cfg(unix)]
-fn apply_zip_permissions(entry: &zip::read::ZipFile<'_>, output_path: &Path) -> Result<(), String> {
+fn apply_zip_permissions(
+    mode: Option<u32>,
+    output: &File,
+    output_path: &Path,
+) -> Result<(), String> {
     use std::os::unix::fs::PermissionsExt;
 
-    let Some(mode) = entry.unix_mode() else {
+    let Some(mode) = mode else {
         return Ok(());
     };
-    std::fs::set_permissions(output_path, std::fs::Permissions::from_mode(mode)).map_err(|err| {
-        format!(
-            "failed to set permissions on curated plugins file {}: {err}",
-            output_path.display()
-        )
-    })
+    // Preserve ordinary read/write/execute bits, never setuid, setgid or sticky.
+    output
+        .set_permissions(std::fs::Permissions::from_mode(mode & 0o777))
+        .map_err(|err| {
+            format!(
+                "failed to set permissions on curated plugins file {}: {err}",
+                output_path.display()
+            )
+        })
 }
 
 #[cfg(not(unix))]
 fn apply_zip_permissions(
-    _entry: &zip::read::ZipFile<'_>,
+    _mode: Option<u32>,
+    _output: &File,
     _output_path: &Path,
 ) -> Result<(), String> {
     Ok(())

@@ -1474,3 +1474,181 @@ fn curated_repo_backup_archive_zip_bytes(sha: &str) -> Vec<u8> {
 
     writer.finish().expect("finish zip writer").into_inner()
 }
+
+// ZIP extraction security regressions. Fixtures carry real ZIP central-directory metadata.
+fn extraction_archive(entries: &[(&str, u32, &[u8])]) -> Vec<u8> {
+    let mut writer = ZipWriter::new(std::io::Cursor::new(Vec::new()));
+    for (name, mode, contents) in entries {
+        let options = SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Stored)
+            .unix_permissions(*mode);
+        if name.ends_with('/') {
+            writer.add_directory(*name, options).expect("add directory");
+        } else {
+            writer.start_file(*name, options).expect("start entry");
+            writer.write_all(contents).expect("write entry");
+        }
+    }
+    let mut bytes = writer.finish().expect("finish archive").into_inner();
+    // The writer intentionally masks special permission and file-type bits. Restore
+    // those attacker-controlled central-directory fields to test the reader boundary.
+    let mut offset = 0;
+    for (_, mode, _) in entries {
+        let relative = bytes[offset..]
+            .windows(4)
+            .position(|signature| signature == b"PK\x01\x02")
+            .expect("central directory entry");
+        offset += relative;
+        bytes[offset + 5] = 3; // Unix creator system.
+        bytes[offset + 38..offset + 42].copy_from_slice(&(mode << 16).to_le_bytes());
+        offset += 46;
+    }
+    bytes
+}
+
+#[test]
+fn zip_extraction_preserves_github_plugin_tree() {
+    let tmp = tempdir().expect("fixture");
+    let archive = extraction_archive(&[
+        ("openai-plugins-sha/", 0o040755, b""),
+        (
+            "openai-plugins-sha/.agents/plugins/marketplace.json",
+            0o100644,
+            b"{}",
+        ),
+        (
+            "openai-plugins-sha/plugins/gmail/bin/run",
+            0o100755,
+            b"#!/bin/sh\n",
+        ),
+        ("openai-plugins-sha/plugins/empty/", 0o040755, b""),
+        (
+            "openai-plugins-sha/.git/HEAD",
+            0o100644,
+            b"ref: refs/heads/main\n",
+        ),
+    ]);
+    extract_zipball_to_dir(&archive, tmp.path()).expect("extract valid GitHub archive");
+    assert_eq!(
+        std::fs::read(tmp.path().join(".agents/plugins/marketplace.json")).unwrap(),
+        b"{}"
+    );
+    assert_eq!(
+        std::fs::read(tmp.path().join("plugins/gmail/bin/run")).unwrap(),
+        b"#!/bin/sh\n"
+    );
+    assert!(tmp.path().join("plugins/empty").is_dir());
+    assert!(tmp.path().join(".git/HEAD").is_file());
+    assert!(!tmp.path().join("openai-plugins-sha").exists());
+}
+
+#[test]
+fn zip_extraction_rejects_unsafe_portable_paths() {
+    for name in [
+        "../escaped",
+        "/root/escaped",
+        "root/../../escaped",
+        "root/../escaped",
+        "root/plugins/../../../escaped",
+        "root/dir/../escaped",
+        "root/C:/escaped",
+        "C:/escaped",
+        "root/C:escaped",
+        "root/plugins/manifest:stream",
+        "root/dir\\..\\escaped",
+        "root/\\\\server\\share",
+    ] {
+        let tmp = tempdir().expect("fixture");
+        let destination = tmp.path().join("extracted");
+        let archive = extraction_archive(&[(name, 0o100644, b"hostile")]);
+        assert!(
+            extract_zipball_to_dir(&archive, &destination).is_err(),
+            "accepted {name}"
+        );
+        assert!(!tmp.path().join("escaped").exists(), "escaped with {name}");
+    }
+}
+
+#[test]
+fn zip_extraction_rejects_symlink_and_special_entries() {
+    for mode in [0o120777, 0o010644, 0o020600, 0o060600, 0o140600] {
+        let tmp = tempdir().expect("fixture");
+        let archive = extraction_archive(&[("root/link", mode, b"../outside")]);
+        assert!(
+            extract_zipball_to_dir(&archive, tmp.path()).is_err(),
+            "accepted mode {mode:o}"
+        );
+        assert!(!tmp.path().join("link").exists());
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn zip_extraction_rejects_existing_symlinks() {
+    use std::os::unix::fs::symlink;
+
+    for link_to_directory in [false, true] {
+        let tmp = tempdir().expect("fixture");
+        let destination = tmp.path().join("extracted");
+        let outside = tmp.path().join("outside");
+        std::fs::create_dir(&destination).unwrap();
+        std::fs::create_dir(&outside).unwrap();
+        std::fs::write(outside.join("sentinel"), b"original").unwrap();
+        let name = if link_to_directory {
+            symlink(&outside, destination.join("link")).unwrap();
+            "root/link/sentinel"
+        } else {
+            symlink(outside.join("sentinel"), destination.join("link")).unwrap();
+            "root/link"
+        };
+        let archive = extraction_archive(&[(name, 0o100644, b"overwritten")]);
+        let result = extract_zipball_to_dir(&archive, &destination);
+        assert_eq!(
+            std::fs::read(outside.join("sentinel")).unwrap(),
+            b"original"
+        );
+        assert!(result.is_err(), "accepted existing symlink");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn zip_extraction_rejects_symlink_destination() {
+    let tmp = tempdir().expect("fixture");
+    let outside = tmp.path().join("outside");
+    let destination = tmp.path().join("extracted");
+    std::fs::create_dir(&outside).unwrap();
+    std::os::unix::fs::symlink(&outside, &destination).unwrap();
+    let archive = extraction_archive(&[("root/file", 0o100644, b"hostile")]);
+    assert!(extract_zipball_to_dir(&archive, &destination).is_err());
+    assert!(!outside.join("file").exists());
+}
+
+#[cfg(unix)]
+#[test]
+fn zip_extraction_strips_privileged_bits_but_preserves_executable_bits() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let tmp = tempdir().expect("fixture");
+    let archive = extraction_archive(&[
+        ("root/run", 0o107755, b"#!/bin/sh\n"),
+        ("root/config", 0o106644, b"{}"),
+    ]);
+    extract_zipball_to_dir(&archive, tmp.path()).expect("extract regular files");
+    assert_eq!(
+        std::fs::metadata(tmp.path().join("run"))
+            .unwrap()
+            .permissions()
+            .mode()
+            & 0o7777,
+        0o755
+    );
+    assert_eq!(
+        std::fs::metadata(tmp.path().join("config"))
+            .unwrap()
+            .permissions()
+            .mode()
+            & 0o7777,
+        0o644
+    );
+}
